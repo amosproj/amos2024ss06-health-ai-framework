@@ -1,0 +1,8 @@
+Title	Assignees	Status
+Familiarize with YouTube API requirements for audio extraction from videos and build a local scrapping pipeline for that target (> do only transcript)		Product Backlog
+Familiarize with Arxiv API requirements for pdf downloading and text extraction and build a local pipeline for scraping from this target		Product Backlog
+Set up local (personal computer) scrapping toolchain for scrapping test runs		Product Backlog
+Aquire and setup access to HPC (TUB || FAU)		In Progress
+Select python scrapping library		Product Backlog
+Setup json config file with keywords, date ranges and targets list (to be fed into the "orchestrator" piece of logic)		Product Backlog
+Create a visual architecture map to identify needs for APIs		Product Backlog
