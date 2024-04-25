@@ -40,3 +40,6 @@ bin/
 
 # VENV
 .venv
+
+# RUFF
+.ruff_cache
