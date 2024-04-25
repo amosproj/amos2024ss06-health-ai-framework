@@ -1,0 +1,13 @@
+[project]
+name = "health-ai-framework"
+version = "0.1.0"
+description = "Framework to create a custom AI agent."
+authors = [{ name = "Preet Vadaliya", email = "preetvadaliya@gmail.com" }]
+dependencies = []
+requires-python = "==3.12.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+
+[tool.pdm]
+distribution = false
