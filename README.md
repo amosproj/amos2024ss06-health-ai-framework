@@ -65,6 +65,31 @@ Click on the installation guide links to download and install the required softw
 Once you've completed the setup steps, you're all set to dive into development work! You have everything you need to begin coding and building your project. Happy coding! 💻🚀
 
 
+## 📁 Folder Structure
+
+```
+📁 ├── Deliverables 📦 (Contains project deliverables)
+│   ├── README.md 📄 (Readme file for deliverables)
+│   └── sprint-01 🏃‍♂️ (Sprint 01 deliverables)
+│       ├── Dummy.md 📄 (Dummy markdown file)
+│       ├── feature-board.csv 📄 (Feature board in CSV format)
+│       ├── feature-board.png 🖼️ (Feature board image)
+│       ├── imp-squared-backlog.csv 📄 (Imp squared backlog in CSV format)
+│       ├── imp-squared-backlog.png 🖼️ (Imp squared backlog image)
+│       ├── planning-document.pdf 📄 (Planning document in PDF format)
+│       ├── team-logo.png 🖼️ (Team logo in PNG format)
+│       └── team-logo.svg 🖼️ (Team logo in SVG format)
+📄 ├── Dockerfile 🐳 (Dockerfile for containerization)
+📁 ├── Documentation 📝 (Contains project documentation)
+│   └── README.md 📄 (Readme file for documentation)
+📄 ├── LICENSE 📃 (License file)
+🔒 ├── pdm.lock 🔒 (Lock file for Python dependency management)
+📄 ├── pyproject.toml 🐍 (Pyproject configuration file)
+📄 ├── README.md 📃 (Main Readme file for the repository)
+📄 ├── ruff.toml 🛠️ (Ruff configuration file)
+```
+
+
 ## 🛠️ Code Style Maintenance
 
 We've implemented Ruff and pre-commit to ensure the consistency of our codebase's style. With this setup, when you attempt to commit changes, pre-commit hooks will automatically run to check the code style. If the code style passes, the commit will proceed as usual.
