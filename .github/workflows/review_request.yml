@@ -1,0 +1,31 @@
+name: "HAF Review Request"
+on:
+  pull_request:
+    types: [review_requested]
+jobs:
+  comment_pr:
+    runs-on: ubuntu-latest
+    name: A job to comment a PR and provide checkout instructions
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Hello there! :wave:
+
+            To review the changes locally, follow these steps:
+
+            1. Open your terminal.
+            2. Make sure your **origin** is set to: **[https://github.com/amosproj/amos2024ss06-health-ai-framework.git](https://github.com/amosproj/amos2024ss06-health-ai-framework.git)**
+            3. Run:
+                ``` bash
+                git fetch origin pull/${{ github.event.pull_request.number }}/head:review-pr-${{ github.event.pull_request.number }}
+                ```
+            4. Checkout the pull request branch:
+                ``` bash
+                git checkout review-pr-${{ github.event.pull_request.number }}
+                ```
+
+            Happy Coding! 
