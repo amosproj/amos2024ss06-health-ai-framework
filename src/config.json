@@ -1,0 +1,15 @@
+{
+    "archiveTargets": [
+        {
+            "keywords": [
+                "nutrition",
+                "health",
+                "food as medicine"
+            ],
+            "urls": [
+                "http://arxiv.org",
+                "https://pubmed.ncbi.nlm.nih.gov/"
+            ]
+        }
+    ]
+}
