@@ -18,6 +18,7 @@ linting = ["ruff>=0.4.2", "pre-commit>=3.7.0"]
 [tool.pdm.scripts]
 post_install = "pre-commit install"
 prettify = "ruff check --fix"
+scrape = 'python src/backend/index.py'
 
 [tool.pdm]
 distribution = false
