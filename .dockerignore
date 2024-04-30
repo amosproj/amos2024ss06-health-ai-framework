@@ -1,0 +1,12 @@
+__pycache__
+.github
+.ruff_cache
+.venv
+Deliverables
+Documentation
+.dockerignore
+.gitignore
+.pdm-python
+Dockerfile
+LICENSE
+README.md

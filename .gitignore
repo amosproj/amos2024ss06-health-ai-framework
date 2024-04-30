@@ -34,3 +34,12 @@ bin/
 
 # MacOS
 .DS_Store
+
+# PDM
+.pdm-python
+
+# VENV
+.venv
+
+# RUFF
+.ruff_cache

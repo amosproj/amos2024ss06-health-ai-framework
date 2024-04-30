@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-lint
+        name: ruff-lint
+        entry: bash -c 'pdm run prettify'
+        language: system
+        pass_filenames: false
