@@ -34,7 +34,7 @@ class YouTube:
   Service = Client(api_key=GOOGLE_API_KEY)
 
   @classmethod
-  def get_channel_name(cls, host_name: str) -> str | None:
+  def get_channel_id(cls, host_name: str) -> str | None:
     """Get the channel name corresponding to the given host name.
 
     Parameters
