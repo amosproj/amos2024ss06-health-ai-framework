@@ -16,14 +16,14 @@ class Config:
     "Used in the JSON encoder"
     def to_dict(self):
         return dict(archive_targets=self.archive_targets)
-        # TODO: add new Scraping Variables here
+        # TODO: add new Scraping Variables to dict if added to the config
 
     def write_to_json(self, path):
         json_data = json.dumps(
             self,
             sort_keys=True,
             indent=4,
-            cls=json_encoder)
+            cls=JsonEncoder)
         with open(path, "w") as json_file:
             json_file.write(json_data)
 
@@ -32,12 +32,10 @@ class Config:
             json_data = json.load(json_file)
 
             # fill data fields of this class with data from json
-            jsonarchive_targets = json_data.get("archive_targets")
-            for entry in jsonarchive_targets:
-                self.addArchiveTarget(entry.get('urls'), entry.get('keywords'))
+            json_archive_targets = json_data.get("archive_targets")
+            for entry in json_archive_targets:
+                self.add_archive_target(entry.get('urls'), entry.get('keywords'))
             #TODO: add new Scraping Objects here
-
-            #print(self)
 
     #---------------------------------------------------------
 
@@ -62,14 +60,14 @@ class Config:
 # MARK: Encoding/Decoding Classes
 #---------------------------------------------------------
 
-class JsonEncoder(json.json_encoder):
+class JsonEncoder(json.JSONEncoder):
     """Custom encoder tells the JSON library how to encode our objects."""
 
     def default(self, obj):
         if hasattr(obj, "to_dict"):
             return obj.to_dict()
         else:
-            return json.json_encoder.default(self, obj)
+            return json.JSONEncoder.default(self, obj)
 
 #---------------------------------------------------------
 # MARK: Classes for Scraping Targets
@@ -128,8 +126,7 @@ class Archives:
 # MARK: Execution
 
 config = Config()
-#config.write_to_json
-("config.json")
+#config.write_to_json("config.json")
 #config.from_json("config.json")
 
 
