@@ -1,0 +1,20 @@
+[project]
+name = "health-ai-framework"
+version = "0.1.0"
+description = "Framework to create a custom AI agent."
+authors = [{ name = "Preet Vadaliya", email = "preetvadaliya@gmail.com" }]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+dependencies = []
+
+[tool.pdm.dev-dependencies]
+linting = ["ruff>=0.4.2", "pre-commit>=3.7.0"]
+
+[tool.pdm.scripts]
+post_install = "pre-commit install"
+prettify = "ruff check --fix"
+
+[tool.pdm]
+distribution = false

@@ -1,0 +1,33 @@
+fix = true
+include = ["*.py"]
+indent-width = 2
+line-length = 90
+tab-size = 2
+target-version = "py312"
+
+[format]
+docstring-code-line-length = 60
+indent-style = "space"
+quote-style = "single"
+skip-magic-trailing-comma = true
+
+[lint]
+select = ["F401", "F632", "F841", "E", "W", "N", "D"]
+ignore = [
+  "D419",
+  "D418",
+  "D417",
+  "D414",
+  "D404",
+  "D402",
+  "D401",
+  "D206",
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D104",
+  "D105",
+  "D106",
+  "D107",
+]
