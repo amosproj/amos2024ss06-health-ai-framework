@@ -11,11 +11,11 @@ License: MIT
 
 from dotenv import find_dotenv, load_dotenv
 from os import getenv, path
-from json import load, dump
 from pyyoutube import Client
 from requests import get, post
 from xml.etree import ElementTree
 from html import unescape
+from utils.file_utils import read_file, write_file
 
 load_dotenv(find_dotenv())
 
@@ -27,45 +27,107 @@ class YouTube:
   API v3.
   """
 
-  HOST_CHANNEL_MAP = 'data/host_channel_map.json'
   GOOGLE_API_KEY = getenv('GOOGLE_API_KEY')
   YOUTUBE_API_KEY = getenv('YOUTUBE_PUBLIC_API_KEY')
   YOUTUBE_BASE_URL = 'https://www.youtube.com/youtubei/v1/player?key=' + YOUTUBE_API_KEY
+
+  HOST_CHANNEL_MAP_PATH = 'data/youtube/host_channel_map.json'
+  USER_CHANNEL_MAP_PATH = 'data/youtube/user_channel_map.json'
+  VIDEOS_FOLDER_PATH = 'data/youtube/videos/'
+
+  HOST_CHANNEL_MAP = read_file(HOST_CHANNEL_MAP_PATH, 'dict')
+  USER_CHANNEL_MAP = read_file(USER_CHANNEL_MAP_PATH, 'dict')
   Service = Client(api_key=GOOGLE_API_KEY)
 
   @classmethod
-  def get_channel_id(cls, host_name: str) -> str | None:
-    """Get the channel name corresponding to the given host name.
+  def get_channel_id_for_user(cls, user_name: str) -> str | None:
+    """Get the channel ID corresponding to the given user name.
 
     Parameters
     ----------
-      host_name (str): The host name for which to retrieve the channel name.
+    user_name : str
+        The user name for which to retrieve the channel ID.
 
     Returns
     -------
-      str | None: The channel name corresponding to the host name, or None if not found.
+    str or None
+        The channel ID corresponding to the user name, or None if not found.
+
+    Raises
+    ------
+    None
 
     """
-    if path.isfile(cls.HOST_CHANNEL_MAP):
-      with open(cls.HOST_CHANNEL_MAP, 'r') as file:
-        host_channel_map = load(file)
-        channel_name = host_channel_map.get(host_name)
-        if channel_name:
-          return channel_name
-
-    res = cls.Service.channels.list(parts='id', for_handle=host_name, return_json=True)
-    if 'items' in res and res['items']:
-      channel_name = res['items'][0]['id']
-      if not path.isfile(cls.HOST_CHANNEL_MAP):
-        host_channel_map = {}
-      else:
-        with open(cls.HOST_CHANNEL_MAP, 'r') as file:
-          host_channel_map = load(file)
-      host_channel_map[host_name] = channel_name
-      with open(cls.HOST_CHANNEL_MAP, 'w') as file:
-        dump(host_channel_map, file)
-      return channel_name
+    if user_name in cls.USER_CHANNEL_MAP:
+      return cls.USER_CHANNEL_MAP.get(user_name)
+    else:
+      res = cls.Service.channels.list(
+        parts='id', for_username=user_name, return_json=True
+      )
+      if 'items' in res and res['items']:
+        channel_id = res['items'][0]['id']
+        cls.USER_CHANNEL_MAP[user_name] = channel_id
+        write_file(cls.USER_CHANNEL_MAP_PATH, cls.USER_CHANNEL_MAP)
+        return channel_id
     return None
+
+  @classmethod
+  def get_channel_id_for_host(cls, host_name: str) -> str | None:
+    """Get the channel ID corresponding to the given host name.
+
+    Parameters
+    ----------
+    host_name : str
+        The host name for which to retrieve the channel ID.
+
+    Returns
+    -------
+    str or None
+        The channel ID corresponding to the host name, or None if not found.
+
+    Raises
+    ------
+    None
+
+    """
+    if host_name in cls.HOST_CHANNEL_MAP:
+      return cls.HOST_CHANNEL_MAP.get(host_name)
+    else:
+      res = cls.Service.channels.list(parts='id', for_handle=host_name, return_json=True)
+      if 'items' in res and res['items']:
+        channel_id = res['items'][0]['id']
+        cls.HOST_CHANNEL_MAP[host_name] = channel_id
+        write_file(cls.HOST_CHANNEL_MAP_PATH, cls.HOST_CHANNEL_MAP)
+        return channel_id
+    return None
+
+  @classmethod
+  def get_channel_id(cls, url: str) -> str | None:
+    """Get the channel ID corresponding to the given URL.
+
+    Parameters
+    ----------
+    url : str
+        The URL from which to retrieve the channel ID.
+
+    Returns
+    -------
+    str or None
+        The channel ID corresponding to the URL, or None if not found.
+
+    """
+    if 'channel/' in url:
+      return url.strip().split('/')[-1]
+    elif 'user/' in url:
+      host_name = url.strip().split('/')[-1]
+      channel_id = cls.get_channel_id_for_user(user_name=host_name)
+      return channel_id
+    elif 'c/' in url:
+      return None
+    else:
+      host_name = url.strip().split('/')[-1]
+      channel_id = cls.get_channel_id_for_host(host_name=host_name)
+      return channel_id
 
   @classmethod
   def get_playlist_ids(cls, channel_id: str) -> list[str]:
@@ -133,7 +195,7 @@ class YouTube:
       return []
 
   @classmethod
-  def get_video_transcript(cls, video_id: str, lang: str) -> str | None:
+  def get_video_transcript(cls, video_id: str, lang: str = 'en') -> str | None:
     """Get the transcript of a video in the specified language.
 
     Parameters
@@ -147,6 +209,11 @@ class YouTube:
       available.
 
     """
+    # check if scrape found then return that
+    if path.exists(cls.VIDEOS_FOLDER_PATH + video_id + '.txt'):
+      return read_file(cls.VIDEOS_FOLDER_PATH + video_id + '.txt', 'str')
+
+    # if scrappe not found then and only call the API and store it.
     payload = {
       'context': {'client': {'clientName': 'WEB', 'clientVersion': '2.20210721.00.00'}},
       'videoId': video_id,
@@ -169,6 +236,7 @@ class YouTube:
                 text_element.text for text_element in root_xml.findall('.//text')
               ]
               text = unescape(' '.join(extracted_text))
+              write_file(cls.VIDEOS_FOLDER_PATH + video_id + '.txt', text)
               return text
       else:
         print('Error:', response.status_code)
