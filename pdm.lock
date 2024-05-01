@@ -17,6 +17,7 @@ files = [
     {file = "certifi-2024.2.2-py3-none-any.whl", hash = "sha256:dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1"},
     {file = "certifi-2024.2.2.tar.gz", hash = "sha256:0569859f95fc761b18b45ef421b1290a0f65f147e92a1e5eb3e635f9a5e4e66f"},
 ]
+content_hash = "sha256:564f27b1bab373cb9649ece1c5689a44be2e8e63c965f44c4318b2f8a1236450"
 
 [[package]]
 name = "cfgv"
