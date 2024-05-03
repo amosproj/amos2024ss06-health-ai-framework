@@ -11,5 +11,16 @@
                 "https://pubmed.ncbi.nlm.nih.gov/"
             ]
         }
+    ],
+    "podcastTargets":[
+        {
+            "keywords": [
+                "podcast",
+                "health"
+            ],
+            "urls": [
+                "https://peterattiamd.com/podcast/archive/"
+            ]
+        }
     ]
 }
