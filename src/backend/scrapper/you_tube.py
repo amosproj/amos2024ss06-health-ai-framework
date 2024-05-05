@@ -33,14 +33,16 @@ class YouTube:
 
   HOST_CHANNEL_MAP_PATH = 'data/youtube/host_channel_map.json'
   USER_CHANNEL_MAP_PATH = 'data/youtube/user_channel_map.json'
+  CHANNEL_MAP_PATH = 'data/youtube/channel_map.json'
   VIDEOS_FOLDER_PATH = 'data/youtube/videos/'
 
   HOST_CHANNEL_MAP = read_file(HOST_CHANNEL_MAP_PATH, 'dict')
   USER_CHANNEL_MAP = read_file(USER_CHANNEL_MAP_PATH, 'dict')
+  CHANNEL_MAP = read_file(CHANNEL_MAP_PATH, 'dict')
   Service = Client(api_key=GOOGLE_API_KEY)
 
   @classmethod
-  def get_channel_id_for_user(cls, user_name: str) -> str | None:
+  def __get_channel_id_for_user(cls, user_name: str) -> str | None:
     """Get the channel ID corresponding to the given user name.
 
     Parameters
@@ -72,7 +74,7 @@ class YouTube:
     return None
 
   @classmethod
-  def get_channel_id_for_host(cls, host_name: str) -> str | None:
+  def __get_channel_id_for_host(cls, host_name: str) -> str | None:
     """Get the channel ID corresponding to the given host name.
 
     Parameters
@@ -120,13 +122,13 @@ class YouTube:
       return url.strip().split('/')[-1]
     elif 'user/' in url:
       host_name = url.strip().split('/')[-1]
-      channel_id = cls.get_channel_id_for_user(user_name=host_name)
+      channel_id = cls.__get_channel_id_for_user(user_name=host_name)
       return channel_id
     elif 'c/' in url:
       return None
     else:
       host_name = url.strip().split('/')[-1]
-      channel_id = cls.get_channel_id_for_host(host_name=host_name)
+      channel_id = cls.__get_channel_id_for_host(host_name=host_name)
       return channel_id
 
   @classmethod
@@ -161,7 +163,7 @@ class YouTube:
     return playlist_ids
 
   @classmethod
-  def get_all_video_ids(cls, playlist_id: str) -> list[str]:
+  def get_all_video_ids_of_playlist(cls, playlist_id: str) -> list[str]:
     """Get a list of all video IDs associated with the given playlist ID.
 
     Parameters
@@ -195,6 +197,42 @@ class YouTube:
       return []
 
   @classmethod
+  def get_all_video_ids_of_channel(cls, channel_id: str) -> list[str]:
+    """Fetches all video IDs of a given channel.
+
+    Args:
+    ----
+      channel_id (str): The ID of the YouTube channel.
+
+    Returns:
+    -------
+      list[str]: A list of video IDs.
+
+    Raises:
+    ------
+      Any exceptions raised by the API request.
+
+    """
+    all_video_ids = []
+    next_page_token = None
+    while True:
+      res = cls.Service.search.list(
+        parts='snippet',
+        channel_id=channel_id,
+        order='date',
+        type='video',
+        page_token=next_page_token,
+        max_results=50,
+        return_json=True,
+      )
+      video_ids = [item['id']['videoId'] for item in res['items']]
+      all_video_ids.extend(video_ids)
+      next_page_token = res.get('nextPageToken')
+      if not next_page_token:
+        break
+    return all_video_ids
+
+  @classmethod
   def get_video_transcript(cls, video_id: str, lang: str = 'en') -> str | None:
     """Get the transcript of a video in the specified language.
 
@@ -213,7 +251,7 @@ class YouTube:
     if path.exists(cls.VIDEOS_FOLDER_PATH + video_id + '.txt'):
       return read_file(cls.VIDEOS_FOLDER_PATH + video_id + '.txt', 'str')
 
-    # if scrappe not found then and only call the API and store it.
+    # if scrape not found then and only call the API and store it.
     payload = {
       'context': {'client': {'clientName': 'WEB', 'clientVersion': '2.20210721.00.00'}},
       'videoId': video_id,
