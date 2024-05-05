@@ -5,7 +5,7 @@
 groups = ["default", "linting"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:740340b65645298f56615fab5572bc5fdd828faec13fb3bf02e931d2f1ffeecb"
+content_hash = "sha256:095e4d4a10a3cc209769f2b7464b27b5bab0c013726487f2936cf6f6cdd91baa"
 
 [[package]]
 name = "anyio"
