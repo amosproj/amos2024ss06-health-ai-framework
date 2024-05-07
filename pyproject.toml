@@ -10,6 +10,19 @@ license = { text = "MIT" }
 dependencies = [
     "python-dotenv>=1.0.1",
     "python-youtube>=0.9.4",
+    "bs4>=0.0.2",
+    "jupyter>=1.0.0",
+    "google-cloud>=0.34.0",
+    "google>=3.0.0",
+    "google-cloud-speech>=2.26.0",
+    "pocketsphinx>=5.0.3",
+    "SpeechRecognition>=3.10.4",
+    "pydub>=0.25.1",
+    "ffmpeg>=1.4",
+    "sox>=1.5.0",
+    "beautifulsoup4>=4.12.3",
+    "wave>=0.0.2",
+    "vosk>=0.3.45",
 ]
 
 [tool.pdm.dev-dependencies]
