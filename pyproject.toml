@@ -8,6 +8,8 @@ readme = "README.md"
 license = { text = "MIT" }
 
 dependencies = [
+    "python-dotenv>=1.0.1",
+    "python-youtube>=0.9.4",
     "bs4>=0.0.2",
     "jupyter>=1.0.0",
     "google-cloud>=0.34.0",
@@ -29,6 +31,7 @@ linting = ["ruff>=0.4.2", "pre-commit>=3.7.0"]
 [tool.pdm.scripts]
 post_install = "pre-commit install"
 prettify = "ruff check --fix"
+scrape = 'python src/backend/index.py'
 
 [tool.pdm]
 distribution = false

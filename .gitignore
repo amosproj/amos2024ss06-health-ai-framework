@@ -43,3 +43,10 @@ bin/
 
 # RUFF
 .ruff_cache
+
+# Env
+.env
+
+# Scrapped data
+data
+.ruff_cache
