@@ -118,18 +118,19 @@ class YouTube:
         The channel ID corresponding to the URL, or None if not found.
 
     """
+    channel_id = None
     if 'channel/' in url:
-      return url.strip().split('/')[-1]
+      channel_id = url.strip().split('/')[-1]
     elif 'user/' in url:
       host_name = url.strip().split('/')[-1]
       channel_id = cls.__get_channel_id_for_user(user_name=host_name)
-      return channel_id
-    elif 'c/' in url:
-      return None
     else:
       host_name = url.strip().split('/')[-1]
       channel_id = cls.__get_channel_id_for_host(host_name=host_name)
-      return channel_id
+    if channel_id not in cls.CHANNEL_MAP:
+      cls.CHANNEL_MAP[channel_id] = {'channel_url': url}
+      write_file(file_name=cls.CHANNEL_MAP_PATH, file_data=cls.CHANNEL_MAP)
+    return channel_id
 
   @classmethod
   def get_playlist_ids(cls, channel_id: str) -> list[str]:
