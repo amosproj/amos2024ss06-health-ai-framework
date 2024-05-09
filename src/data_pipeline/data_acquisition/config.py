@@ -15,14 +15,14 @@ class Config:
     def add_archives_target(self, urls, keywords):
         self.archives_targets.append(Archives(urls, keywords))
     def add_youtube_channel_target(self, name, url):
-        self.self.youtube_channel_targets.append(YoutubeChannel(name, url))
+        self.youtube_channel_targets.append(YoutubeChannel(name, url))
     def add_podcasts_target(self, urls, keywords):
         self.podcasts_targets.append(Podcasts(urls, keywords))
 
     "Used in the JSON encoder"
     def to_dict(self):
-        return dict(archives_targets=self.archive_targets,
-                    youtube_channel_targets=self.youtube_channel_targets
+        return dict(archives_targets=self.archives_targets,
+                    youtube_channel_targets=self.youtube_channel_targets,
                     podcasts_targets=self.podcasts_targets
                     )
         # TODO: add new Scraping Variables to dict if added to the config
@@ -41,7 +41,7 @@ class Config:
             json_data = json.load(json_file)
 
             # fill data fields of this class with data from json
-            json_archives_targets = json_data.get("archive_targets")
+            json_archives_targets = json_data.get("archives_targets")
             for entry in json_archives_targets:
                 self.add_archives_target(entry.get('urls'), entry.get('keywords'))
 
@@ -49,7 +49,10 @@ class Config:
             for entry in json_youtube_channel_targets:
                 self.add_youtube_channel_target(entry.get('name'), entry.get('url'))
 
-            json_podcasts_targets = json_data.get("")
+            json_podcasts_targets = json_data.get("podcasts_targets")
+            for entry in json_podcasts_targets:
+                self.add_podcasts_target(entry.get('urls'), entry.get('keywords'))
+            #TODO: add new scraping types here
 
     #---------------------------------------------------------
 
@@ -57,10 +60,24 @@ class Config:
         pass
 
     def __repr__(self):
-        fmt_string = f"Config(archive_targets: ["
-        for entry in self.archive_targets:
+        fmt_string = f"Config(\n|--> archive_targets: ["
+        for entry in self.archives_targets:
+            fmt_string += "\n     |--> "
+            fmt_string += repr(entry)
+        fmt_string += "]\n|--> youtube_channel_targets: ["
+
+        for entry in self.youtube_channel_targets:
+            fmt_string += "\n     |--> "
+            fmt_string += repr(entry)
+        fmt_string += "]\n|--> podcasts_targets: ["
+
+        for entry in self.podcasts_targets:
+            fmt_string += "\n     |--> "
             fmt_string += repr(entry)
         fmt_string += "])"
+
+        #TODO: add new scraping types here
+
         return fmt_string
 
     #---------------------------------------------------------
@@ -147,7 +164,7 @@ class YoutubeChannel:
 
 #MARK: Podcast Webite Scraping
 class Podcasts:
-    def __init(self, _urls, _keywords)
+    def __init__(self, _urls, _keywords):
         self.urls = _urls
         self.keywords = _keywords
     def __repr__(self):
@@ -156,16 +173,18 @@ class Podcasts:
         return dict(urls=self.urls, keywords=self.keywords)
 
 
-config = Config()
+#config = Config()
 
-self.add_archives_target(["http://arxiv.org","https://pubmed.ncbi.nlm.nih.gov/"]
-                      , ["nutrition", "health", "food as medicine"])
-self.add_youtubes_channel_target("Dr William Li", "https://www.youtube.com/@DrWilliamLi")
-self.add_podcasts_target(["https://peterattiamd.com/podcast/archive/"],
-                         ["podcast", "health"])
+# Example: Add new entries to json config
+# config.add_archives_target(["http://arxiv.org","https://pubmed.ncbi.nlm.nih.gov/"]
+#                       , ["nutrition", "health", "food as medicine"])
+# config.add_youtube_channel_target("Dr William Li", "https://www.youtube.com/@DrWilliamLi")
+# config.add_podcasts_target(["https://peterattiamd.com/podcast/archive/"],
+#                          ["podcast", "health"])
+# config.write_to_json("config.json")
 
-
-#config.write_to_json("config.json")
+# Example: read from json into objects
 #config.from_json("config.json")
+#print(config)
 
 

@@ -1,28 +1,57 @@
 import os
 import re
 import json
-from urllib.request import Request, urlopen, urlretrieve
+from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 from pydub import AudioSegment
 from vosk import Model, KaldiRecognizer
 import wave
 import datetime
+from scraping_data_element import *
 
-
-
-
+#import scraping_data_element
+# import sys
+# import os
+# print(os.getcwd())
+# sys.path.append(".") # Adds higher directory to python modules path.
 
 
 """
 New methods to meet requirements of the orchestrator implementation
 one method that scrapes one element
 one method that get all links + names of website
+"""
+def get_podcast_links(channel_link):
+    page_soup = soup_maker(channel_link)
+    article = page_soup.find('article')
+    link_list = [a['href'] for a in article.findAll('a', href=True)]
+    return link_list
 
 """
+gets a ScrapingDataElement object, which has the URL of a specific podcast
+fills the ScrapingDataElement with all needed information and the transcribed text
+returns the ScrapingDataElement back to the Orchestrator
+"""
+def download_element(podcast_object: ScrapingDataElement):
+    #testing
+    folder = "audios/"
+    #num_url = 3
+    model = "vosk-model-small-en-us-0.15"
+    #testing end
 
+    soup = soup_maker(podcast_object.url)
+    mp3_link = mp3_scrape(soup)
+    filename = download_mp3(folder, mp3_link)
+    #TODO:ab hier error
+    mp3_filepath = folder+filename
+    print(mp3_filepath)
+    wav_filepath = convert_to_wav_sox(mp3_filepath)
+    # transcription = sr_transcribe(wav_filepath)
+    transcription = transcribe_pretrained(wav_filepath, model)
+    podcast_object.text_data = transcription
+    podcast_object.metadata = Metadata(filename)
 
-
-
+    return podcast_object
 
 """
 The load_url_from_json() function loads a URL from a JSON configuration file.
@@ -44,7 +73,7 @@ def load_url_from_json():
         print("File does not exist in the parent directory.")
 
     # Take first URL of firs
-    archive_url = json_data['podcastTargets'][0]['urls'][0]
+    archive_url = json_data['podcasts_targets'][0]['urls'][0]
     return archive_url
 
 
@@ -187,6 +216,7 @@ the entire process by loading the URL, scraping for MP3 links,
 downloading, and transcribing the audio files.
 """
 def main():
+
     # Load podcast url from json
     archive_url = load_url_from_json()
 
@@ -203,6 +233,9 @@ def main():
     num_url = 3
     model = "vosk-model-small-en-us-0.15"
     download_and_transcribe(hrefs, folder, num_url, model)
+
+    archive_url = load_url_from_json()
+    print(get_podcast_links(archive_url))
 
 
 if __name__ == "__main__":
