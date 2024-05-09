@@ -9,6 +9,21 @@ import wave
 import datetime
 
 
+
+
+
+
+"""
+New methods to meet requirements of the orchestrator implementation
+one method that scrapes one element
+one method that get all links + names of website
+
+"""
+
+
+
+
+
 """
 The load_url_from_json() function loads a URL from a JSON configuration file.
 """

@@ -8,14 +8,23 @@ class Config:
     """
 
     #TODO: add more types of scaping targets here
-    archive_targets = []
+    archives_targets = []
+    youtube_channel_targets = []
+    podcasts_targets = []
 
-    def add_archive_target(self, url, keywords):
-        self.archive_targets.append(Archives(url, keywords))
+    def add_archives_target(self, urls, keywords):
+        self.archives_targets.append(Archives(urls, keywords))
+    def add_youtube_channel_target(self, name, url):
+        self.self.youtube_channel_targets.append(YoutubeChannel(name, url))
+    def add_podcasts_target(self, urls, keywords):
+        self.podcasts_targets.append(Podcasts(urls, keywords))
 
     "Used in the JSON encoder"
     def to_dict(self):
-        return dict(archive_targets=self.archive_targets)
+        return dict(archives_targets=self.archive_targets,
+                    youtube_channel_targets=self.youtube_channel_targets
+                    podcasts_targets=self.podcasts_targets
+                    )
         # TODO: add new Scraping Variables to dict if added to the config
 
     def write_to_json(self, path):
@@ -32,20 +41,21 @@ class Config:
             json_data = json.load(json_file)
 
             # fill data fields of this class with data from json
-            json_archive_targets = json_data.get("archive_targets")
-            for entry in json_archive_targets:
-                self.add_archive_target(entry.get('urls'), entry.get('keywords'))
-            #TODO: add new Scraping Objects here
+            json_archives_targets = json_data.get("archive_targets")
+            for entry in json_archives_targets:
+                self.add_archives_target(entry.get('urls'), entry.get('keywords'))
+
+            json_youtube_channel_targets = json_data.get("youtube_channel_targets")
+            for entry in json_youtube_channel_targets:
+                self.add_youtube_channel_target(entry.get('name'), entry.get('url'))
+
+            json_podcasts_targets = json_data.get("")
 
     #---------------------------------------------------------
 
     def __init__(self):
-        # this only serves as an example. Ideally, you would want to call the fromJason
-        # method to fill this object with data from an existing Json file
-
-        #self.addArchiveTarget(["http://arxiv.org","https://pubmed.ncbi.nlm.nih.gov/"]
-        #, ["nutrition", "health", "food as medicine"])
         pass
+
     def __repr__(self):
         fmt_string = f"Config(archive_targets: ["
         for entry in self.archive_targets:
@@ -123,9 +133,38 @@ class Archives:
 
     #------------------------------------------------------------
 
-# MARK: Execution
+#
+
+# MARK: Youtube Channel Scraping
+class YoutubeChannel:
+    def __init__(self, _name, _url):
+        self.name = _name
+        self.url = _url
+    def __repr__(self):
+        return f"YoutubeChannel(name={self.name}, url={self.url})"
+    def to_dict(self):
+        return dict(name=self.name, url=self.url)
+
+#MARK: Podcast Webite Scraping
+class Podcasts:
+    def __init(self, _urls, _keywords)
+        self.urls = _urls
+        self.keywords = _keywords
+    def __repr__(self):
+        return f"Podcasts(urls={self.urls}, keywords={self.keywords})"
+    def to_dict(self):
+        return dict(urls=self.urls, keywords=self.keywords)
+
 
 config = Config()
+
+self.add_archives_target(["http://arxiv.org","https://pubmed.ncbi.nlm.nih.gov/"]
+                      , ["nutrition", "health", "food as medicine"])
+self.add_youtubes_channel_target("Dr William Li", "https://www.youtube.com/@DrWilliamLi")
+self.add_podcasts_target(["https://peterattiamd.com/podcast/archive/"],
+                         ["podcast", "health"])
+
+
 #config.write_to_json("config.json")
 #config.from_json("config.json")
 
