@@ -57,19 +57,19 @@ To ensure that the **required modules and PDM are available system-wide** withou
    cd ~
    ```
 
-2. **Create** a `.bashrc` file if it doesn't already exist:
+2. **Create** a `.bash_login` file if it doesn't already exist:
    
    ```bash
-   touch .bashrc
+   touch .bash_login
    ```
 
-3. **Open** the `.bashrc` file in a text editor of your choice:
+3. **Open** the `.bash_login` file in a text editor of your choice:
    
    ```bash
-   nano .bashrc
+   nano .bash_login
    ```
 
-4. **Add** the following lines to the `.bashrc` file:
+4. **Add** the following lines to the `.bash_login` file:
    
    ```bash
    module add python/3.10-anaconda
@@ -81,7 +81,7 @@ To ensure that the **required modules and PDM are available system-wide** withou
 6. To **apply the changes**, either restart your terminal or run the following command:
    
    ```bash
-   source ~/.bashrc
+   source ~/.bash_login
    ```
 
 Now, the required modules and PDM will be automatically loaded whenever you open a new terminal session, making them readily available for your project.
