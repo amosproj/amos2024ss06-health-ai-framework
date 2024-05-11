@@ -85,3 +85,27 @@ To ensure that the **required modules and PDM are available system-wide** withou
    ```
 
 Now, the required modules and PDM will be automatically loaded whenever you open a new terminal session, making them readily available for your project.
+
+## 👤 Creating a shared folder
+
+1. Adding a read permission to your own `$WORK` directory for our `amos` group .
+   ```bash
+   chmod g+x $WORK
+   ```
+2. Creating a shared folder inside `$WORK` where we can store shared resources.
+   ```bash
+   cd $WORK
+   mkdir ./shared
+   ```
+3. Letting the folder `./shared` to be accessible for other team members.
+   ```bash
+   chmod -R g+rwx $WORK/shared
+   ```
+4. Checking if the permissions were applied correctly. The output should look similar.
+   ```bash
+   ll -a
+   drwxrwxr-x 1 amos103h amos 16 May 11 16:10 shared
+   ```
+
+- `$WORK` directory has the capacity of 500 GB but has no backups / snapshots.
+- `$HOME` directory has the capacity of 50 GB but is backed up regularly.
