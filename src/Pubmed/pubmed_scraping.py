@@ -37,54 +37,87 @@ def fetch_details(id):
     handle.close()
     return results
 
+"""Retrieve doi url from details dictionary received from fetch_details() method."""
 def get_doi_from_details(details_dict):
     try:
         id_list = details_dict['PubmedArticle'][0]['PubmedData']['ArticleIdList']
+        doi = ''
         for entry in id_list:
-            attr = getattr(entry, IdType)
-            #TODO:
+            attr = entry.attributes.get('IdType')
             if attr == 'doi':
-                print(entry)
+                 doi = f"https://doi.org/{entry}"
         return doi
-    except Exception:
+        #return doi
+    except Exception as e:
         print("Error: pubmed_scraping: get_doi_from_pubmed_id: Could not retrieve doi.")
+        print(e)
         return ""
     pass
 
-#TODO: get metadata for:
-# authors, publication date
-
+"""Retrieve abstract from details dictionary received from fetch_details() method."""
 def get_abstract_from_details(details_dict):
     try:
         # Maybe check why 'AbstractText' is a list of texts with only 1 entry
         # (in all examples seen)
         abstract = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
-        ['Abstract']['AbstractText'][0]
+        abstract = abstract['Abstract']['AbstractText'][0]
         return abstract
-    except Exception:
-        print("Error: pubmed_scraping: get_title_from_details: Could not retrieve title.")
+    except Exception as e:
+        print("Error: pubmed_scraping: get_abstract_from_details:"
+              + " Could not retrieve abstract.")
+        print(e)
         return ""
 
 """Retrieve title from details dictionary received from fetch_details() method."""
 def get_title_from_details(details_dict):
     try:
         title = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
-        ['ArticleTitle']
+        title = title['ArticleTitle']
         return title
-    except Exception:
+    except Exception as e:
         print("Error: pubmed_scraping: get_title_from_details: Could not retrieve title.")
+        print(e)
+        return ""
+
+"""Retrieve authors str from details dictionary received from fetch_details() method.
+
+the authors are separated by ', ' delimeter"""
+def get_authors_from_details(details_dict):
+    try:
+        author_dict_list = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
+        author_dict_list = author_dict_list['AuthorList']
+        author_strings = []
+        for entry in author_dict_list:
+            author = entry['ForeName'] + ' ' + entry['LastName']
+            author_strings.append(author)
+        return ', '.join(author_strings)
+    except Exception as e:
+        print("Error: pubmed_scraping: get_authors_from_details:" +
+              " Could not retrieve authors.")
+        print(e)
+        return ""
+
+"""Retrieve publication date from details dict received from fetch_details() method."""
+def get_publication_date_from_details(details_dict):
+    try:
+        date_dict = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
+        date_dict = date_dict['Journal']['JournalIssue']['PubDate']
+        date = date_dict['Day'] + ' ' + date_dict['Month'] + ' ' + date_dict['Year']
+        return date
+    except Exception as e:
+        print("Error: pubmed_scraping: get_publication_date_from_details:" +
+              "Could not retrieve date.")
+        print(e)
         return ""
 
 studies_id_list = search_free_fulltext('nutrition cancer exercise')
 fetch_results = fetch_details([studies_id_list[0]])
-
-
-
 print("found " + str(len(studies_id_list)) + " studies")
 print("retrieving details for id: " + str(studies_id_list[0]))
+
 #print(fetch_results)
-#print(get_title_from_details(fetch_results).keys())
-print(get_doi_from_details(fetch_results))
+#print(get_authors_from_details(fetch_results).keys())
+print(get_publication_date_from_details(fetch_results))
 #print(get_doi_from_details(fetch_results).keys())
 #print(type(get_title_from_details(fetch_results)))
 #print(get_doi_from_pubmed_id(fetch_results))
