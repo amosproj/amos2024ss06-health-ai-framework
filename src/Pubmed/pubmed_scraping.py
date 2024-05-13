@@ -124,25 +124,9 @@ def get_publication_date_from_details(details_dict):
 # MARK: Get pdf and text
 #---------------------------------------------------------
 
-def get_paper_from_doi(doi: str, title=None, path="papers"):
-    # potentially add title and then pdf files can be stored under the title
-    # instead of their doi (as filename)
-    # if the title is given, it will be used. Otherwise the file will be saved
-    # under its DOI
-    if title is None:
-        title = doi
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    paper_data = {'doi': doi}
-    filename = f"{title}".replace('/', '').replace('?', '').replace('!', '')
-    filepath = path + "/" + filename
-
-    save_pdf(paper_data, filepath=filepath + '.pdf')
-    return filename
-
-def get_txt_from_pdf(filename: str, path="papers/", create_txt_file=False):
-    reader = PdfReader(path + f'{filename}.pdf')
+def get_txt_from_pdf(filename: str, path="papers/", create_txt_file=False, keep_pdfs=False):
+    filepath = path + f'{filename}.pdf'
+    reader = PdfReader(filepath)
     text = ""
     for page in reader.pages:
         text = text + page.extract_text()
@@ -152,6 +136,10 @@ def get_txt_from_pdf(filename: str, path="papers/", create_txt_file=False):
         f.write(text)
         f.close()
 
+    if keep_pdfs is not True:
+        if os.path.exists(filepath):
+            os.remove(filepath)
+    
     return text
 
 #---------------------------------------------------------
