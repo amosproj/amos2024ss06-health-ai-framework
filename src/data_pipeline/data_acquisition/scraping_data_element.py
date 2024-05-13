@@ -21,3 +21,9 @@ class ScrapingDataElement:
 class PodcastMetadata:
     def __init__(self, _filename):
         self.filename = _filename
+
+class YoutubeMetadata:
+    def __init__(self, _video_title, _upload_date, _num_clicks):
+        self.video_title = _video_title
+        self.upload_date = _upload_date
+        self.num_clicks = _num_clicks
