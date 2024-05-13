@@ -1,0 +1,22 @@
+name: Code Formatting and Linting
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          cache: true
+      - name: Install project dependencies
+        run: pdm install
+      - name: Run Prettify (Code Formatting and Linting)
+        run: pdm run prettify
