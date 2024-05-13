@@ -101,7 +101,12 @@ Now, the required modules and PDM will be automatically loaded whenever you open
    ```bash
    chmod -R g+rwx $WORK/shared
    ```
-4. Checking if the permissions were applied correctly. The output should look similar.
+   
+4. Ensure that newly created files within `./shared` inherit the same permissions.
+   ```bash
+   chmod g+s $WORK/shared
+   ```
+5. Checking if the permissions were applied correctly. The output should look similar.
    ```bash
    ll -a
    drwxrwxr-x 1 amos103h amos 16 May 11 16:10 shared
