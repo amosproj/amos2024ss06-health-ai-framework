@@ -62,7 +62,11 @@ class AllRecipes:
             response = opener.open(req)
             html_content = response.read()
             soup = BeautifulSoup(html_content, 'html.parser')
-            title = soup.find("h1").get_text(strip=True) if soup.find("h1") else 'No title found'
+            title = ""
+            if soup.find("h1"):
+                title = soup.find("h1").get_text(strip=True)
+            else:
+                title =  'No title found'
 
             ingredients_list = soup.find("ul", class_="mntl-structured-ingredients__list")
             ingredients = []
@@ -73,10 +77,13 @@ class AllRecipes:
                     ingredients.append(formatted_ingredient)
 
             steps_list = soup.find("ol", class_="mntl-sc-block-group--OL")
-            steps = [li.get_text(strip=True) for li in steps_list.find_all("li")] if steps_list else []
+            steps = []
+            if steps_list:
+                steps = [li.get_text(strip=True) for li in steps_list.find_all("li")]
 
             nutrition_facts = {}
-            nutrition_table = soup.find("table", class_="mntl-nutrition-facts-summary__table")
+            nutrition_table = soup.find("table",
+                                        class_="mntl-nutrition-facts-summary__table")
             if nutrition_table:
                 rows = nutrition_table.find_all("tr")
                 for row in rows:

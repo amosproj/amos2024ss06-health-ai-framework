@@ -3,13 +3,14 @@ from allrecipes import AllRecipes
 if __name__ == "__main__":
     processed_urls = set()  # This set will prevent processing the same URL multiple times
     categories = AllRecipes.fetch_categories()
-    
+
     if categories:
-        with open("recipes_details.txt", "w", encoding='utf-8') as file:  # Open file to write with UTF-8 encoding
+        # Open file to write with UTF-8 encoding
+        with open("recipes_details.txt", "w", encoding='utf-8') as file:
             for name, url in categories.items():
                 print(f"Fetching recipes from {name.title()}...")
                 recipe_urls = AllRecipes.fetch_recipe_links(url)
-                
+
                 if recipe_urls:
                     for recipe_url in recipe_urls:
                         if recipe_url not in processed_urls:
