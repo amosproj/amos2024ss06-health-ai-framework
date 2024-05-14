@@ -1,39 +1,39 @@
-name: "HAF Review Request"
+name: Write checkout instructions
+
 on:
   pull_request:
-    types: [review_requested]
+    branches: [main]
+    types: [opened]
+
 jobs:
-  comment_pr:
+  write-instructions:
     runs-on: ubuntu-latest
-    name: A job to comment a PR and provide checkout instructions
+    name: A job to comment checkout instructions
     steps:
-      - name: Get Token
-        id: get_workflow_token
+      # Generate a github token
+      - name: Generate token
+        id: token
         uses: peter-murray/workflow-application-token-action@v3
         with:
           application_id: ${{ secrets.APPLICATION_ID }}
           application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
           revoke_token: true
+      # Checkout to repository
       - name: Checkout
         uses: actions/checkout@v3
+      # Comment on PR
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
         with:
-          GITHUB_TOKEN: ${{ steps.get_workflow_token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
           message: |
-            Hello there! :wave:
+            ### :rocket: Checkout Instructions
 
-            To review the changes locally, follow these steps:
-
-            1. Open your terminal.
-            2. Make sure your **origin** is set to: **[https://github.com/amosproj/amos2024ss06-health-ai-framework.git](https://github.com/amosproj/amos2024ss06-health-ai-framework.git)**
-            3. Run:
-                ``` bash
-                git fetch origin pull/${{ github.event.pull_request.number }}/head:review-pr-${{ github.event.pull_request.number }}
-                ```
-            4. Checkout the pull request branch:
-                ``` bash
-                git checkout review-pr-${{ github.event.pull_request.number }}
-                ```
-
-            Happy Coding! 
+            Make sure your **origin** is set to: **[https://github.com/amosproj/amos2024ss06-health-ai-framework.git](https://github.com/amosproj/amos2024ss06-health-ai-framework.git)**
+          
+            ``` bash
+            git fetch origin
+            git checkout ${{ github.head_ref }}
+            ```
+            
+            Happy Coding!

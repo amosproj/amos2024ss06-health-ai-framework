@@ -1,0 +1,26 @@
+name: Code Formatting and Linting
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  run-prettify:
+    runs-on: ubuntu-latest
+    name: A job to verify python code style and linting
+    steps:
+      # Checkout to repository
+      - name: Checkout
+        uses: actions/checkout@v3
+      # Setup PDM
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          cache: true
+      # Install dependencies
+      - name: Install dependencies
+        run: pdm install
+      # Code Formatting and Linting
+      - name: Run Prettify (Code Formatting and Linting)
+        run: pdm run prettify
