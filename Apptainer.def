@@ -1,0 +1,64 @@
+Bootstrap: docker
+From: ubuntu
+Stage: spython-base
+
+%files
+. .
+%post
+
+# Update package lists and upgrade existing packages
+apt-get update && \
+apt-get upgrade -y
+
+# Install necessary packages
+apt-get install git curl software-properties-common build-essential -y
+
+# Add deadsnakes PPA for installing specific Python versions
+add-apt-repository ppa:deadsnakes/ppa
+
+# Install Python 3.10 and venv
+apt-get install -y python3.10 python3.10-venv python3.10-dev
+
+# Install pkg-config
+apt-get install -y pkg-config
+
+# Create a virtual environment using Python 3.10
+python3.10 -m venv /opt/venv
+
+# Activate the virtual environment
+PATH="/opt/venv/bin:$PATH"
+
+# Download PDM installation script
+curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+
+# Add PDM bin directory to PATH
+PATH="/root/.local/bin:${PATH}"
+
+# Add ffmpeg to convert MP3 files to WAV
+apt-get install -y ffmpeg
+
+# Set the working directory for subsequent commands
+mkdir -p health-ai-framework
+cd health-ai-framework
+
+# Initialize a new Git repository
+git init
+
+# Copy project files into the container
+
+# Install project dependencies using PDM
+pdm install
+
+# USAGE => run in folder 'amos2024ss06-health-ai-framework'
+# sudo docker build -f ./Dockerfile .
+# spython recipe Dockerfile > Apptainer.def
+# apptainer build Apptainer.sif Apptainer.def
+%environment
+export PATH="/opt/venv/bin:$PATH"
+export PATH="/root/.local/bin:${PATH}"
+%runscript
+cd health-ai-framework
+exec /bin/bash "$@"
+%startscript
+cd health-ai-framework
+exec /bin/bash "$@"
