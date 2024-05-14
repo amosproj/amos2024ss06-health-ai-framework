@@ -23,6 +23,7 @@ dependencies = [
     "beautifulsoup4>=4.12.3",
     "wave>=0.0.2",
     "vosk>=0.3.45",
+    "pymongo>=4.7.2",
 ]
 
 [tool.pdm.dev-dependencies]
