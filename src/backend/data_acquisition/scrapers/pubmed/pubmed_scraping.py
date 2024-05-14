@@ -1,8 +1,8 @@
 from Bio import Entrez
 from pypdf import PdfReader
+from paperscraper.pdf import save_pdf
 
 import os
-# import pandas as pd
 
 
 # ---------------------------------------------------------
@@ -145,10 +145,25 @@ def get_publication_date_from_details(details_dict):
 # MARK: Get pdf and text
 # ---------------------------------------------------------
 
+def get_paper_from_doi(doi: str, title=None, path="papers"):
+    # potentially add title and then pdf files can be stored under the title
+    # instead of their doi (as filename)
+    # if the title is given, it will be used. Otherwise the file will be saved
+    # under its DOI
+    if title is None:
+        title = doi
+    if not os.path.exists(path):
+        os.makedirs(path)
 
-def get_txt_from_pdf(
-  filename: str, path='papers/', create_txt_file=False, keep_pdfs=False
-):
+    paper_data = {'doi': doi}
+    filename = f"{title}".replace('/', '').replace('?', '').replace('!', '')
+    filepath = path + "/" + filename
+
+    save_pdf(paper_data, filepath=filepath + '.pdf')
+    return filename
+
+def get_txt_from_pdf(filename: str, path='papers/', create_txt_file=False,
+                     keep_pdfs=False):
   filepath = path + f'{filename}.pdf'
   reader = PdfReader(filepath)
   text = ''
@@ -171,28 +186,28 @@ def get_txt_from_pdf(
 # MARK: Example
 # ---------------------------------------------------------
 
-# Fetch papers from pubmed
-# keywords = ["nutrition", "cancer", "exercise"]
-# studies_id_list = search_free_fulltext(' '.join(keywords))
-# metadata = fetch_details([studies_id_list[0]])
+# # Fetch papers from pubmed
+keywords = ["nutrition", "cancer", "exercise"]
+studies_id_list = search_free_fulltext(' '.join(keywords))
+metadata = fetch_details([studies_id_list[0]])
 
-# print("-----------------")
-# print("Fetching Pubmed for keywords: " + repr(keywords))
-# print("Found " + str(len(studies_id_list)) + " papers")
-# print("Retrieving metadata for first paper, pubmed id: " + str(studies_id_list[0]))
+print("-----------------")
+print("Fetching Pubmed for keywords: " + repr(keywords))
+print("Found " + str(len(studies_id_list)) + " papers")
+print("Retrieving metadata for first paper, pubmed id: " + str(studies_id_list[0]))
 
-# # Extract important metadata
-# title = get_title_from_details(metadata)
-# publication_date = get_publication_date_from_details(metadata)
-# authors = get_authors_from_details(metadata)
-# abstract = get_abstract_from_details(metadata)
-# doi = get_doi_from_details(metadata)
+# Extract important metadata
+title = get_title_from_details(metadata)
+publication_date = get_publication_date_from_details(metadata)
+authors = get_authors_from_details(metadata)
+abstract = get_abstract_from_details(metadata)
+doi = get_doi_from_details(metadata)
 
-# print("-----------------")
-# print("Metadata:")
-# print("Title: " + title + "\nPublication Date: " + publication_date)
-# print("Authors: " + authors + "\nDoi: " + doi + "\nAbstract: " + abstract)
+print("-----------------")
+print("Metadata:")
+print("Title: " + title + "\nPublication Date: " + publication_date)
+print("Authors: " + authors + "\nDoi: " + doi + "\nAbstract: " + abstract)
 
-# # Download pdf and convert to text
-# file_name = get_paper_from_doi(doi, title)
-# text_data = get_txt_from_pdf(file_name, "papers/", True)
+# Download pdf and convert to text
+file_name = get_paper_from_doi(doi, title)
+text_data = get_txt_from_pdf(file_name, "papers/", True)
