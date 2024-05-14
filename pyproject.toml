@@ -26,6 +26,7 @@ dependencies = [
     "paperscraper>=0.2.11",
     "pypdf>=4.2.0",
     "biopython>=1.83",
+    "pymongo>=4.7.2",
 ]
 
 [tool.pdm.dev-dependencies]
