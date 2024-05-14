@@ -1,5 +1,5 @@
 {
-    "archiveTargets": [
+    "archives_targets": [
         {
             "keywords": [
                 "nutrition",
@@ -12,7 +12,7 @@
             ]
         }
     ],
-    "podcastTargets":[
+    "podcasts_targets": [
         {
             "keywords": [
                 "podcast",
@@ -21,6 +21,12 @@
             "urls": [
                 "https://peterattiamd.com/podcast/archive/"
             ]
+        }
+    ],
+    "youtube_channel_targets": [
+        {
+            "name": "Dr William Li",
+            "url": "https://www.youtube.com/@DrWilliamLi"
         }
     ]
 }
