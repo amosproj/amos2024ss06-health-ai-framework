@@ -125,7 +125,7 @@ class Archives:
             return f"Archive Details:\nURLs: {url_str}\nKeywords: {keyword_str}"
         #------------------------------------------------------------
 
-    def get_archives():
+    def get_archives(self):
         return self.archives
 
     def to_dict(self):
