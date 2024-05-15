@@ -170,10 +170,12 @@ def get_txt_from_pdf(filename: str, path='papers/', create_txt_file=False,
   for page in reader.pages:
     text = text + page.extract_text()
 
+
   if create_txt_file:
-    f = open(filename + '.txt', 'a')
+    f = open(filename + '.txt', "a", encoding="utf-8")
     f.write(text)
     f.close()
+
 
   if keep_pdfs is not True:
     if os.path.exists(filepath):
