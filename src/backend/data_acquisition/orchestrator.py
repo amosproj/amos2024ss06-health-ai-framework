@@ -2,7 +2,7 @@ import hashlib
 import pathlib
 
 from config import Config
-from scrapingDB import *
+from scraping_db import *
 from scraping_data_element import *
 
 
