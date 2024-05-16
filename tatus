@@ -1,0 +1,388 @@
+[33mcommit c9a20f369dba76595850f2ba9a52d2583a6ebb5b[m[33m ([m[1;36mHEAD -> [m[1;32mallrecipes_scraping[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/allrecipes_scraping[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Lukáš Varga <72818751+lukas-varga@users.noreply.github.com>
+Date:   Mon May 13 14:39:25 2024 +0200
+
+    Posix hpc (#34)
+    
+    * Adding guide for setting up shared folder
+    
+    * Added inheriting permissions to new files
+
+M	Documentation/hpc_setup.md
+
+[33mcommit d8091120a397e14066b676947fd506c4e21a9fca[m
+Author: Preet Vadaliya <preetvadaliya@gmail.com>
+Date:   Mon May 13 11:14:09 2024 +0200
+
+    delete: duplicate code and zip file of podcast scrapper (#32)
+
+D	src/backend/data_acquisition/scrapers/podcast/podcast_text_20240507_191423.json
+D	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15.zip
+D	src/backend/scrapper/podcast/__init__.py
+D	src/backend/scrapper/podcast/podcast_scraping.py
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/README
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/am/final.mdl
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/conf/mfcc.conf
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/conf/model.conf
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/Gr.fst
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/HCLr.fst
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/disambig_tid.int
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/phones/word_boundary.int
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/final.dubm
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/final.ie
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/final.mat
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/global_cmvn.stats
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/online_cmvn.conf
+D	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/splice.conf
+
+[33mcommit b56c4e5d9cb469d89c4ed2ebb82f211b0a0dfdcd[m
+Author: Eloi <70521773+eloinoel@users.noreply.github.com>
+Date:   Sun May 12 13:29:41 2024 +0200
+
+    Reorganised directory structure (#30)
+    
+    * reorganised directory structure, Co-authored-by: David Enescu  <david.enescu@fau.de>
+    
+    Signed-off-by: Eloi Sandt <eloi.sandt@campus.tu-berlin.de>
+    
+    * divide src into frontent and backend directories
+    
+    Signed-off-by: Eloi Sandt <eloi.sandt@campus.tu-berlin.de>
+    
+    ---------
+    
+    Signed-off-by: Eloi Sandt <eloi.sandt@campus.tu-berlin.de>
+
+D	config.json
+R100	src/config.json	src/backend/data_acquisition/config.json
+R100	src/config.py	src/backend/data_acquisition/config.py
+A	src/backend/data_acquisition/orchestrator.py
+R100	src/backend/podcast/podcast_scraping.py	src/backend/data_acquisition/scrapers/podcast/podcast_scraping.py
+R100	src/backend/podcast/podcast_text_20240507_191423.json	src/backend/data_acquisition/scrapers/podcast/podcast_text_20240507_191423.json
+R100	src/backend/podcast/vosk-model-small-en-us-0.15.zip	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15.zip
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/README	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/README
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/am/final.mdl	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/am/final.mdl
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/conf/mfcc.conf	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/conf/mfcc.conf
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/conf/model.conf	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/conf/model.conf
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/graph/Gr.fst	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/graph/Gr.fst
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/graph/HCLr.fst	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/graph/HCLr.fst
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/graph/disambig_tid.int	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/graph/disambig_tid.int
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/graph/phones/word_boundary.int	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/graph/phones/word_boundary.int
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/final.dubm	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/ivector/final.dubm
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/final.ie	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/ivector/final.ie
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/final.mat	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/ivector/final.mat
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/global_cmvn.stats	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/ivector/global_cmvn.stats
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/online_cmvn.conf	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/ivector/online_cmvn.conf
+R100	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/splice.conf	src/backend/data_acquisition/scrapers/podcast/vosk-model-small-en-us-0.15/ivector/splice.conf
+R100	src/backend/scrapper/__init__.py	src/backend/data_acquisition/scrapers/youtube/__init__.py
+R100	src/backend/index.py	src/backend/data_acquisition/scrapers/youtube/index.py
+R100	src/backend/scrapper/you_tube.py	src/backend/data_acquisition/scrapers/youtube/you_tube.py
+R100	src/backend/utils/__init__.py	src/backend/data_acquisition/utils/__init__.py
+R100	src/backend/utils/file_utils.py	src/backend/data_acquisition/utils/file_utils.py
+
+[33mcommit 0682107db014ed6cbe0318d4ac0d975ad616db6d[m
+Merge: 8d2d9eb f3dbe08
+Author: Lukáš Varga <72818751+lukas-varga@users.noreply.github.com>
+Date:   Sat May 11 11:56:04 2024 +0200
+
+    Merge pull request #31 from amosproj/python-version-change
+    
+    Python version bump & project setup docs for HPC
+
+[33mcommit f3dbe085faab89edf6857a125a642be5ac4d601d[m[33m ([m[1;31morigin/python-version-change[m[33m)[m
+Author: Preet Vadaliya <preetvadaliya@gmail.com>
+Date:   Fri May 10 16:44:33 2024 +0200
+
+    change: file name to fix reload modules
+
+M	Documentation/hpc_setup.md
+
+[33mcommit 8d2d9eb9ec945563fabe57c82f9d1cb710b114a3[m
+Author: lukas-varga <lukas.varga128@gmail.com>
+Date:   Fri May 10 15:28:54 2024 +0200
+
+    Deleted init.py
+    
+    Signed-off-by: lukas-varga <lukas.varga128@gmail.com>
+
+D	src/__init__.py
+D	src/backend/__init__.py
+
+[33mcommit 28fd25322758eb193fc7fad46cbf46bcdb50def2[m
+Author: lukas-varga <lukas.varga128@gmail.com>
+Date:   Wed May 8 21:38:21 2024 +0200
+
+    Hotfix after Preet commnets to better organize structure of the src structureCo-authored-by: Jan Potthoff <potthoff.jan@googlemail.com>
+    
+    Signed-off-by: lukas-varga <lukas.varga128@gmail.com>
+
+A	src/__init__.py
+A	src/backend/__init__.py
+A	src/backend/scrapper/podcast/__init__.py
+A	src/backend/scrapper/podcast/podcast_scraping.py
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/README
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/am/final.mdl
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/conf/mfcc.conf
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/conf/model.conf
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/Gr.fst
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/HCLr.fst
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/disambig_tid.int
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/graph/phones/word_boundary.int
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/final.dubm
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/final.ie
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/final.mat
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/global_cmvn.stats
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/online_cmvn.conf
+A	src/backend/scrapper/podcast/vosk-model-small-en-us-0.15/ivector/splice.conf
+
+[33mcommit ba0cb301e2236eb325b698ecedf5983a1ad35542[m
+Author: Preet Vadaliya <preetvadaliya@gmail.com>
+Date:   Fri May 10 14:55:25 2024 +0200
+
+    add: docs to setup project in HPC
+
+A	Documentation/hpc_setup.md
+
+[33mcommit 037c2a7815412f0d849f3e73746ef9bbce4d483e[m
+Author: Preet Vadaliya <preetvadaliya@gmail.com>
+Date:   Fri May 10 11:57:35 2024 +0200
+
+    fix: python version to work with HPC
+
+M	pdm.lock
+M	pyproject.toml
+
+[33mcommit ec25b450df2e168cd3200f2752ccb9c5ed322610[m[33m ([m[1;33mtag: sprint-02-release[m[33m)[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:57:06 2024 +0200
+
+    Update software architecture document for sprint 02
+
+M	Deliverables/sprint-02/software-architecture.pdf
+
+[33mcommit 60a81b25f4e63110f23985e33b13370509a6f091[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:53:49 2024 +0200
+
+    Add imp-squared backlog tsv for sprint 02
+
+A	Deliverables/sprint-02/imp-squared-backlog.tsv
+
+[33mcommit c4fc777222907b2901b2f45a7c25af2227506cec[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:53:10 2024 +0200
+
+    Add feature board tsv for sprint 02
+
+A	Deliverables/sprint-02/feature-board.tsv
+
+[33mcommit 937aedcb39d323694c2e4d5083a376c2416143d9[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:52:24 2024 +0200
+
+    Upload architecture document tsv for sprint 02
+
+M	Deliverables/sprint-02/software-architecture.pdf
+
+[33mcommit cc4344b423766056f56cfe1735314b5d84c0411b[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:51:41 2024 +0200
+
+    Delete Deliverables/software-architecture.pdf
+
+D	Deliverables/software-architecture.pdf
+
+[33mcommit e938b5caf0f83171734bce48d735945b19d99569[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:51:26 2024 +0200
+
+    Delete Deliverables/feature-board.tsv
+
+D	Deliverables/feature-board.tsv
+
+[33mcommit 8c64f9f785d68326978497f9b05518a15d275333[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:50:17 2024 +0200
+
+    Upload feature board tsv document
+
+A	Deliverables/feature-board.tsv
+
+[33mcommit 00a95d737ffaebf1e8ac46c77cd561bae3d7c269[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 08:48:03 2024 +0200
+
+    Update software architecture document for sprint 02
+
+A	Deliverables/software-architecture.pdf
+
+[33mcommit e98e6619ddc8aa31561c07bbdec4ba541e7907e3[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 02:17:51 2024 +0200
+
+    Update software architecture document for sprint 02
+
+M	Deliverables/sprint-02/software-architecture.pdf
+
+[33mcommit 8855771bb7af6f9a7999ec0630d5e4de1974049c[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 02:10:07 2024 +0200
+
+    Update feature board screenshot for sprint 02
+
+M	Deliverables/sprint-02/feature-board.png
+
+[33mcommit f9ece2050d9970428fa50112829b9dac9d7a6cf1[m[33m ([m[1;33mtag: sprint-02-release-candidate[m[33m)[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 00:03:03 2024 +0200
+
+    Add imp-squared backlog screenshot for sprint 02
+
+A	Deliverables/sprint-02/imp-squared-backlog.png
+
+[33mcommit 28665df5dc20def9ec4e80f17d23b844e6fdd476[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 00:01:53 2024 +0200
+
+    Add feature board screenshot for sprint 02
+
+A	Deliverables/sprint-02/feature-board.png
+
+[33mcommit 69cac25380fbe9ff6cc9da6a14bb4e887e14933e[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Wed May 8 00:01:03 2024 +0200
+
+    Add software architecture document for sprint 02
+
+A	Deliverables/sprint-02/software-architecture.pdf
+
+[33mcommit 3bdf80784549ae3f52df3d2c1dc6ae6958096f0f[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Tue May 7 23:59:48 2024 +0200
+
+    Add planning document for sprint 02
+
+A	Deliverables/sprint-02/planning-document.pdf
+
+[33mcommit b835378834509224feacf57461fdec89edc4c8aa[m
+Author: George <166435676+tubamos@users.noreply.github.com>
+Date:   Tue May 7 23:55:25 2024 +0200
+
+    Create Dummy.md
+    
+    Create sprint-02 directory
+
+A	Deliverables/sprint-02/Dummy.md
+
+[33mcommit 1f3b0c4cb63f163a7eb43fb051ba10aa60d1b960[m
+Author: Preet Vadaliya <preetvadaliya@gmail.com>
+Date:   Tue May 7 22:09:33 2024 +0200
+
+    YouTube Data Scrapping (#13)
+    
+    * init: pdm project
+    
+    * init: pre-commit hooks and ruff linting
+    
+    * init: docker img
+    
+    * add: ruff format & lint rules
+    
+    * init: README
+    
+    * add: env template
+    
+    * add: ignored dir and file
+    
+    * pkg: dependencies installed
+    
+    * add: script to test youtube scrapping
+    
+    * add: env template file
+    
+    * add: youtube scrapper and tester
+    
+    * fix: method name
+    
+    * add: utils functions for file system
+    
+    * fix: duplicating code & able to detect youtube URLs
+    
+    * fix: flexible fix for utils func
+    
+    * add: method to get all video ids of channel
+    
+    * fix: logic of get channel id
+
+A	.env.template
+M	.gitignore
+M	pdm.lock
+M	pyproject.toml
+A	src/backend/index.py
+A	src/backend/scrapper/__init__.py
+A	src/backend/scrapper/you_tube.py
+A	src/backend/utils/__init__.py
+A	src/backend/utils/file_utils.py
+
+[33mcommit 86ffd039c855a3eaa9ffa3a6112695320fb2c149[m
+Merge: 836d1a6 275a0f3
+Author: Lukáš Varga <72818751+lukas-varga@users.noreply.github.com>
+Date:   Tue May 7 19:44:57 2024 +0200
+
+    Merge pull request #22 from amosproj/feature_podcast_scraper
+    
+    Feature podcast scraper
+
+[33mcommit 275a0f3acaaecee295d076d417819cd443d5f927[m[33m ([m[1;31morigin/feature_podcast_scraper[m[33m)[m
+Author: lukas-varga <lukas.varga128@gmail.com>
+Date:   Tue May 7 19:38:41 2024 +0200
+
+    Added some more changes.
+    
+    Co-authored-by: Jan Potthoff <potthoff.jan@googlemail.com>
+
+M	Dockerfile
+M	pdm.lock
+M	pyproject.toml
+A	src/backend/podcast/podcast_scraping.py
+A	src/backend/podcast/podcast_text_20240507_191423.json
+A	src/backend/podcast/vosk-model-small-en-us-0.15.zip
+A	src/backend/podcast/vosk-model-small-en-us-0.15/README
+A	src/backend/podcast/vosk-model-small-en-us-0.15/am/final.mdl
+A	src/backend/podcast/vosk-model-small-en-us-0.15/conf/mfcc.conf
+A	src/backend/podcast/vosk-model-small-en-us-0.15/conf/model.conf
+A	src/backend/podcast/vosk-model-small-en-us-0.15/graph/Gr.fst
+A	src/backend/podcast/vosk-model-small-en-us-0.15/graph/HCLr.fst
+A	src/backend/podcast/vosk-model-small-en-us-0.15/graph/disambig_tid.int
+A	src/backend/podcast/vosk-model-small-en-us-0.15/graph/phones/word_boundary.int
+A	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/final.dubm
+A	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/final.ie
+A	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/final.mat
+A	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/global_cmvn.stats
+A	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/online_cmvn.conf
+A	src/backend/podcast/vosk-model-small-en-us-0.15/ivector/splice.conf
+D	src/podcast_scraper/podcast_scraping.ipynb
+D	src/podcast_scraper/podcast_transcriptions.json
+
+[33mcommit 5c83f9cdc8930fcd3659fa9da62cf1e4c3d17668[m
+Author: lukas-varga <lukas.varga128@gmail.com>
+Date:   Sun May 5 17:58:01 2024 +0200
+
+    Scraping for mupltiple podcasts on provided website now works still a bit slow, but bugs were corrected and result is saved in form oj json.
+    
+    Co-authored-by: Jan Potthoff <potthoff.jan@googlemail.com>
+
+M	pdm.lock
+M	pyproject.toml
+M	src/podcast_scraper/podcast_scraping.ipynb
+A	src/podcast_scraper/podcast_transcriptions.json
+
+[33mcommit 0f32eef55d8a8ba7e3f421234c482d9382844fcb[m
+Author: lukas-varga <lukas.varga128@gmail.com>
+Date:   Sat May 4 17:29:12 2024 +0200
+
+    Added pipeline using functions os its more readable, the code should works, but it takes eternity to get the transcription therefore we will rather use GPT or GoogleCloud APIs.
+    
+    Co-authored-by: Jan Potthoff <potthoff.jan@googlemail.com>
+
+M	src/podcast_scraper/podcast_scraping.ipynb

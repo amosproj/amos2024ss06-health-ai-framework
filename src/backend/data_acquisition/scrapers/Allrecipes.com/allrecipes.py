@@ -1,15 +1,16 @@
 import urllib.request
 import ssl
 from bs4 import BeautifulSoup
+from urllib.request import HTTPSHandler
 
 class AllRecipes:
     @staticmethod
     def fetch_categories(base_url="https://www.allrecipes.com/"):
         """Fetch category names and URLs from the Allrecipes homepage."""
-        categories = {}
+        categories = {} # An empty dictionary
         req = urllib.request.Request(base_url)
         req.add_header('Cookie', 'euConsent=true')
-        handler = urllib.request.HTTPSHandler(context=ssl._create_unverified_context())
+        handler = HTTPSHandler(context=ssl._create_unverified_context())
         opener = urllib.request.build_opener(handler)
 
         try:
@@ -62,7 +63,8 @@ class AllRecipes:
             response = opener.open(req)
             html_content = response.read()
             soup = BeautifulSoup(html_content, 'html.parser')
-            title = soup.find("h1").get_text(strip=True) if soup.find("h1") else 'No title found'
+            h1_tag = soup.find("h1")
+            title = h1_tag.get_text(strip=True) if h1_tag else 'No title found'
 
             ingredients_list = soup.find("ul", class_="mntl-structured-ingredients__list")
             ingredients = []
@@ -73,10 +75,12 @@ class AllRecipes:
                     ingredients.append(formatted_ingredient)
 
             steps_list = soup.find("ol", class_="mntl-sc-block-group--OL")
-            steps = [li.get_text(strip=True) for li in steps_list.find_all("li")] if steps_list else []
+            li_elements = steps_list.find_all("li")
+            steps = [li.get_text(strip=True) for li in li_elements] if li_elements else []
 
             nutrition_facts = {}
-            nutrition_table = soup.find("table", class_="mntl-nutrition-facts-summary__table")
+            table_class = "mntl-nutrition-facts-summary__table"
+            nutrition_table = soup.find("table", class_=table_class)
             if nutrition_table:
                 rows = nutrition_table.find_all("tr")
                 for row in rows:
@@ -85,7 +89,13 @@ class AllRecipes:
                         key = cells[1].text.strip()
                         value = cells[0].text.strip()
                         nutrition_facts[key] = value
-
+            return {
+                "title" : title,
+                "ingredients" : ingredients,
+                "steps" : steps,
+                "nutrition_facts" : nutrition_facts
+            }
+            """"
             details = f"Recipe URL: {recipe_url}\n"
             details += f"Recipe Title: {title}\nIngredients ({len(ingredients)}):\n"
             for ingredient in ingredients:
@@ -98,7 +108,8 @@ class AllRecipes:
                 details += f"{key}: {value}\n"
             details += "--------------------------------\n"
 
-            return details
+            return details"""
+
         except Exception as e:
             print(f"Failed to fetch recipe details due to: {e}")
-            return None
+            return {} #if nothing is to be fetched an empty dictonary is returned
