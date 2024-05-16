@@ -1,3 +1,16 @@
+"""Podcast Scrapper Pipeline.
+
+This module provides a set of Python libraries for
+interacting with the podcast website.
+It includes methods to retrieve channel links to podcast,
+download mp3 files, convert them to wav
+and eventually transcribe them into text file.
+
+Author: Lukáš Varga, Jan Potthoff
+Email: lukas.varga128@gmail.com, potthoff.jan@googlemail.com
+License: MIT
+"""
+
 import os
 import re
 import json
@@ -8,30 +21,7 @@ from vosk import Model, KaldiRecognizer
 import wave
 import datetime
 
-
-"""
-The load_url_from_json() function loads a URL from a JSON configuration file.
-"""
-def load_url_from_json():
-    # Extract data from json
-    filename = 'config.json'
-    relative_path = os.path.join('../..', filename)
-    absolute_path = os.path.abspath(relative_path)
-
-    # Check if the file exists
-    if os.path.exists(absolute_path):
-        # Load JSON data from the file
-        with open(absolute_path, 'r') as file:
-            json_data = json.load(file)
-        # Access the loaded JSON data
-        print("JSON data loaded from the file in the parent directory.")
-    else:
-        print("File does not exist in the parent directory.")
-
-    # Take first URL of firs
-    archive_url = json_data['podcastTargets'][0]['urls'][0]
-    return archive_url
-
+from src.backend.data_acquisition.config import Config
 
 """
 The soup_maker() function takes a URL as input and returns a BeautifulSoup object
@@ -127,11 +117,26 @@ def transcribe_pretrained(file_path, model_path):
 
 
 """
+To remove the created and used MP3 and WAV files after transcription.
+"""
+def remove_raw_audio(audio_file_path):
+    # Check if the file exists
+    if os.path.exists(audio_file_path):
+        # Remove the file
+        os.remove(audio_file_path)
+        print(f"Removed: {audio_file_path}")
+    else:
+        print(f"File does not exist: {audio_file_path}")
+
+
+"""
 The download_and_transcribe() function combines the downloading
 and transcription process for a list of URLs
 """
-def download_and_transcribe(hrefs, folder, num_url, model):
-    hrefs = hrefs[:num_url]
+def download_and_transcribe(hrefs, folder, model, num_url=None):
+    hrefs = hrefs[::-1]
+    if num_url is not None:
+        hrefs = hrefs[:num_url]
     final_texts = []
 
     # load_GC_API()
@@ -151,6 +156,10 @@ def download_and_transcribe(hrefs, folder, num_url, model):
             "transcription": transcription
         }
         final_texts.append(data)
+
+        # Remove the raw audio files after transcription
+        remove_raw_audio(mp3_filepath)
+        remove_raw_audio(wav_filepath)
 
     # Generate the current timestamp
     current_time = datetime.datetime.now()
@@ -172,8 +181,11 @@ the entire process by loading the URL, scraping for MP3 links,
 downloading, and transcribing the audio files.
 """
 def main():
-    # Load podcast url from json
-    archive_url = load_url_from_json()
+    # EXAMPLE => Load podcast url from json
+    config = Config()
+    path_to_file = "../../"
+    config.from_json(path_to_file+"config.json")
+    archive_url = config.podcasts_targets[0].urls[0]
 
     # Scape archive site with all the links to podcasts
     page_soup = soup_maker(archive_url)
@@ -182,12 +194,14 @@ def main():
     article = page_soup.find('article')
     hrefs = [a['href'] for a in article.findAll('a', href=True)]
 
-    # Downloading all mp3 links into audio folder
+    # data folder for raw audio
     folder = "audios/"
-    # TODO num of links to transcribe
-    num_url = 3
+    # vosk model name
     model = "vosk-model-small-en-us-0.15"
-    download_and_transcribe(hrefs, folder, num_url, model)
+
+    # Downloading all mp3 links into audio folder
+    num_url = 1  # Can be "None" if no limits
+    download_and_transcribe(hrefs, folder, model, num_url)
 
 
 if __name__ == "__main__":
