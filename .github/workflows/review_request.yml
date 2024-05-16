@@ -2,8 +2,10 @@ name: Write checkout instructions
 
 on:
   pull_request:
-    branches: [main]
-    types: [opened]
+    branches:
+      - main
+    types:
+      - opened
 
 jobs:
   write-instructions:
