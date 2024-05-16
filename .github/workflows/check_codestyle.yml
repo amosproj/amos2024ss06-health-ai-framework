@@ -2,8 +2,15 @@ name: Code Formatting and Linting
 
 on:
   pull_request:
-    branches: [main]
-    types: [opened, reopened, synchronize, edited]
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+    paths:
+      - '**/*.py'
 
 jobs:
   run-prettify:
@@ -18,9 +25,26 @@ jobs:
         uses: pdm-project/setup-pdm@v4
         with:
           cache: true
-      # Install dependencies
-      - name: Install dependencies
-        run: pdm install
-      # Code Formatting and Linting
-      - name: Run Prettify (Code Formatting and Linting)
-        run: pdm run prettify
+      # Install only ruff as dependency
+      - name: Install Ruff
+        run: pdm add -dG linting ruff
+      # Get all changed python file paths
+      - name: Get all changed python file paths
+        id: changes
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |  
+            **.py
+      # Activate venv
+      - name: Activate venv
+        run: |
+          . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+      # Run ruff on changed files
+      - name: Run ruff on changed files
+        env:
+          CHANGED_FILES: ${{ steps.changes.outputs.all_changed_files }}
+        run: |
+          for file in ${CHANGED_FILES}; do
+            ruff check $file --fix
+          done
