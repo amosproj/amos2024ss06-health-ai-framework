@@ -2,8 +2,15 @@ name: Check release draft
 
 on:
   pull_request:
-    branches: [main]
-    types: [opened, reopened, synchronize, edited, labeled, unlabeled]
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - labeled
+      - unlabeled
 
 jobs:
   verify-labels:
