@@ -23,6 +23,9 @@ dependencies = [
     "beautifulsoup4>=4.12.3",
     "wave>=0.0.2",
     "vosk>=0.3.45",
+    "paperscraper>=0.2.11",
+    "pypdf>=4.2.0",
+    "biopython>=1.83",
     "pymongo>=4.7.2",
 ]
 

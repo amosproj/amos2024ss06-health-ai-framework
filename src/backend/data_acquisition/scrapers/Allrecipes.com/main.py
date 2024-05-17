@@ -45,3 +45,4 @@ if __name__ == "__main__":
             print("Recipes data written to JSON file.")
     else:
         print("No categories available.")
+
