@@ -27,3 +27,12 @@ class YoutubeMetadata:
         self.video_title = _video_title
         self.upload_date = _upload_date
         self.num_clicks = _num_clicks
+
+class AllRecipeMetadata:
+    def __init__(self, _title, _ingredients, _steps, _nutrition_facts, _category) -> None:
+        self.title = _title
+        self.ingredients = _ingredients
+        self.steps = _steps
+        self.nutrition_facts = _nutrition_facts
+        self.category = _category
+        pass

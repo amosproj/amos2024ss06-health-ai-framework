@@ -2,9 +2,22 @@ import urllib.request
 import ssl
 from bs4 import BeautifulSoup
 from urllib.request import HTTPSHandler
+from ...scraping_data_element import *
 
 
 class AllRecipes:
+    @staticmethod
+    def scrape_recipe_url(data: ScrapingDataElement):
+        recipe_url = data.url
+        details = AllRecipes.fetch_recipe_details(recipe_url)
+        metadata = AllRecipeMetadata(details['title'],
+                                     details['ingredients'],
+                                     details['steps'],
+                                     details['nutrition_facts'])
+        # TODO: add category name to AllRecipeMetadata
+        data.metadata = metadata
+        return data
+
     @staticmethod
     def fetch_categories(base_url="https://www.allrecipes.com/"):
         """Fetch category names and URLs from the Allrecipes homepage."""
