@@ -5,7 +5,7 @@
 groups = ["default", "linting"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:b06df47d0ca0ba96c9b1352515c1218cfabc968f05e2ebb4f3dfe9b5980018e9"
+content_hash = "sha256:e748320eba963e75db807b70167b876c3334fc2637a8fc3bbda3ad93de70d0f1"
 
 [[package]]
 name = "anyio"
@@ -2650,7 +2650,7 @@ files = [
 
 [[package]]
 name = "selenium"
-version = "4.20.0"
+version = "4.21.0"
 requires_python = ">=3.8"
 summary = ""
 groups = ["default"]
@@ -2662,8 +2662,8 @@ dependencies = [
     "urllib3[socks]<3,>=1.26",
 ]
 files = [
-    {file = "selenium-4.20.0-py3-none-any.whl", hash = "sha256:b1d0c33b38ca27d0499183e48e1dd09ff26973481f5d3ef2983073813ae6588d"},
-    {file = "selenium-4.20.0.tar.gz", hash = "sha256:0bd564ee166980d419a8aaf4ac00289bc152afcf2eadca5efe8c8e36711853fd"},
+    {file = "selenium-4.21.0-py3-none-any.whl", hash = "sha256:4770ffe5a5264e609de7dc914be6b89987512040d5a8efb2abb181330d097993"},
+    {file = "selenium-4.21.0.tar.gz", hash = "sha256:650dbfa5159895ff00ad16e5ddb6ceecb86b90c7ed2012b3f041f64e6e4904fe"},
 ]
 
 [[package]]
@@ -3159,6 +3159,22 @@ groups = ["default"]
 files = [
     {file = "webcolors-1.13-py3-none-any.whl", hash = "sha256:29bc7e8752c0a1bd4a1f03c14d6e6a72e93d82193738fa860cbff59d0fcc11bf"},
     {file = "webcolors-1.13.tar.gz", hash = "sha256:c225b674c83fa923be93d235330ce0300373d02885cef23238813b0d5668304a"},
+]
+
+[[package]]
+name = "webdriver-manager"
+version = "4.0.1"
+requires_python = ">=3.7"
+summary = "Library provides the way to automatically manage drivers for different browsers"
+groups = ["default"]
+dependencies = [
+    "packaging",
+    "python-dotenv",
+    "requests",
+]
+files = [
+    {file = "webdriver_manager-4.0.1-py2.py3-none-any.whl", hash = "sha256:d7970052295bb9cda2c1a24cf0b872dd2c41ababcc78f7b6b8dc37a41e979a7e"},
+    {file = "webdriver_manager-4.0.1.tar.gz", hash = "sha256:25ec177c6a2ce9c02fb8046f1b2732701a9418d6a977967bb065d840a3175d87"},
 ]
 
 [[package]]

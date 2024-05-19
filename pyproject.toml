@@ -27,6 +27,8 @@ dependencies = [
     "pypdf>=4.2.0",
     "biopython>=1.83",
     "pymongo>=4.7.2",
+    "selenium>=4.21.0",
+    "webdriver-manager>=4.0.1",
 ]
 
 [tool.pdm.dev-dependencies]
