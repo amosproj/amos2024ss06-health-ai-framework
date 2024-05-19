@@ -33,9 +33,13 @@ dependencies = [
 linting = ["ruff>=0.4.2", "pre-commit>=3.7.0"]
 
 [tool.pdm.scripts]
-post_install = "pre-commit install"
-prettify = "ruff check --fix"
-scrape = 'python src/backend/index.py'
+post_install="sh -c '[ \"$IS_IN_DOCKER\" = \"true\" ] && echo \"Docker: skipping pre-commit\" || pre-commit install'"
+lint = "ruff check"
+format = "ruff format"
+scrape-allrecipes = "python -m src.backend.Scrapers.AllRecipes.main"
+scrape-podcast = "python -m src.backend.Scrapers.PodCast.main"
+scrape-pubmed = "python -m src.backend.Scrapers.PubMed.main"
+scrape-youtube = "python -m src.backend.Scrapers.YouTube.main"
 
 [tool.pdm]
 distribution = false
