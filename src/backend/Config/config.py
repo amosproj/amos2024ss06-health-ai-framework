@@ -77,12 +77,13 @@ class Config:
       config_file.write(config_data)
 
   def get_all_targets(self) -> []:
-    return [].extend(
-      self._all_recipes_targets,
-      self._archive_targets,
-      self._pubmed_targets,
-      self._youtube_targets,
-      self.podcast_targets,
+    return (
+      []
+      + self._all_recipes_targets
+      + self._archive_targets
+      + self._pubmed_targets
+      + self._youtube_targets
+      + self.podcast_targets
     )
 
   @property
