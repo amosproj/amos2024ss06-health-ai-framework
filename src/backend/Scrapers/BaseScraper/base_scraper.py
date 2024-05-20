@@ -1,4 +1,5 @@
 import json
+import os.path
 from abc import abstractmethod, ABCMeta
 
 
@@ -6,13 +7,11 @@ class BaseScraper(metaclass=ABCMeta):
   def __init__(self, element_id: str):
     self.element_id = element_id
 
-  @property
   @classmethod
   @abstractmethod
   def index_file(cls) -> str:
     pass
 
-  @property
   @classmethod
   @abstractmethod
   def base_dir(cls):
@@ -32,14 +31,14 @@ class BaseScraper(metaclass=ABCMeta):
     return self.element_id in indexes
 
   def _save(self, raw_data: str):
-    with open('', 'w') as file:
+    with open(os.path.join(type(self).base_dir(), f'{self.element_id}.txt'), 'w') as file:
       file.write(raw_data)
 
   def scrape_and_save(self):
     raw_data = self._scrape()
     self._save(raw_data)
     # Read index data from the file
-    with open(self.index_file, 'r+') as file:
+    with open(type(self).index_file(), 'r+') as file:
       index_data = json.load(file)
       # Update the indexes
       indexes = index_data.get('indexes', [])
