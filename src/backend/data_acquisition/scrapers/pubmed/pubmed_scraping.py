@@ -170,6 +170,8 @@ def get_txt_from_pdf(filename: str, path='papers/', create_txt_file=False,
   for page in reader.pages:
     text = text + page.extract_text()
 
+  # Delete symbols that cannot be encoded using UTF-8
+  text = text.encode('utf-8', 'ignore').decode('utf-8')
 
   if create_txt_file:
     f = open(filename + '.txt', "a", encoding="utf-8")

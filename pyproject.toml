@@ -27,6 +27,7 @@ dependencies = [
     "pypdf>=4.2.0",
     "biopython>=1.83",
     "pymongo>=4.7.2",
+    "arxiv>=2.1.0",
 ]
 
 [tool.pdm.dev-dependencies]

@@ -27,3 +27,13 @@ class YoutubeMetadata:
         self.video_title = _video_title
         self.upload_date = _upload_date
         self.num_clicks = _num_clicks
+
+
+class PaperMetadata:
+    def __init__(self, _title, _authors, _publication_date, _abstract, _doi):
+        self.title = _title
+        self.authors = _authors
+        self.publication_date = _publication_date
+        self.abstract = _abstract
+        self.doi = _doi
+
