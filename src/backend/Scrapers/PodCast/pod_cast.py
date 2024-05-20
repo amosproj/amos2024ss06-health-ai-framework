@@ -6,12 +6,10 @@ class PodCastScraper(BaseScraper):
   def __init__(self, element_id: str):
     super().__init__(element_id=element_id)
 
-  @property
   @classmethod
   def index_file(cls) -> str:
     return INDEX_FILE_PATH
 
-  @property
   @classmethod
   def base_dir(cls) -> str:
     return RAW_DIR_PATH
