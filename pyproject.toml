@@ -36,6 +36,8 @@ linting = ["ruff>=0.4.2", "pre-commit>=3.7.0"]
 post_install="sh -c '[ \"$IS_IN_DOCKER\" = \"true\" ] && echo \"Docker: skipping pre-commit\" || pre-commit install'"
 lint = "ruff check"
 format = "ruff format"
+build-config = "python -m src.backend.Config.main"
+run-orchestrator = "python -m src.backend.Orchestrator.main"
 scrape-allrecipes = "python -m src.backend.Scrapers.AllRecipes.main"
 scrape-podcast = "python -m src.backend.Scrapers.PodCast.main"
 scrape-pubmed = "python -m src.backend.Scrapers.PubMed.main"
