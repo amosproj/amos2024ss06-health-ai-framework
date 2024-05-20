@@ -2,7 +2,6 @@ fix = true
 include = ["*.py"]
 indent-width = 2
 line-length = 90
-tab-size = 2
 target-version = "py312"
 
 [format]
@@ -30,4 +29,8 @@ ignore = [
   "D105",
   "D106",
   "D107",
+  "D203",
+  "D213",
+  "D400",
+  "D415"
 ]

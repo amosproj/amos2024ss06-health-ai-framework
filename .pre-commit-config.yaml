@@ -3,6 +3,11 @@ repos:
     hooks:
       - id: ruff-lint
         name: ruff-lint
-        entry: bash -c 'pdm run prettify'
+        entry: bash -c 'pdm run lint'
+        language: system
+        pass_filenames: false
+      - id: ruff-format
+        name: ruff-format
+        entry: bash -c 'pdm run format'
         language: system
         pass_filenames: false
