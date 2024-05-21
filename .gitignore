@@ -48,5 +48,4 @@ bin/
 .env
 
 # Scrapped data
-data
-.ruff_cache
+data/
