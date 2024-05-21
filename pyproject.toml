@@ -34,6 +34,7 @@ dependencies = [
     "chromadb>=0.5.0",
     "vertexai>=1.49.0",
     "langchain-google-genai>=1.0.4",
+    "sentence-transformers>=2.7.0",
 ]
 
 [tool.pdm.dev-dependencies]
