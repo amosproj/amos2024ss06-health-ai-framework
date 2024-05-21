@@ -5,7 +5,7 @@
 groups = ["default", "linting"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:5e7bcb3dc431bb4c5bfa3c2b02580e2e4c202d17697fe8c633742fc3b9911821"
+content_hash = "sha256:8eb3d9892df5092d89c8dbebfdd60851da3c68d940a207776befb50fea7fafd0"
 
 [[package]]
 name = "aiohttp"
@@ -4760,6 +4760,22 @@ groups = ["default"]
 files = [
     {file = "webcolors-1.13-py3-none-any.whl", hash = "sha256:29bc7e8752c0a1bd4a1f03c14d6e6a72e93d82193738fa860cbff59d0fcc11bf"},
     {file = "webcolors-1.13.tar.gz", hash = "sha256:c225b674c83fa923be93d235330ce0300373d02885cef23238813b0d5668304a"},
+]
+
+[[package]]
+name = "webdriver-manager"
+version = "4.0.1"
+requires_python = ">=3.7"
+summary = "Library provides the way to automatically manage drivers for different browsers"
+groups = ["default"]
+dependencies = [
+    "packaging",
+    "python-dotenv",
+    "requests",
+]
+files = [
+    {file = "webdriver_manager-4.0.1-py2.py3-none-any.whl", hash = "sha256:d7970052295bb9cda2c1a24cf0b872dd2c41ababcc78f7b6b8dc37a41e979a7e"},
+    {file = "webdriver_manager-4.0.1.tar.gz", hash = "sha256:25ec177c6a2ce9c02fb8046f1b2732701a9418d6a977967bb065d840a3175d87"},
 ]
 
 [[package]]
