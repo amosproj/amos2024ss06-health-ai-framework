@@ -5,6 +5,7 @@
 groups = ["default", "linting"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
+
 content_hash = "sha256:676ae2c7455d7bd97ea6663a112d2a104df0ef5ad9cab3cf97f2180175f7e26d"
 
 [[package]]
