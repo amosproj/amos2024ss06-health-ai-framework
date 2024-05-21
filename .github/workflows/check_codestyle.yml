@@ -46,5 +46,6 @@ jobs:
           CHANGED_FILES: ${{ steps.changes.outputs.all_changed_files }}
         run: |
           for file in ${CHANGED_FILES}; do
-            ruff check $file --fix
+            ruff check "$file"
+            ruff format "$file"
           done

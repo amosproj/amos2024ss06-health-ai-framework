@@ -18,7 +18,7 @@ jobs:
     name: A job to verify labels
     if: github.event.pull_request.merged == false
     steps:
-      # Generate a github token
+      # Generate a GitHub token
       - name: Generate token
         id: token
         uses: peter-murray/workflow-application-token-action@v3
@@ -29,9 +29,9 @@ jobs:
       # Checkout to repository
       - name: Checkout
         uses: actions/checkout@v3
-      # Varify lables
+      # Varify labels
       - name: Verify labels
         uses: mauroalderete/action-verify-labels@v1
         with:
           github-token: ${{ steps.token.outputs.token }}
-          some: 'release: feature, release: bug-fix, release: sprint-deliverables'
+          some: 'release: feature, release: bug-fix, release: sprint-deliverables, release: maintenance, release: refactor'
