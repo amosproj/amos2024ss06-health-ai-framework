@@ -49,3 +49,6 @@ bin/
 
 # Scrapped data
 data/
+
+# singularity images
+*.sif

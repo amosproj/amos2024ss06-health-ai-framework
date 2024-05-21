@@ -114,3 +114,23 @@ Now, the required modules and PDM will be automatically loaded whenever you open
 
 - `$WORK` directory has the capacity of 500 GB but has no backups / snapshots.
 - `$HOME` directory has the capacity of 50 GB but is backed up regularly.
+
+## 🚀 Building Apptainer Container with Singularity
+
+### 🛠️ Building the Container
+
+Use the following command to build the Singularity container:
+
+```bash
+singularity build Apptainer.sif Apptainer.def
+```
+
+### 🏃‍♂️ Running the Container
+
+Once the container is built, you can run it using the following command:
+
+```bash
+singularity shell Apptainer.sif
+```
+
+This command opens a shell within the container, allowing you to interact with its environment.
