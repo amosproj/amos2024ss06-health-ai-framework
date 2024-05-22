@@ -1,0 +1,13 @@
+Title	URL	Assignees	Status
+Minimize time expenditure through meetings			In Progress
+Start working on deliverables early			In Progress
+Agree on a meeting culture			In Progress
+Pair programming for selected issues only			In Progress
+Set up routine meetup times			In Progress
+Have public agendas for meetings			Done
+Define rough time frames for every meeting			Done
+Form pair programming teams according to skillsets and motivations			Done
+-------------------- divider -------------------- (items below this line still need refinement)			Todo
+Establish PR review pattern			Todo
+Nutritionfacts scraping	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/77	manikg08	Done
+Allrecipes scrapping pipeline as per new orchestrator implementation	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/78	manikg08	Done
