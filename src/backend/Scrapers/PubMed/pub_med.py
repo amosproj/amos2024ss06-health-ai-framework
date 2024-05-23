@@ -1,14 +1,20 @@
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
 
-from Bio import Entrez
-from pypdf import PdfReader
-from paperscraper.pdf import save_pdf
-
 import os
+import json
+import logging
+
+logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
+
+from Bio import Entrez  # noqa: E402
+from pypdf import PdfReader  # noqa: E402
+from paperscraper.pdf import save_pdf  # noqa: E402
 
 
 class PubMedScraper(BaseScraper):
+  INDEX = json.loads(open(INDEX_FILE_PATH).read())
+
   def __init__(self, element_id: str):
     super().__init__(element_id=element_id)
 
@@ -30,12 +36,12 @@ class PubMedScraper(BaseScraper):
   can only retrieve the first 10k search results so be specific with search terms"""
 
   @classmethod
-  def search_free_fulltext(cls, query):
+  def search_free_fulltext(cls, query: str, max_results=10_000):
     Entrez.email = 'email@example.com'
     handle = Entrez.esearch(
       db='pubmed',
       sort='relevance',
-      retmax='250000',
+      retmax=max_results,
       retmode='xml',
       term=query + ' AND free full text[sb]',
     )
@@ -189,8 +195,37 @@ class PubMedScraper(BaseScraper):
   # ---------------------------------------------------------
 
   def _scrape(self) -> str:
+    try:
+      metadata = self.fetch_details(self.element_id)
+
+      data = ''
+      title = self.get_title_from_details(metadata)
+      data += 'Title: ' + title + '\n'
+      data += 'Authors: ' + self.get_authors_from_details(metadata) + '\n'
+      data += 'Publication Date: ' + self.get_publication_date_from_details(metadata)
+      data += '\n'
+      doi = self.get_doi_from_details(metadata)
+      data += 'Doi: ' + doi + '\n'
+      data += 'Abstract: ' + self.get_abstract_from_details(metadata) + '\n\n'
+
+      file_name = self.get_paper_from_doi(doi, title)
+      text_data = self.get_txt_from_pdf(file_name)
+      data += 'Text data:\n' + text_data
+      return data
+    except Exception as e:
+      print(f'Error occured in PubmedScraper: {e}')
     return ''
 
   @classmethod
   def get_all_possible_elements(cls, target) -> []:
-    return []
+    old_indexes = set(cls.INDEX['indexes'])
+    query_str = ' '.join(target.keywords)
+    new_indexes = set(cls.search_free_fulltext(query_str, target.max_results))
+    new_target_elements = new_indexes - old_indexes
+    print(
+      'New Pubmed target elements: '
+      + repr(new_target_elements)
+      + ' for keywords '
+      + repr(query_str)
+    )  # TODO: remove debug
+    return [PubMedScraper(element_id=id) for id in new_target_elements]

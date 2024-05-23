@@ -9,6 +9,6 @@ if __name__ == '__main__':
   #   ArchiveTarget(keywords=['nutrition', 'health', 'food as medicine'], max_results=1)
   # ) #TODO: reenable previous targets after testing pubmed
   c.add_target(
-    PubMedTarget(keywords=['nutrition', 'health', 'food as medicine'], max_results=1)
+    PubMedTarget(keywords=['nutrition', 'health', 'food as medicine'], max_results=3)
   )
   c.write_to_json()

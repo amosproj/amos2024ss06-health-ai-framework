@@ -41,7 +41,7 @@ class Config:
         PodcastTarget(**entry) for entry in json_data.get('podcast_targets', [])
       ]
       config._pubmed_targets = [
-        PodcastTarget(**entry) for entry in json_data.get('pubmed_targets', [])
+        PubMedTarget(**entry) for entry in json_data.get('pubmed_targets', [])
       ]
       config._youtube_targets = [
         YouTubeTarget(**entry) for entry in json_data.get('youtube_targets', [])
