@@ -10,7 +10,7 @@ from xml.etree import ElementTree
 
 class YouTubeScraper(BaseScraper):
   GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-  YOUTUBE_BASE_URL = os.getenv('YOUTUBE_BASE_URL')
+  YOUTUBE_BASE_URL = 'https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8'
   INDEX = json.loads(open(INDEX_FILE_PATH).read())
   Service = pyyoutube.Client(api_key=GOOGLE_API_KEY)
 
