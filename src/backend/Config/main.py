@@ -6,7 +6,5 @@ if __name__ == '__main__':
   c = Config()
   c.add_target(YouTubeTarget(url='https://www.youtube.com/@NutritionFactsOrg'))
   c.add_target(YouTubeTarget(url='https://www.youtube.com/@DrWilliamLi'))
-  c.add_target(
-    ArchiveTarget(keywords=['nutrition', 'health', 'food as medicine'], max_results=1)
-  )
+  c.add_target(ArchiveTarget(keywords=['nutrition', 'health'], max_results=1))
   c.write_to_json()
