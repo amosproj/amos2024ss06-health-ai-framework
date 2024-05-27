@@ -79,13 +79,11 @@ class PodCastScraper(BaseScraper):
     response = requests.get(url)
     with open(filename, 'wb') as file:
       file.write(response.content)
-    print(f'Downloaded {filename}.')
 
     # Unzip the file
     print(f'Unzipping {filename}...')
     with ZipFile(filename, 'r') as zip_ref:
       zip_ref.extractall(extract_to)
-    print(f'Unzipped {filename}.')
 
     # Optionally, remove the zip file after extraction
     os.remove(filename)
@@ -165,7 +163,6 @@ class PodCastScraper(BaseScraper):
 
   def download_and_transcribe_from_podcast_id(self, title=None, path='audios/'):
     vosk_path = f'{VOSK_DIR_PATH}/{PodCastScraper.model}'
-    print(vosk_path)
     parsed_url = urlparse(PodCastScraper.main_url)
     base_url = f'{parsed_url.scheme}://{parsed_url.netloc}/'
     link = f'{base_url}{title}'
@@ -189,7 +186,9 @@ class PodCastScraper(BaseScraper):
   def _scrape(self) -> str:
     try:
       # download vosk model
-      self.download_vosk_model(url=PodCastScraper.model_download)
+      vosk = f'{VOSK_DIR_PATH}/{PodCastScraper.model}'
+      if not os.path.exists(vosk):
+        self.download_vosk_model(url=PodCastScraper.model_download)
       # download and transcribe
       transcription = self.download_and_transcribe_from_podcast_id(title=self.element_id)
       if transcription is None:
