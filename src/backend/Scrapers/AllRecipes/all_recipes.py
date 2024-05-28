@@ -156,6 +156,18 @@ class AllRecipesScraper(BaseScraper):
       'nutrition_facts': self.get_nutrition_facts(),
       'nutrition_info': self.get_nutrition_info(),
     }
+
+    # Check for essential data points and raise an exception if missing
+    if (
+      self._soup is None
+      or not info['title']
+      or not info['get_recipe_details']
+      or not info['get_ingredients']
+      or not info['get_nutrition_facts']
+      or not info['get_nutrition_info']
+    ):
+      info = {}
+
     return json.dumps(info, indent=2)
 
   @classmethod
