@@ -78,19 +78,34 @@ class ArchiveScraper(BaseScraper):
   # ---------------------------------------------------------
 
   def get_title_from_paper(self, paper):
-    return paper.title
+    try:
+      return paper.title
+    except AttributeError:
+      raise ValueError('No title found for paper.')
 
   def get_authors_from_paper(self, paper):
-    return ', '.join([author.name for author in paper.authors])
+    try:
+      return ', '.join([author.name for author in paper.authors])
+    except AttributeError:
+      raise ValueError('No authors found for paper.')
 
   def get_abstract_from_paper(self, paper):
-    return paper.summary
+    try:
+      return paper.summary
+    except AttributeError:
+      raise ValueError('No abstract found for paper.')
 
   def get_publication_date_from_paper(self, paper):
-    return paper.published
+    try:
+      return paper.published
+    except AttributeError:
+      raise ValueError('No publication date found for paper.')
 
   def get_pdf_url_from_paper(self, paper):
-    return paper.pdf_url
+    try:
+      return paper.pdf_url
+    except AttributeError:
+      raise ValueError('No PDF URL found for paper.')
 
   # ---------------------------------------------------------
   # MARK: Text Scraping
@@ -138,31 +153,31 @@ class ArchiveScraper(BaseScraper):
   # MARK: _scrape & get_ids
   # ---------------------------------------------------------
 
-  # TODO: return structured output instead of string
   def _scrape(self) -> str:
     try:
       paper = self.get_paper_from_arxiv_id(self.element_id)
       if paper is None:
         raise ValueError('Paper does not exist for id: ' + str(id))
 
-      # print("paper: " + repr(paper)) # TODO: remove debug
-
-      # metadata scraping
-      data = ''
       title = self.get_title_from_paper(paper)
-      data += title + '\n'
-      data += self.get_authors_from_paper(paper) + '\n'
-      data += str(self.get_publication_date_from_paper(paper)) + '\n'
-      data += self.get_abstract_from_paper(paper) + '\n\n'
-
-      # text data from pdf
       pdf_url = self.get_pdf_url_from_paper(paper)
       file_name = self.get_paper_pdf(paper, pdf_url, title)
-      data += self.get_txt_from_pdf(file_name)
-      return data
+      data = self.get_txt_from_pdf(file_name)
+
+      info = {
+        'title': title,
+        'authors': self.get_authors_from_paper(paper),
+        'publication_date': str(self.get_publication_date_from_paper(paper)),
+        'abstract': self.get_abstract_from_paper(paper),
+        'pdf_url': pdf_url,
+        'text': data,
+      }
+
     except Exception as e:
-      print(f'Error occured: {e}')
-    return ''
+      print(e)
+      info = {}
+
+    return json.dumps(info, indent=2)
 
   @classmethod
   def get_all_possible_elements(cls, target) -> []:
