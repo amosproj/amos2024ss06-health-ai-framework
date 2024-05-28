@@ -142,7 +142,8 @@ class PodCastScraper(BaseScraper):
       # convert mp3 file to wav file
       sound = AudioSegment.from_mp3(input_file)
       sound.export(output_file, format='wav')
-      return
+
+      return output_file
     except Exception as e:
       raise e
 

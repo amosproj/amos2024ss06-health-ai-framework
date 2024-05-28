@@ -36,11 +36,15 @@ class BaseScraper(metaclass=ABCMeta):
       json.dump(scrapped_dict, file)
 
   def scrape_and_save(self):
-    scrapped_dict = self._scrape()
+    # Parse string to dictionary
+    scrapped_data = self._scrape()
+    scrapped_dict = json.loads(scrapped_data)
+
     # Check if the scrapped_dict is empty
     if not scrapped_dict:
       print('Scrapped data is empty. Nothing to save or update.')
       return
+
     self._save(scrapped_dict)  # save scrapped json file
     # Read index data from the file
     with open(type(self).index_file(), 'r+') as file:
