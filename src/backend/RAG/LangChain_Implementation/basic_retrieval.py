@@ -103,7 +103,10 @@ all_doc_ids = chroma_db.from_documents(
 )
 chroma_db.add_documents(documents=document_chunks)
 
-query_text = "what did the executive at the Kellogs ad firm say? What can we conclude from this response?"
+# ridiculous linting rules - thanks:
+query_text1 = "what did the executive at the Kellogs ad firm say? "
+query_text2 = "What can we conclude from this response?"
+query_text = query_text1 + query_text2
 
 query_embedding = embedding_model.embed_query(query_text)
 
