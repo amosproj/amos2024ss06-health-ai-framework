@@ -5,7 +5,7 @@ import os
 RAW_DIR_PATH = os.path.join('data', 'pubmed', 'raw')
 INDEX_FILE_PATH = os.path.join('data', 'pubmed', 'index.json')
 
-# YouTube scraper base dir
+# PubMed scraper base dir
 os.makedirs(RAW_DIR_PATH, exist_ok=True)
 
 if not os.path.exists(INDEX_FILE_PATH):

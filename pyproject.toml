@@ -37,6 +37,7 @@ dependencies = [
     "vertexai>=1.49.0",
     "langchain-google-genai>=1.0.4",
     "sentence-transformers>=2.7.0",
+    "requests>=2.31.0",
 ]
 
 [tool.pdm.dev-dependencies]
