@@ -1,4 +1,4 @@
-name: Check release draft
+name: "CI: Release Draft Helper"
 
 on:
   pull_request:
@@ -7,31 +7,25 @@ on:
     types:
       - opened
       - reopened
-      - synchronize
-      - edited
       - labeled
       - unlabeled
+
+permissions:
+  id-token: write
+  pull-requests: write
 
 jobs:
   verify-labels:
     runs-on: ubuntu-latest
-    name: A job to verify labels
+    name: "Job: Release Draft Helper"
     if: github.event.pull_request.merged == false
     steps:
-      # Generate a GitHub token
-      - name: Generate token
-        id: token
-        uses: peter-murray/workflow-application-token-action@v3
-        with:
-          application_id: ${{ secrets.APPLICATION_ID }}
-          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
-          revoke_token: true
       # Checkout to repository
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Varify labels
       - name: Verify labels
         uses: mauroalderete/action-verify-labels@v1
         with:
-          github-token: ${{ steps.token.outputs.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           some: 'release: feature, release: bug-fix, release: sprint-deliverables, release: maintenance, release: refactor'

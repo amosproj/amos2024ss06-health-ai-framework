@@ -1,4 +1,4 @@
-category-template: '## $TITLE'
+category-template: '### $TITLE'
 name-template: '📬 Release notes of Sprint ${N}'
 tag-template: 'sprint-${N}-release'
 change-template: '- $TITLE (#$NUMBER) @$AUTHOR'

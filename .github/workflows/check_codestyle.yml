@@ -1,4 +1,4 @@
-name: Code Formatting and Linting
+name: "CI: Check Code Style"
 
 on:
   pull_request:
@@ -8,18 +8,17 @@ on:
       - opened
       - reopened
       - synchronize
-      - edited
     paths:
       - '**/*.py'
 
 jobs:
   run-prettify:
     runs-on: ubuntu-latest
-    name: A job to verify python code style and linting
+    name: "Job: Check Code Style"
     steps:
       # Checkout to repository
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Setup PDM
       - name: Set up PDM
         uses: pdm-project/setup-pdm@v4
