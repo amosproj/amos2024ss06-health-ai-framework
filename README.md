@@ -5,9 +5,20 @@
 </div>
 
 
-## 🚀 About Project
+## 🚀 About the Project
 
-Welcome to the Custom AI Agent Framework, a powerful tool designed to create personalized chat interactions using a variety of language model (LLM) engines such as custom GPT, LLaMA, BARD, and more. This framework enables developers to build AI agents that engage users through text and voice inputs, gradually constructing user profiles to enhance contextual interactions. 🤖💬🔊
+Welcome to the Custom AI Agent Framework, a powerful tool designed to create personalized chat interactions using a variety of language model (LLM) engines such as GPT, LLaMA, Gemini, and more. This framework enables developers to build AI agents that engage users through text and voice inputs, gradually constructing user profiles to enhance contextual interactions. 🤖💬🔊
+
+## 💫 The Project's Vision
+
+Ailixir” empowers users to create and incrementally refine custom AI agents that are specialized in specific domains. It assists users in gaining useful, reliable and timely answers to domain specific questions they are interested in, eventually becoming a dependable companion in the journey to navigate effectively within the field of their choice.
+
+## 👩‍🚀 The Project's Mission
+
+Ailixir aims to produce an MVP for a prototyping tool that allows users, who are entrepreneurs / developers to create, refine and compare the results of custom AI agents. Ailixir can be thought of a combination of three pieces that come together to achive its goals:
+- The first one aims to create an automated, modular pipeline of acquiring, storing and generating current contextual information from handpicked knowledge sources.
+- The second one uses the acquired data and by utilizing a data pipeline which is modular enough to change various parameters, it produces answers independently of the underlying components. This allows the user to tweak parameters or replace components with the aim of finding an optimum combination that produces scientifically accurate and useful results. Important at this step is the ability to trace the sources that were used to generate the results. 
+- The final piece of the project is the creation of a user-facing app that allows users to interact with the data pipeline via modalities such as text and voice.
 
 
 ## 🛠️ Prerequisites
