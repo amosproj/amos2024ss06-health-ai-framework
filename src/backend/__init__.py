@@ -14,9 +14,7 @@ ENV_FILE_PATH = os.path.join('.env')
 ENV_TEMPLATE_PATH = os.path.join('.env.template')
 
 # Create data directory if it does not exist
-if os.path.exists(DATA_DIR_PATH):
-  print('The data directory already exists.')
-else:
+if not os.path.exists(DATA_DIR_PATH):
   try:
     os.mkdir(DATA_DIR_PATH)
     print('Data directory created successfully.')
@@ -64,8 +62,6 @@ for key in template_env:
 # Write the updated .env file if there were changes
 if updated:
   write_env(ENV_FILE_PATH, actual_env)
-else:
-  print('The .env file is already up to date.')
 
 # Load .env file using python-dotenv
 load_dotenv(find_dotenv())

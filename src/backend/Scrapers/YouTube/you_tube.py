@@ -9,10 +9,10 @@ from xml.etree import ElementTree
 
 
 class YouTubeScraper(BaseScraper):
-  GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+  YOUTUBE_DATA_API_V3 = os.getenv('YOUTUBE_DATA_API_V3')
   YOUTUBE_BASE_URL = 'https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8'
   INDEX = json.loads(open(INDEX_FILE_PATH).read())
-  Service = pyyoutube.Client(api_key=GOOGLE_API_KEY)
+  Service = pyyoutube.Client(api_key=YOUTUBE_DATA_API_V3)
 
   def __init__(self, element_id: str):
     super().__init__(element_id=element_id)
