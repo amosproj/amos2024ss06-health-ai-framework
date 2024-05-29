@@ -5,8 +5,8 @@ from src.backend.ScrappingTarget.base_target import BaseTarget
 
 
 class PubMedTarget(BaseTarget):
-  def __init__(self):
-    pass
+    def __init__(self):
+        pass
 
-  def get_all_new_target_elements(self) -> List[PubMedScraper]:
-    return PubMedScraper.get_all_possible_elements(self)
+    def get_all_new_target_elements(self) -> List[PubMedScraper]:
+        return PubMedScraper.get_all_possible_elements(self)
