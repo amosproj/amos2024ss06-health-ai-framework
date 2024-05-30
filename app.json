@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "AiLixir",
+    "description": "",
+    "slug": "ailixir",
+    "owner": "amos-health-ai-framework",
+    "version": "1.0.0",
+    "platforms": ["ios","android","web"],
+    "orientation": "portrait",
+    "backgroundColor": "#FFFFFF",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "02cf6cef-f45f-48b0-a33a-3d0242eaca82"
+      }
+    }
+  }
+}

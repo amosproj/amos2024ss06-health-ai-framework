@@ -1,0 +1,93 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
+	"files": {
+		"ignore": [
+			"**/*.py"
+		],
+		"include": [
+			"**/*.ts",
+			"**/*.js",
+			"**/*.tsx",
+			"**/*.jsx"
+		],
+		"ignoreUnknown": true
+	},
+	"organizeImports": {
+		"enabled": true,
+		"ignore": [
+			"**/*.py"
+		],
+		"include": [
+			"**/*.ts",
+			"**/*.js",
+			"**/*.tsx",
+			"**/*.jsx"
+		]
+	},
+	"linter": {
+		"enabled": true,
+		"ignore": [
+			"**/*.py"
+		],
+		"include": [
+			"**/*.ts",
+			"**/*.js",
+			"**/*.tsx",
+			"**/*.jsx"
+		],
+		"rules": {
+			"recommended": true,
+			"style": {
+				"noDefaultExport": "error",
+				"noImplicitBoolean": "warn",
+				"noUnusedTemplateLiteral": "warn",
+				"noVar": "error",
+				"useConst": "warn",
+				"useSingleVarDeclarator": "error"
+			}
+		}
+	},
+	"json": {
+		"parser": {
+			"allowComments": true,
+			"allowTrailingCommas": false
+		},
+		"formatter": {
+			"enabled": true,
+			"indentStyle": "space",
+			"lineWidth": 100,
+			"trailingCommas": "none"
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"ignore": [
+			"**/*.py"
+		],
+		"include": [
+			"**/*.ts",
+			"**/*.js",
+			"**/*.tsx",
+			"**/*.jsx"
+		],
+		"indentStyle": "space",
+		"indentWidth": 2,
+		"lineWidth": 100
+	},
+	"javascript": {
+		"formatter": {
+			"enabled": true,
+			"quoteStyle": "single",
+			"jsxQuoteStyle": "single",
+			"quoteProperties": "preserve",
+			"trailingComma": "none",
+			"semicolons": "always",
+			"arrowParentheses": "always",
+			"indentStyle": "space",
+			"indentWidth": 2,
+			"lineWidth": 100,
+			"bracketSpacing": true,
+			"attributePosition": "auto"
+		}
+	}
+}
