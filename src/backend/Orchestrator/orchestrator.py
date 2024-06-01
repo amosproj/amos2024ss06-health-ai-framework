@@ -7,6 +7,13 @@ class Orchestrator:
   def __init__(self, config: Config):
     self._config = config
 
+  @classmethod
+  def run_target(cls, target):
+    all_new_target_elements: List[BaseScraper] = []
+    all_new_target_elements.extend(target.get_all_new_target_elements())
+    for element in all_new_target_elements:
+      element.scrape_and_save()
+
   def run(self):
     target_groups = self._config.get_all_targets()
     all_new_target_elements: List[BaseScraper] = []

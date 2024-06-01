@@ -1,7 +1,7 @@
 fix = true
 include = ["*.py"]
-indent-width = 2
-line-length = 90
+indent-width = 4
+line-length = 100
 target-version = "py312"
 
 [format]

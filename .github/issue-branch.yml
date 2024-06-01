@@ -1,0 +1,15 @@
+mode: chatops
+silent: false
+branchName: short
+autoLinkIssue: true
+autoCloseIssue: true
+defaultBranch: main
+commentMessage: |
+  ### :rocket: Checkout Instructions
+
+  ``` bash
+  git fetch origin
+  git checkout ${branchName}
+  ```
+
+  Happy Coding!

@@ -1,4 +1,4 @@
-name: Write checkout instructions
+name: "CI: Comment Checkout Instructions"
 
 on:
   pull_request:
@@ -7,31 +7,25 @@ on:
     types:
       - opened
 
+permissions:
+  id-token: write
+  pull-requests: write
+
 jobs:
   write-instructions:
     runs-on: ubuntu-latest
-    name: A job to comment checkout instructions
+    name: "Job: Comment Checkout Instructions"
     steps:
-      # Generate a github token
-      - name: Generate token
-        id: token
-        uses: peter-murray/workflow-application-token-action@v3
-        with:
-          application_id: ${{ secrets.APPLICATION_ID }}
-          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
-          revoke_token: true
       # Checkout to repository
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Comment on PR
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
         with:
-          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: |
             ### :rocket: Checkout Instructions
-
-            Make sure your **origin** is set to: **[https://github.com/amosproj/amos2024ss06-health-ai-framework.git](https://github.com/amosproj/amos2024ss06-health-ai-framework.git)**
           
             ``` bash
             git fetch origin
