@@ -1,0 +1,60 @@
+{
+  "cli": {
+    "version": ">= 9.1.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "dev": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "dev"
+    },
+    "dev:android": {
+      "extends": "dev",
+      "channel": "dev-android"
+    },
+    "dev:ios-simulator": {
+      "extends": "dev",
+      "channel": "dev-ios-simulator",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m1-medium"
+      }
+    },
+    "dev:ios-device": {
+      "extends": "dev",
+      "channel": "dev-ios-device",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m1-medium"
+      }
+    },
+    "prod": {
+      "autoIncrement": true,
+      "channel": "prod"
+    },
+    "prod:android": {
+      "extends": "prod",
+      "channel": "prod-android"
+    },
+    "prod:ios": {
+      "extends": "prod",
+      "channel": "prod-ios",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m1-medium"
+      }
+    },
+    "prod:ios-simulator": {
+      "extends": "prod",
+      "channel": "prod-ios-simulator",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m1-medium"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
