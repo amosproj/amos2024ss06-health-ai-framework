@@ -89,7 +89,7 @@ class PubMedScraper(BaseScraper):
             # (in all examples seen)
             abstract = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
             abstract = abstract['Abstract']['AbstractText'][0]
-            return abstract
+            return str(abstract)
         except Exception as e:
             print(
                 'Error: pubmed_scraping: get_abstract_from_details:'
@@ -138,7 +138,23 @@ class PubMedScraper(BaseScraper):
         try:
             date_dict = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
             date_dict = date_dict['Journal']['JournalIssue']['PubDate']
-            date = date_dict['Day'] + ' ' + date_dict['Month'] + ' ' + date_dict['Year']
+            # sometimes date parts are incomplete to we scrape separately
+            date = ''
+            try:
+                day = date_dict['Day']
+                date += str(day) + ' '
+            except Exception:
+                pass
+            try:
+                month = date_dict['Month']
+                date += str(month) + ' '
+            except Exception:
+                pass
+            try:
+                year = date_dict['Year']
+                date += str(year)
+            except Exception:
+                pass
             return date
         except Exception as e:
             print(
@@ -203,8 +219,8 @@ class PubMedScraper(BaseScraper):
             doi = self.get_doi_from_details(metadata)
             abstract = self.get_abstract_from_details(metadata)
 
-            file_name = self.get_paper_from_doi(doi, title)
-            text_data = self.get_txt_from_pdf(file_name)
+            # file_name = self.get_paper_from_doi(doi, title)
+            # text_data = self.get_txt_from_pdf(file_name)
 
             data = {
                 'title': title,
@@ -212,7 +228,7 @@ class PubMedScraper(BaseScraper):
                 'publication_date': str(publication_date),
                 'abstract': abstract,
                 'pdf_url': doi,
-                'text': text_data,
+                #'text': text_data,
             }
         except Exception as e:
             print(f'Error occured in PubmedScraper: {e}')
