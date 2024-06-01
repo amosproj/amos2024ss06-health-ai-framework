@@ -1,6 +1,7 @@
 import html
 import json
 import os
+import re
 import pyyoutube
 import requests
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
@@ -36,8 +37,10 @@ class YouTubeScraper(BaseScraper):
         try:
             response = requests.post(YouTubeScraper.YOUTUBE_BASE_URL, headers=headers, json=payload)
             if response.status_code == 200:
+                transcript = ''
                 data = response.json()
                 captions = data['captions']['playerCaptionsTracklistRenderer']['captionTracks']
+                video_details = data['videoDetails']
                 for track in captions:
                     if track['languageCode'] == 'en':
                         track_url = track['baseUrl']
@@ -46,10 +49,18 @@ class YouTubeScraper(BaseScraper):
                             root_xml = ElementTree.fromstring(res.content)
                             transcript = [element.text for element in root_xml.findall('.//text')]
                             transcript = html.unescape(' '.join(transcript))
-                            return transcript
         except Exception as e:
-            print(f'Error occurred: {e}')
-        return ''
+            print(f'Error: {e} No caption found for videoId: {self.element_id}')
+            return {}
+        return {
+            'videoId': video_details.get('videoId', ''),
+            'title': video_details.get('title', ''),
+            'keywords': video_details.get('keywords', []),
+            'shortDescription': video_details.get('shortDescription', ''),
+            'viewCount': int(video_details.get('viewCount', '0')),
+            'author': video_details.get('author', ''),
+            'content': re.sub(r'\n+', ' ', transcript),
+        }
 
     @classmethod
     def get_all_video_ids(cls, channel_id: str) -> list[str]:
