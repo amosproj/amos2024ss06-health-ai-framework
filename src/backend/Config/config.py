@@ -16,6 +16,7 @@ from src.backend.ScrappingTarget.archive_target import ArchiveTarget
 from src.backend.ScrappingTarget.podcast_target import PodcastTarget
 from src.backend.ScrappingTarget.pubmed_target import PubMedTarget
 from src.backend.ScrappingTarget.youtube_target import YouTubeTarget
+from src.backend.ScrappingTarget.nutrition_target import NutritionTarget
 
 
 class Config:
@@ -25,6 +26,7 @@ class Config:
         self._podcast_targets: [] = []
         self._pubmed_targets: [] = []
         self._youtube_targets: [] = []
+        self._nutrition_targets: [] = []
 
     @classmethod
     def from_json(cls, path: str = CONFIG_FILE_PATH) -> 'Config':
@@ -46,6 +48,9 @@ class Config:
             config._youtube_targets = [
                 YouTubeTarget(**entry) for entry in json_data.get('youtube_targets', [])
             ]
+            config._nutrition_targets = [
+                NutritionTarget(**entry) for entry in json_data.get('nutrition_targets', [])
+            ]
             return config
 
     def add_target(self, target):
@@ -59,6 +64,8 @@ class Config:
             self._pubmed_targets.append(target)
         elif isinstance(target, YouTubeTarget):
             self._youtube_targets.append(target)
+        elif isinstance(target, NutritionTarget):
+            self._nutrition_targets.append(target)
         else:
             raise ValueError(f'Unknown target type: {type(target)}')
 
@@ -69,6 +76,7 @@ class Config:
             podcast_targets=[target.to_dict() for target in self._podcast_targets],
             pubmed_targets=[target.to_dict() for target in self._pubmed_targets],
             youtube_targets=[target.to_dict() for target in self._youtube_targets],
+            nutrition_targets=[target.to_dict() for target in self._nutrition_targets],
         )
 
     def write_to_json(self):
@@ -84,6 +92,7 @@ class Config:
             + self._pubmed_targets
             + self._youtube_targets
             + self.podcast_targets
+            + self._nutrition_targets
         )
 
     @property
@@ -105,3 +114,7 @@ class Config:
     @property
     def youtube_targets(self):
         return self._youtube_targets
+
+    @property
+    def nutrition_targets(self):
+        return self._nutrition_targets
