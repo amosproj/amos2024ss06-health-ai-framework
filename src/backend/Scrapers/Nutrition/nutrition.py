@@ -43,23 +43,27 @@ class NutritionScraper(BaseScraper):
     @classmethod
     def query_ids(cls) -> list[str]:
         """Queries the nutrition facts site for podcast ids and returns them as a list"""
+        driver = cls.start_driver()
+
         ids = []
-        nutrition_links = NutritionScraper.search_nutrition_ids()
+        nutrition_links = NutritionScraper.search_nutrition_ids(driver)
         ids.extend([cls.extract_nutrition_id_from_url(link) for link in nutrition_links])
+
+        driver.quit()
         return ids
 
     @classmethod
-    def search_nutrition_ids(cls) -> list[str]:
+    def search_nutrition_ids(cls, driver) -> list[str]:
         """Search podcast site for nutrition facts related to a query and return the ids."""
         blog_links = set()
         page_number = 1
         while True:
             print(f'Scraping page {page_number}')
             page_url = cls.url if page_number == 1 else f'{cls.url}page/{page_number}/'
-            cls.driver.get(page_url)
+            driver.get(page_url)
 
-            WebDriverWait(cls.driver, 10).until(ec.presence_of_element_located((By.TAG_NAME, 'a')))
-            if cls.driver.find_elements(
+            WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.TAG_NAME, 'a')))
+            if driver.find_elements(
                 By.XPATH,
                 '//div[@class="alert alert-warning" and contains(text(),'
                 '"Sorry, no results were found.")]',
@@ -67,7 +71,7 @@ class NutritionScraper(BaseScraper):
                 print('No more results found.')
                 break
 
-            links = cls.driver.find_elements(By.TAG_NAME, 'a')
+            links = driver.find_elements(By.TAG_NAME, 'a')
             for link in links:
                 href = link.get_attribute('href')
                 if (
@@ -80,11 +84,11 @@ class NutritionScraper(BaseScraper):
                     blog_links.add(href)
 
             next_page_url = f'{cls.url}page/{page_number + 1}/'
-            cls.driver.get(next_page_url)
+            driver.get(next_page_url)
             page_number += 1
             time.sleep(2)
 
-            if cls.driver.current_url == page_url:
+            if driver.current_url == page_url:
                 break
 
             if cls.max_pages is not None and page_number >= cls.max_pages:
@@ -114,6 +118,21 @@ class NutritionScraper(BaseScraper):
         chrome_options.add_experimental_option('useAutomationExtension', False)
 
         return chrome_options
+
+    @classmethod
+    def start_driver(cls):
+        try:
+            options = cls.get_chrome_options()
+            service = Service(ChromeDriverManager().install())
+            driver = webdriver.Chrome(service=service, options=options)
+            return driver
+        except Exception as e:
+            print(f'Error starting ChromeDriver: {e}')
+            return None
+
+    @classmethod
+    def get_driver(cls):
+        return cls.start_driver()
 
     # ---------------------------------------------------------
     # MARK: Metadata Scraping
@@ -184,15 +203,16 @@ class NutritionScraper(BaseScraper):
     # ---------------------------------------------------------
 
     def _scrape(self) -> str:
+        driver = NutritionScraper.get_driver()
+
         final_url = NutritionScraper.url + self.element_id + '/'
         print(f'Scraping {final_url}')
 
-        nutrition = self.get_url_content(NutritionScraper.driver, self.element_id)
+        nutrition = self.get_url_content(driver, final_url)
         if nutrition is None:
             raise ValueError('Data does not exist for id: ' + str(self.element_id))
 
         title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url = nutrition
-
         info = {
             'title': title,
             'date': date,
@@ -203,13 +223,13 @@ class NutritionScraper(BaseScraper):
             'url': blog_url,
         }
 
+        time.sleep(2)
+
+        driver.quit()
         return json.dumps(info, indent=2)
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:
-        options = cls.get_chrome_options()
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        cls.driver = driver
         cls.url = target.url
         cls.max_pages = target.max_pages
 
@@ -223,5 +243,4 @@ class NutritionScraper(BaseScraper):
             + repr(target.url)
         )  # TODO: remove debug
 
-        driver.quit()
         return [NutritionScraper(element_id=id) for id in new_target_elements]
