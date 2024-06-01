@@ -3,8 +3,9 @@ from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
 
 import os
 import json
+import logging
 
-# logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
+logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
 
 from Bio import Entrez  # noqa: E402
 from pypdf import PdfReader  # noqa: E402
@@ -202,9 +203,10 @@ class PubMedScraper(BaseScraper):
             if keep_pdfs is not True:
                 if os.path.exists(filepath):
                     os.remove(filepath)
-        except Exception as e:
-            print(f'Error: PubmedScraper: Could not retrieve text data from pdf.')
-            print('Error message: ' + repr(e))
+        except Exception:
+            print('Warning: PubmedScraper: Could not retrieve text data from pdf for id:', end=' ')
+            print(self.element_id)
+            # print('Error message: ' + repr(e))
 
         return text
 
@@ -236,7 +238,7 @@ class PubMedScraper(BaseScraper):
         except Exception as e:
             print(f'Error occured in PubmedScraper: {e}')
             data = {}
-        return data
+        return json.dumps(data, indent=2)
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:
