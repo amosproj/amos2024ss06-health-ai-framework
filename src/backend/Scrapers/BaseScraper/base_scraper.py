@@ -36,23 +36,19 @@ class BaseScraper(metaclass=ABCMeta):
     def _save(self, scrapped_dict: dict):
         file_path = os.path.join(self.base_dir(), f'{self.element_id}.json')
         with open(file_path, 'w') as file:
-            json.dump(scrapped_dict, file)
+            json.dump(scrapped_dict, file, indent=2)
 
     def scrape_and_save(self):
-        # Parse string to dictionary
-        scrapped_data = self._scrape()
-        scrapped_dict = json.loads(scrapped_data)
-
+        scrapped_dict = self._scrape()
         # Check if the scrapped_dict is empty
         if not scrapped_dict:
-            print('Scrapped data is empty. Nothing to save or update.')
+            print(f'No data found for {self.element_id}')
             return
-
-        self._save(scrapped_dict)  # save scrapped json file
-        # Read index data from the file
+        # save scrapped json file
+        self._save(scrapped_dict)
+        # Update the indexes
         with open(type(self).index_file(), 'r+') as file:
             index_data = json.load(file)
-            # Update the indexes
             indexes = index_data.get('indexes', [])
             indexes.append(self.element_id)
             index_data['indexes'] = indexes
