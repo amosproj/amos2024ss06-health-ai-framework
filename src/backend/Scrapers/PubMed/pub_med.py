@@ -3,9 +3,8 @@ from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
 
 import os
 import json
-import logging
 
-logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
+# logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
 
 from Bio import Entrez  # noqa: E402
 from pypdf import PdfReader  # noqa: E402
@@ -188,20 +187,24 @@ class PubMedScraper(BaseScraper):
     def get_txt_from_pdf(
         self, filename: str, path='papers/', create_txt_file=False, keep_pdfs=False
     ):
-        filepath = path + f'{filename}.pdf'
-        reader = PdfReader(filepath)
         text = ''
-        for page in reader.pages:
-            text = text + page.extract_text()
+        try:
+            filepath = path + f'{filename}.pdf'
+            reader = PdfReader(filepath)
+            for page in reader.pages:
+                text = text + page.extract_text()
 
-        if create_txt_file:
-            f = open(filename + '.txt', 'a', encoding='utf-8')
-            f.write(text)
-            f.close()
+            if create_txt_file:
+                f = open(filename + '.txt', 'a', encoding='utf-8')
+                f.write(text)
+                f.close()
 
-        if keep_pdfs is not True:
-            if os.path.exists(filepath):
-                os.remove(filepath)
+            if keep_pdfs is not True:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+        except Exception as e:
+            print(f'Error: PubmedScraper: Could not retrieve text data from pdf.')
+            print('Error message: ' + repr(e))
 
         return text
 
@@ -219,8 +222,8 @@ class PubMedScraper(BaseScraper):
             doi = self.get_doi_from_details(metadata)
             abstract = self.get_abstract_from_details(metadata)
 
-            # file_name = self.get_paper_from_doi(doi, title)
-            # text_data = self.get_txt_from_pdf(file_name)
+            file_name = self.get_paper_from_doi(doi, title)
+            text_data = self.get_txt_from_pdf(file_name)
 
             data = {
                 'title': title,
@@ -228,7 +231,7 @@ class PubMedScraper(BaseScraper):
                 'publication_date': str(publication_date),
                 'abstract': abstract,
                 'pdf_url': doi,
-                #'text': text_data,
+                'text': text_data,
             }
         except Exception as e:
             print(f'Error occured in PubmedScraper: {e}')

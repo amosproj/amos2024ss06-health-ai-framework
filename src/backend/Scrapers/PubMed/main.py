@@ -7,14 +7,15 @@ if __name__ == '__main__':
         PubMedTarget(keywords=['nutrition', 'health', 'food as medicine'], max_results=3)
     )
 
-    print('Scraping for ids ' + repr(scrapers))
+    print('Scraping for ids ' + repr(scrapers) + '\n\n')
     for scraper in scrapers:
         data = scraper._scrape()
         for item in data.items():
             print(item[0], end=': ')
-            if item[0] == 'publication_date':
-                print(item[1], end=' ')
-            print(type(item[1]))
+            if item[0] == 'text' or item[0] == 'abstract':
+                print(type(item[1]))
+            else:
+                print(item[1])
 
             # print(item[1])
         print('-----------------------')
