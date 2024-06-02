@@ -9,7 +9,6 @@ from urllib.request import HTTPSHandler
 
 class AllRecipesScraper(BaseScraper):
     INDEX = json.loads(open(INDEX_FILE_PATH).read())
-    BASE_URL = 'https://www.allrecipes.com/recipe/{}/{}'
     HEADERS = {
         'User-Agent': (
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
@@ -25,7 +24,8 @@ class AllRecipesScraper(BaseScraper):
 
     def __init__(self, element_id: str, recipe_name: str):
         super().__init__(element_id=element_id)
-        url = self.BASE_URL.format(element_id, recipe_name)
+        base_url = AllRecipesScraper.url + 'recipe/{}/{}'
+        url = base_url.format(element_id, recipe_name)
         req = urllib.request.Request(url, headers=self.HEADERS)
         handler = HTTPSHandler(context=ssl._create_unverified_context())
         opener = urllib.request.build_opener(handler)
@@ -173,7 +173,7 @@ class AllRecipesScraper(BaseScraper):
     @classmethod
     def get_all_recipes_category_urls(cls):
         category_urls = []
-        req = urllib.request.Request('https://www.allrecipes.com/', headers=cls.HEADERS)
+        req = urllib.request.Request(cls.url, headers=cls.HEADERS)
         handler = HTTPSHandler(context=ssl._create_unverified_context())
         opener = urllib.request.build_opener(handler)
         try:
@@ -188,9 +188,9 @@ class AllRecipesScraper(BaseScraper):
         return category_urls
 
     @classmethod
-    def get_all_recipes_of_page(cls, base_url):
+    def get_all_recipes_of_page(cls, link_url):
         recipes = []
-        current_url = base_url
+        current_url = link_url
         while current_url:
             req = urllib.request.Request(current_url, headers=cls.HEADERS)
             handler = HTTPSHandler(context=ssl._create_unverified_context())
@@ -219,6 +219,7 @@ class AllRecipesScraper(BaseScraper):
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:
+        cls.url = target.url
         old_indexes = set(cls.INDEX['indexes'])
         all_possible_category_urls = cls.get_all_recipes_category_urls()
         all_possible_recipes_of_pages = []
