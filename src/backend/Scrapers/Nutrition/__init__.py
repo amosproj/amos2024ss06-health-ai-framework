@@ -2,8 +2,8 @@ import json
 import os
 
 
-RAW_DIR_PATH = os.path.join('data', 'archive', 'raw')
-INDEX_FILE_PATH = os.path.join('data', 'archive', 'index.json')
+RAW_DIR_PATH = os.path.join('data', 'nutrition', 'raw')
+INDEX_FILE_PATH = os.path.join('data', 'nutrition', 'index.json')
 
 # Nutrition scraper base dir
 os.makedirs(RAW_DIR_PATH, exist_ok=True)

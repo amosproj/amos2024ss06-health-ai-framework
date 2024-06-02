@@ -5,7 +5,7 @@ from src.backend.ScrappingTarget.base_target import BaseTarget
 
 
 class NutritionTarget(BaseTarget):
-    def __init__(self, url='https://nutritionfacts.org/blog/', max_pages=None):
+    def __init__(self, url='https://nutritionfacts.org/blog/', max_pages=3):
         self.url = url
         self.max_pages = max_pages  # max pages None if all pages should be scraped
 
