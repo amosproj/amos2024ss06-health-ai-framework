@@ -104,20 +104,24 @@ class NutritionScraper(BaseScraper):
 
     @classmethod
     def get_chrome_options(cls):
-        chrome_options = Options()
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        chrome_options.add_argument('--log-level=3')
-        chrome_options.add_argument('--disable-extensions')
-        chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-        chrome_options.add_experimental_option(
-            'excludeSwitches', ['enable-logging', 'enable-automation']
-        )
-        chrome_options.add_experimental_option('useAutomationExtension', False)
+        try:
+            chrome_options = Options()
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-gpu')
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--disable-dev-shm-usage')
+            chrome_options.add_argument('--log-level=3')
+            chrome_options.add_argument('--disable-extensions')
+            chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+            chrome_options.add_experimental_option(
+                'excludeSwitches', ['enable-logging', 'enable-automation']
+            )
+            chrome_options.add_experimental_option('useAutomationExtension', False)
 
-        return chrome_options
+            return chrome_options
+        except Exception as e:
+            print(f'Error getting ChromeOptions: {e}')
+            return None
 
     @classmethod
     def start_driver(cls):
@@ -132,100 +136,121 @@ class NutritionScraper(BaseScraper):
 
     @classmethod
     def get_driver(cls):
-        return cls.start_driver()
+        try:
+            return cls.start_driver()
+        except Exception as e:
+            print(f'Error getting ChromeDriver: {e}')
+            return None
 
     # ---------------------------------------------------------
     # MARK: Metadata Scraping
     # ---------------------------------------------------------
 
     def clean_text(self, text):
-        # Replace newline characters within words or around links with spaces
-        text = re.sub(r'(\w)\n(\w)', r'\1 \2', text)
-        text = re.sub(r'(\w)\n(\W)', r'\1 \2', text)
-        text = re.sub(r'(\W)\n(\w)', r'\1 \2', text)
+        try:
+            # Replace newline characters within words or around links with spaces
+            text = re.sub(r'(\w)\n(\w)', r'\1 \2', text)
+            text = re.sub(r'(\w)\n(\W)', r'\1 \2', text)
+            text = re.sub(r'(\W)\n(\w)', r'\1 \2', text)
 
-        # Replace multiple newlines with a single newline
-        text = re.sub(r'\n+', '\n', text)
+            # Replace multiple newlines with a single newline
+            text = re.sub(r'\n+', '\n', text)
 
-        # Remove non-printable characters and replace non-breaking spaces with regular spaces
-        text = re.sub(r'\u00a0', ' ', text)
-        text = re.sub(r'[^\x00-\x7F]+', ' ', text)
+            # Remove non-printable characters and replace non-breaking spaces with regular spaces
+            text = re.sub(r'\u00a0', ' ', text)
+            text = re.sub(r'[^\x00-\x7F]+', ' ', text)
 
-        return text
+            return text
+        except Exception:
+            raise ValueError('Error cleaning text')
 
     def get_url_content(self, driver, blog_url):
-        driver.get(blog_url)
-        WebDriverWait(driver, 10).until(
-            ec.presence_of_element_located((By.CLASS_NAME, 'entry-title'))
-        )
+        try:
+            driver.get(blog_url)
+            WebDriverWait(driver, 10).until(
+                ec.presence_of_element_located((By.CLASS_NAME, 'entry-title'))
+            )
 
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-        title_element = soup.find('h1', class_='entry-title')
-        title = title_element.text.strip() if title_element else 'Title not found'
+            title_element = soup.find('h1', class_='entry-title')
+            title = title_element.text.strip() if title_element else 'Title not found'
 
-        date_element = soup.find('time', datetime=True)
-        date = date_element['datetime'] if date_element else 'Date not found'
+            date_element = soup.find('time', datetime=True)
+            date = date_element['datetime'] if date_element else 'Date not found'
 
-        author_element = soup.find('p', class_='byline author vcard')
-        if author_element:
-            author_link = author_element.find('a', class_='fn')
-            author = author_link.text.strip() if author_link else 'Author Not Found'
-        else:
-            author = 'Author Not Found'
+            author_element = soup.find('p', class_='byline author vcard')
+            if author_element:
+                author_link = author_element.find('a', class_='fn')
+                author = author_link.text.strip() if author_link else 'Author Not Found'
+            else:
+                author = 'Author Not Found'
 
-        content_element = soup.find('div', class_='entry-content')
-        content = (
-            content_element.get_text(separator='\n') if content_element else 'Content not found'
-        )
-        content = self.clean_text(content)
-        max_length = 80
-        content_chunks = [content[i : i + max_length] for i in range(0, len(content), max_length)]
+            content_element = soup.find('div', class_='entry-content')
+            content = (
+                content_element.get_text(separator='\n') if content_element else 'Content not found'
+            )
+            content = self.clean_text(content)
+            max_length = 80
+            content_chunks = [
+                content[i : i + max_length] for i in range(0, len(content), max_length)
+            ]
 
-        key_take_away_element = soup.find('div', class_='key-takeaways')
-        key_take_away = (
-            key_take_away_element.get_text(separator='\n')
-            if key_take_away_element
-            else 'Key Take Away not found'
-        )
-        key_take_away = self.clean_text(key_take_away)
-        key_take_away_chunks = [
-            key_take_away[i : i + max_length] for i in range(0, len(key_take_away), max_length)
-        ]
+            key_take_away_element = soup.find('div', class_='key-takeaways')
+            key_take_away = (
+                key_take_away_element.get_text(separator='\n')
+                if key_take_away_element
+                else 'Key Take Away not found'
+            )
+            key_take_away = self.clean_text(key_take_away)
+            key_take_away_chunks = [
+                key_take_away[i : i + max_length] for i in range(0, len(key_take_away), max_length)
+            ]
 
-        image_elements = content_element.find_all('img')
-        image_urls = [img['src'] for img in image_elements if 'src' in img.attrs]
+            image_elements = content_element.find_all('img')
+            image_urls = [img['src'] for img in image_elements if 'src' in img.attrs]
 
-        return title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url
+            return title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url
+        except Exception:
+            print(f'Error getting content from url: {blog_url}')
+            return None
 
     # ---------------------------------------------------------
     # MARK: _scrape & get_ids
     # ---------------------------------------------------------
 
     def _scrape(self) -> str:
-        driver = NutritionScraper.get_driver()
+        try:
+            driver = NutritionScraper.get_driver()
+            if driver is None:
+                raise ValueError('Driver could not be started')
+            final_url = NutritionScraper.url + self.element_id + '/'
+            print(f'Scraping {final_url}')
 
-        final_url = NutritionScraper.url + self.element_id + '/'
-        print(f'Scraping {final_url}')
+            nutrition = self.get_url_content(driver, final_url)
+            if nutrition is None:
+                raise ValueError('Data does not exist for id: ' + str(self.element_id))
 
-        nutrition = self.get_url_content(driver, final_url)
-        if nutrition is None:
-            raise ValueError('Data does not exist for id: ' + str(self.element_id))
+            title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url = (
+                nutrition
+            )
+            info = {
+                'title': title,
+                'date': date,
+                'author': author,
+                'content': content_chunks,
+                'key take away': key_take_away_chunks,
+                'images': image_urls,
+                'url': blog_url,
+            }
 
-        title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url = nutrition
-        info = {
-            'title': title,
-            'date': date,
-            'author': author,
-            'content': content_chunks,
-            'key take away': key_take_away_chunks,
-            'images': image_urls,
-            'url': blog_url,
-        }
+            time.sleep(2)
+            driver.quit()
 
-        time.sleep(2)
+        except Exception as e:
+            print(e)
+            info = {}
 
-        driver.quit()
         return json.dumps(info, indent=2)
 
     @classmethod
@@ -242,5 +267,4 @@ class NutritionScraper(BaseScraper):
             + ' for keywords '
             + repr(target.url)
         )
-
         return [NutritionScraper(element_id=id) for id in new_target_elements]
