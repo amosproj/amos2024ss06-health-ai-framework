@@ -89,7 +89,7 @@ class PubMedScraper(BaseScraper):
             # (in all examples seen)
             abstract = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
             abstract = abstract['Abstract']['AbstractText'][0]
-            return abstract
+            return str(abstract)
         except Exception as e:
             print(
                 'Error: pubmed_scraping: get_abstract_from_details:'
@@ -138,7 +138,23 @@ class PubMedScraper(BaseScraper):
         try:
             date_dict = details_dict['PubmedArticle'][0]['MedlineCitation']['Article']
             date_dict = date_dict['Journal']['JournalIssue']['PubDate']
-            date = date_dict['Day'] + ' ' + date_dict['Month'] + ' ' + date_dict['Year']
+            # sometimes date parts are incomplete to we scrape separately
+            date = ''
+            try:
+                day = date_dict['Day']
+                date += str(day) + ' '
+            except Exception:
+                pass
+            try:
+                month = date_dict['Month']
+                date += str(month) + ' '
+            except Exception:
+                pass
+            try:
+                year = date_dict['Year']
+                date += str(year)
+            except Exception:
+                pass
             return date
         except Exception as e:
             print(
@@ -172,20 +188,25 @@ class PubMedScraper(BaseScraper):
     def get_txt_from_pdf(
         self, filename: str, path='papers/', create_txt_file=False, keep_pdfs=False
     ):
-        filepath = path + f'{filename}.pdf'
-        reader = PdfReader(filepath)
         text = ''
-        for page in reader.pages:
-            text = text + page.extract_text()
+        try:
+            filepath = path + f'{filename}.pdf'
+            reader = PdfReader(filepath)
+            for page in reader.pages:
+                text = text + page.extract_text()
 
-        if create_txt_file:
-            f = open(filename + '.txt', 'a', encoding='utf-8')
-            f.write(text)
-            f.close()
+            if create_txt_file:
+                f = open(filename + '.txt', 'a', encoding='utf-8')
+                f.write(text)
+                f.close()
 
-        if keep_pdfs is not True:
-            if os.path.exists(filepath):
-                os.remove(filepath)
+            if keep_pdfs is not True:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+        except Exception:
+            print('Warning: PubmedScraper: Could not retrieve text data from pdf for id:', end=' ')
+            print(self.element_id)
+            # print('Error message: ' + repr(e))
 
         return text
 
@@ -217,7 +238,7 @@ class PubMedScraper(BaseScraper):
         except Exception as e:
             print(f'Error occured in PubmedScraper: {e}')
             data = {}
-        return data
+        return json.dumps(data, indent=2)
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:

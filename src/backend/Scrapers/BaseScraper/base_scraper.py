@@ -7,6 +7,9 @@ class BaseScraper(metaclass=ABCMeta):
     def __init__(self, element_id: str):
         self.element_id = element_id
 
+    def __repr__(self):
+        return 'Scraper(' + str(self.element_id) + ')'
+
     @classmethod
     @abstractmethod
     def index_file(cls) -> str:
