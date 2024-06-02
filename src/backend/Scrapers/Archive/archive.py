@@ -189,5 +189,5 @@ class ArchiveScraper(BaseScraper):
             + repr(new_target_elements)
             + ' for keywords '
             + repr(target.keywords)
-        )  # TODO: remove debug
+        )
         return [ArchiveScraper(element_id=id) for id in new_target_elements]

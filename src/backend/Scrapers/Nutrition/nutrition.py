@@ -241,6 +241,6 @@ class NutritionScraper(BaseScraper):
             + repr(new_target_elements)
             + ' for keywords '
             + repr(target.url)
-        )  # TODO: remove debug
+        )
 
         return [NutritionScraper(element_id=id) for id in new_target_elements]
