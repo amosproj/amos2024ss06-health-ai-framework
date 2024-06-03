@@ -1,7 +1,6 @@
-from nutritionfacts import scrape_blogs
-
-# TODO: ADAPT THIS TO PREET'S NEW ORCHESTRATOR PIPELINE NEXT SPRINT
+from src.backend.Orchestrator.orchestrator import Orchestrator
+from src.backend.ScrappingTarget.nutrition_target import NutritionTarget
 
 if __name__ == '__main__':
-    base_url = 'https://nutritionfacts.org/blog/'
-    scrape_blogs(base_url)
+    target = NutritionTarget(max_pages=1)
+    Orchestrator.run_target(target)
