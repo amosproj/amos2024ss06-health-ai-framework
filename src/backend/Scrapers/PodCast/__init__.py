@@ -1,7 +1,6 @@
 import json
 import os
 
-
 RAW_DIR_PATH = os.path.join('data', 'podcast', 'raw')
 INDEX_FILE_PATH = os.path.join('data', 'podcast', 'index.json')
 VOSK_DIR_PATH = os.path.join('data', 'podcast', 'vosk_model')

@@ -2,11 +2,14 @@ import html
 import json
 import os
 import re
+from xml.etree import ElementTree
+
 import pyyoutube
 import requests
+
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.YouTube import INDEX_FILE_PATH, RAW_DIR_PATH
-from xml.etree import ElementTree
+from src.backend.Types import YouTubeScrappingData
 
 
 class YouTubeScraper(BaseScraper):
@@ -28,39 +31,51 @@ class YouTubeScraper(BaseScraper):
     def base_dir(cls) -> str:
         return RAW_DIR_PATH
 
-    def _scrape(self) -> str:
+    def _get_video_data(self):
         payload = {
             'context': {'client': {'clientName': 'WEB', 'clientVersion': '2.20210721.00.00'}},
             'videoId': self.element_id,
         }
         headers = {'Content-Type': 'application/json'}
+        response = requests.post(self.YOUTUBE_BASE_URL, headers=headers, json=payload)
+        response.raise_for_status()
+        return response.json()
+
+    def _get_captions(self, captions):
+        for track in captions:
+            if track['languageCode'] == 'en':
+                track_url = track['baseUrl']
+                res = requests.get(track_url)
+                res.raise_for_status()
+                return res.content
+        return None
+
+    def _parse_transcript(self, xml_content):
+        root_xml = ElementTree.fromstring(xml_content)
+        transcript = [element.text for element in root_xml.findall('.//text')]
+        return html.unescape(' '.join(transcript))
+
+    def _scrape(self) -> YouTubeScrappingData:
+        scrap_data: YouTubeScrappingData = {}
         try:
-            response = requests.post(YouTubeScraper.YOUTUBE_BASE_URL, headers=headers, json=payload)
-            if response.status_code == 200:
-                transcript = ''
-                data = response.json()
-                captions = data['captions']['playerCaptionsTracklistRenderer']['captionTracks']
-                video_details = data['videoDetails']
-                for track in captions:
-                    if track['languageCode'] == 'en':
-                        track_url = track['baseUrl']
-                        res = requests.get(track_url)
-                        if res.status_code == 200:
-                            root_xml = ElementTree.fromstring(res.content)
-                            transcript = [element.text for element in root_xml.findall('.//text')]
-                            transcript = html.unescape(' '.join(transcript))
+            data = self._get_video_data()
+            captions = data['captions']['playerCaptionsTracklistRenderer']['captionTracks']
+            video_details = data['videoDetails']
+            transcript = ''
+            xml_content = self._get_captions(captions)
+            if xml_content:
+                transcript = self._parse_transcript(xml_content)
+            scrap_data['videoId'] = video_details.get('videoId', '')
+            scrap_data['title'] = video_details.get('title', '')
+            scrap_data['keywords'] = video_details.get('keywords', [])
+            scrap_data['shortDescription'] = video_details.get('shortDescription', '')
+            scrap_data['viewCount'] = int(video_details.get('viewCount', '0'))
+            scrap_data['author'] = video_details.get('author', '')
+            scrap_data['transcript'] = re.sub(r'\n+', ' ', transcript)
+            return scrap_data
         except Exception as e:
             print(f'Error: {e} No caption found for videoId: {self.element_id}')
             return {}
-        return {
-            'videoId': video_details.get('videoId', ''),
-            'title': video_details.get('title', ''),
-            'keywords': video_details.get('keywords', []),
-            'shortDescription': video_details.get('shortDescription', ''),
-            'viewCount': int(video_details.get('viewCount', '0')),
-            'author': video_details.get('author', ''),
-            'content': re.sub(r'\n+', ' ', transcript),
-        }
 
     @classmethod
     def get_all_video_ids(cls, channel_id: str) -> list[str]:

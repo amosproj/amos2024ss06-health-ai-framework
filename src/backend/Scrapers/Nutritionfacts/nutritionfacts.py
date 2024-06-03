@@ -1,14 +1,15 @@
-import time
 import json
+import re
+import time
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
-import re
 
 # TODO: ADAPT THIS TO PREET'S NEW ORCHESTRATOR PIPELINE NEXT SPRINT
 

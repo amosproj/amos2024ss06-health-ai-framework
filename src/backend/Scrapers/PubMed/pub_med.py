@@ -1,15 +1,15 @@
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
-
-import os
 import json
 import logging
+import os
+
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
 
 logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
 
 from Bio import Entrez  # noqa: E402
-from pypdf import PdfReader  # noqa: E402
 from paperscraper.pdf import save_pdf  # noqa: E402
+from pypdf import PdfReader  # noqa: E402
 
 
 class PubMedScraper(BaseScraper):

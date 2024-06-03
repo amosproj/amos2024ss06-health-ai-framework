@@ -1,17 +1,18 @@
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.PodCast import INDEX_FILE_PATH, RAW_DIR_PATH, VOSK_DIR_PATH
-
+import json
 import os
 import re
-import json
-from urllib.request import Request, urlopen, urlretrieve
-from bs4 import BeautifulSoup
-from pydub import AudioSegment
-from vosk import Model, KaldiRecognizer
 import wave
 from urllib.parse import urlparse
-import requests
+from urllib.request import Request, urlopen, urlretrieve
 from zipfile import ZipFile
+
+import requests
+from bs4 import BeautifulSoup
+from pydub import AudioSegment
+from vosk import KaldiRecognizer, Model
+
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Scrapers.PodCast import INDEX_FILE_PATH, RAW_DIR_PATH, VOSK_DIR_PATH
 
 
 class PodCastScraper(BaseScraper):

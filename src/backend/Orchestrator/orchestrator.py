@@ -1,5 +1,6 @@
-from src.backend.Config.config import Config
 from typing import List
+
+from src.backend.Config.config import Config
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 
 

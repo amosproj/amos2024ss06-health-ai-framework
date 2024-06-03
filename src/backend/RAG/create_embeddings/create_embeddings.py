@@ -1,15 +1,14 @@
 import os
 import uuid
-from langchain.embeddings import HuggingFaceBgeEmbeddings  # imports for open source modules:
-from langchain_community.embeddings import (
-    HuggingFaceEmbeddings,
-)  # for alternative using only LangChain syntax:
-
-# from sentence_transformers import SentenceTransformer
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
 # free local vector store:
 import chromadb
+
+# for alternative using only LangChain syntax:
+# from sentence_transformers import SentenceTransformer
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+from langchain.embeddings import HuggingFaceBgeEmbeddings  # imports for open source modules:
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 """ imports for modules that need API keys: """
 # from langchain.embeddings.openai import OpenAIEmbeddings

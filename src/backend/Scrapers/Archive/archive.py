@@ -1,10 +1,11 @@
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.Archive import RAW_DIR_PATH, INDEX_FILE_PATH
-
-import os
 import json
-from pypdf import PdfReader
+import os
+
 import arxiv
+from pypdf import PdfReader
+
+from src.backend.Scrapers.Archive import INDEX_FILE_PATH, RAW_DIR_PATH
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 
 
 class ArchiveScraper(BaseScraper):

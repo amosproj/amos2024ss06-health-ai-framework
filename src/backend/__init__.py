@@ -1,5 +1,6 @@
 import os
-from dotenv import load_dotenv, find_dotenv
+
+from dotenv import find_dotenv, load_dotenv
 
 # Change current working directory (CWD) to the root if it's within 'src'
 cwd = os.getcwd()

@@ -1,10 +1,12 @@
-import ssl
 import json
-from bs4 import BeautifulSoup
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.AllRecipes import RAW_DIR_PATH, INDEX_FILE_PATH
+import ssl
 import urllib.request
 from urllib.request import HTTPSHandler
+
+from bs4 import BeautifulSoup
+
+from src.backend.Scrapers.AllRecipes import INDEX_FILE_PATH, RAW_DIR_PATH
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 
 
 class AllRecipesScraper(BaseScraper):

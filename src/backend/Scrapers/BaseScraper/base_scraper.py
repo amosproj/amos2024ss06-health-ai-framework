@@ -1,6 +1,6 @@
 import json
 import os.path
-from abc import abstractmethod, ABCMeta
+from abc import ABCMeta, abstractmethod
 
 
 class BaseScraper(metaclass=ABCMeta):
