@@ -14,6 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.Nutritionfacts import INDEX_FILE_PATH, RAW_DIR_PATH
+from src.backend.Types.nutrition import TypeNutritionScrappingData
 
 # Suppress Selenium log messages
 logging.getLogger('selenium').setLevel(logging.WARNING)
@@ -234,14 +235,13 @@ class NutritionScraper(BaseScraper):
             title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url = (
                 nutrition
             )
-            info = {
-                'title': title,
-                'date': date,
+            info: TypeNutritionScrappingData = {
                 'author': author,
-                'content': content_chunks,
-                'key take away': key_take_away_chunks,
-                'images': image_urls,
-                'url': blog_url,
+                'date': date,
+                'keyPoints': key_take_away_chunks,
+                'ref': blog_url,
+                'title': title,
+                'transcript': content_chunks,
             }
 
             time.sleep(2)
@@ -251,7 +251,7 @@ class NutritionScraper(BaseScraper):
             print(e)
             info = {}
 
-        return json.dumps(info, indent=2)
+        return info
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:
