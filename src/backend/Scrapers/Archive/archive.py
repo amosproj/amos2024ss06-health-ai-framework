@@ -6,6 +6,7 @@ from pypdf import PdfReader
 
 from src.backend.Scrapers.Archive import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Types.archive import TypeArchiveScrappingData
 
 
 class ArchiveScraper(BaseScraper):
@@ -154,7 +155,7 @@ class ArchiveScraper(BaseScraper):
     # MARK: _scrape & get_ids
     # ---------------------------------------------------------
 
-    def _scrape(self) -> str:
+    def _scrape(self) -> TypeArchiveScrappingData:
         try:
             paper = self.get_paper_from_arxiv_id(self.element_id)
             if paper is None:
@@ -165,20 +166,20 @@ class ArchiveScraper(BaseScraper):
             file_name = self.get_paper_pdf(paper, pdf_url, title)
             data = self.get_txt_from_pdf(file_name)
 
-            info = {
-                'title': title,
-                'authors': self.get_authors_from_paper(paper),
-                'publication_date': str(self.get_publication_date_from_paper(paper)),
+            info: TypeArchiveScrappingData = {
                 'abstract': self.get_abstract_from_paper(paper),
-                'pdf_url': pdf_url,
-                'text': data,
+                'authors': self.get_authors_from_paper(paper),
+                'ref': pdf_url,
+                'publicationDate': str(self.get_publication_date_from_paper(paper)),
+                'title': title,
+                'transcript': data,
             }
 
         except Exception as e:
             print(e)
             info = {}
 
-        return json.dumps(info, indent=2)
+        return info
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:
