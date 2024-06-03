@@ -4,6 +4,7 @@ import os
 
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
+from src.backend.Types.pub_med import TypePubMedScrappingData
 
 logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
 
@@ -214,7 +215,7 @@ class PubMedScraper(BaseScraper):
     # MARK: _scrape, get_ids
     # ---------------------------------------------------------
 
-    def _scrape(self) -> str:
+    def _scrape(self) -> TypePubMedScrappingData:
         try:
             metadata = self.fetch_details(self.element_id)
 
@@ -227,18 +228,18 @@ class PubMedScraper(BaseScraper):
             file_name = self.get_paper_from_doi(doi, title)
             text_data = self.get_txt_from_pdf(file_name)
 
-            data = {
-                'title': title,
-                'authors': authors,
-                'publication_date': str(publication_date),
+            data: TypePubMedScrappingData = {
                 'abstract': abstract,
-                'pdf_url': doi,
-                'text': text_data,
+                'authors': authors,
+                'publicationDate': publication_date,
+                'ref': doi,
+                'title': title,
+                'transcript': text_data,
             }
         except Exception as e:
             print(f'Error occured in PubmedScraper: {e}')
             data = {}
-        return json.dumps(data, indent=2)
+        return data
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:
