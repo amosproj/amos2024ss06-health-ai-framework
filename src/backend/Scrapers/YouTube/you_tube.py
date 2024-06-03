@@ -9,7 +9,7 @@ import requests
 
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.YouTube import INDEX_FILE_PATH, RAW_DIR_PATH
-from src.backend.Types import YouTubeScrappingData
+from src.backend.Types.you_tube import TypeYouTubeScrappingData
 
 
 class YouTubeScraper(BaseScraper):
@@ -55,8 +55,8 @@ class YouTubeScraper(BaseScraper):
         transcript = [element.text for element in root_xml.findall('.//text')]
         return html.unescape(' '.join(transcript))
 
-    def _scrape(self) -> YouTubeScrappingData:
-        scrap_data: YouTubeScrappingData = {}
+    def _scrape(self) -> TypeYouTubeScrappingData:
+        scrap_data: TypeYouTubeScrappingData = {}
         try:
             data = self._get_video_data()
             captions = data['captions']['playerCaptionsTracklistRenderer']['captionTracks']
@@ -72,6 +72,7 @@ class YouTubeScraper(BaseScraper):
             scrap_data['viewCount'] = int(video_details.get('viewCount', '0'))
             scrap_data['author'] = video_details.get('author', '')
             scrap_data['transcript'] = re.sub(r'\n+', ' ', transcript)
+            scrap_data['ref'] = f'https://www.youtube.com/watch?v={scrap_data["videoId"]}'
             return scrap_data
         except Exception as e:
             print(f'Error: {e} No caption found for videoId: {self.element_id}')
