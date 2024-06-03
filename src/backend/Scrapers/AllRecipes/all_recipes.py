@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from src.backend.Scrapers.AllRecipes import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Types import AllRecipesScrappingData
+from src.backend.Types.all_recipes import TypeAllRecipeScrappingData
 
 
 class AllRecipesScraper(BaseScraper):
@@ -28,8 +28,8 @@ class AllRecipesScraper(BaseScraper):
     def __init__(self, element_id: str, recipe_name: str):
         super().__init__(element_id=element_id)
         base_url = AllRecipesScraper.url + 'recipe/{}/{}'
-        url = base_url.format(element_id, recipe_name)
-        req = urllib.request.Request(url, headers=self.HEADERS)
+        self._url = base_url.format(element_id, recipe_name)
+        req = urllib.request.Request(self._url, headers=self.HEADERS)
         handler = HTTPSHandler(context=ssl._create_unverified_context())
         opener = urllib.request.build_opener(handler)
         try:
@@ -148,8 +148,8 @@ class AllRecipesScraper(BaseScraper):
             pass
         return nutrition_dict
 
-    def _scrape(self) -> AllRecipesScrappingData:
-        scrape_data: AllRecipesScrappingData = {
+    def _scrape(self) -> TypeAllRecipeScrappingData:
+        scrape_data: TypeAllRecipeScrappingData = {
             'title': self.get_heading(),
             'subTitle': self.get_sub_heading(),
             'rating': self.get_rating_count(),
@@ -158,20 +158,11 @@ class AllRecipesScraper(BaseScraper):
             'steps': self.get_steps(),
             'nutritionFacts': self.get_nutrition_facts(),
             'nutritionInfo': self.get_nutrition_info(),
+            'ref': self._url,
         }
-        # Check for essential data points and return an empty dict if missing
-        if (
-            self._soup is None
-            or not scrape_data['title']
-            or not scrape_data['subTitle']
-            or not scrape_data['rating']
-            or not scrape_data['recipeDetails']
-            or not scrape_data['ingredients']
-            or not scrape_data['steps']
-            or not scrape_data['nutritionFacts']
-            or not scrape_data['nutritionInfo']
-        ):
-            return {}
+        for key, value in scrape_data.items():
+            if value == '' or value == [] or value == {} or value is None:
+                return {}
         return scrape_data
 
     @classmethod
