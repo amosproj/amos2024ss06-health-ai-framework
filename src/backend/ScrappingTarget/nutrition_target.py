@@ -1,6 +1,6 @@
 from typing import List
 
-from src.backend.Scrapers.Nutrition.nutrition import NutritionScraper
+from src.backend.Scrapers.Nutritionfacts.nutrition import NutritionScraper
 from src.backend.ScrappingTarget.base_target import BaseTarget
 
 

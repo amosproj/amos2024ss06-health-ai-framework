@@ -1,5 +1,5 @@
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.Nutrition import RAW_DIR_PATH, INDEX_FILE_PATH
+from src.backend.Scrapers.Nutritionfacts import RAW_DIR_PATH, INDEX_FILE_PATH
 
 import time
 import json
@@ -262,7 +262,7 @@ class NutritionScraper(BaseScraper):
         new_indexes = set(cls.query_ids())
         new_target_elements = new_indexes - old_indexes
         print(
-            'New Nutrition target elements: '
+            'New Nutritionfacts target elements: '
             + repr(new_target_elements)
             + ' for keywords '
             + repr(target.url)
