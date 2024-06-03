@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 from src.backend.Scrapers.AllRecipes import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Types import AllRecipesScrappingData
 
 
 class AllRecipesScraper(BaseScraper):
@@ -147,30 +148,31 @@ class AllRecipesScraper(BaseScraper):
             pass
         return nutrition_dict
 
-    def _scrape(self) -> str:
-        info = {
+    def _scrape(self) -> AllRecipesScrappingData:
+        scrape_data: AllRecipesScrappingData = {
             'title': self.get_heading(),
-            'sub_title': self.get_sub_heading(),
+            'subTitle': self.get_sub_heading(),
             'rating': self.get_rating_count(),
-            'recipe_details': self.get_recipe_details(),
+            'recipeDetails': self.get_recipe_details(),
             'ingredients': self.get_ingredients(),
             'steps': self.get_steps(),
-            'nutrition_facts': self.get_nutrition_facts(),
-            'nutrition_info': self.get_nutrition_info(),
+            'nutritionFacts': self.get_nutrition_facts(),
+            'nutritionInfo': self.get_nutrition_info(),
         }
-
-        # Check for essential data points and raise an exception if missing
+        # Check for essential data points and return an empty dict if missing
         if (
             self._soup is None
-            or not info['title']
-            or not info['get_recipe_details']
-            or not info['get_ingredients']
-            or not info['get_nutrition_facts']
-            or not info['get_nutrition_info']
+            or not scrape_data['title']
+            or not scrape_data['subTitle']
+            or not scrape_data['rating']
+            or not scrape_data['recipeDetails']
+            or not scrape_data['ingredients']
+            or not scrape_data['steps']
+            or not scrape_data['nutritionFacts']
+            or not scrape_data['nutritionInfo']
         ):
-            info = {}
-
-        return json.dumps(info, indent=2)
+            return {}
+        return scrape_data
 
     @classmethod
     def get_all_recipes_category_urls(cls):
