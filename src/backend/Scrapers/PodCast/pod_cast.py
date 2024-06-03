@@ -13,6 +13,7 @@ from vosk import KaldiRecognizer, Model
 
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PodCast import INDEX_FILE_PATH, RAW_DIR_PATH, VOSK_DIR_PATH
+from src.backend.Types.pod_cast import TypePodCastScrappingData
 
 
 class PodCastScraper(BaseScraper):
@@ -200,6 +201,7 @@ class PodCastScraper(BaseScraper):
             parsed_url = urlparse(PodCastScraper.main_url)
             base_url = f'{parsed_url.scheme}://{parsed_url.netloc}/'
             link = f'{base_url}{title}'
+            self._url = link
             print(f'Downloading and transcribing: {link}')
 
             soup = self.soup_maker(link)
@@ -219,7 +221,7 @@ class PodCastScraper(BaseScraper):
         except Exception as e:
             raise e
 
-    def _scrape(self) -> str:
+    def _scrape(self) -> TypePodCastScrappingData:
         try:
             # download vosk model
             vosk = f'{VOSK_DIR_PATH}/{PodCastScraper.model}'
@@ -230,13 +232,17 @@ class PodCastScraper(BaseScraper):
             transcription = self.download_and_transcribe_from_podcast_id(title=self.element_id)
             if transcription is None:
                 raise ValueError('Podcast does not exist for id: ' + str(id))
-            info = {'title': self.element_id, 'transcription': transcription}
+            info: TypePodCastScrappingData = {
+                'title': self.element_id,
+                'transcript': transcription,
+                'ref': self._url,
+            }
 
         except Exception as e:
             print(e)
             info = {}
 
-        return json.dumps(info, indent=2)
+        return info
 
     @classmethod
     def get_all_possible_elements(cls, target) -> []:
