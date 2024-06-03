@@ -54,6 +54,7 @@ scrape-podcast = "python -m src.backend.Scrapers.PodCast.main"
 scrape-pubmed = "python -m src.backend.Scrapers.PubMed.main"
 scrape-youtube = "python -m src.backend.Scrapers.YouTube.main"
 scrape-archive = "python -m src.backend.Scrapers.Archive.main"
+scrape-nutritionfacts = "python -m src.backend.Scrapers.Nutritionfacts.main"
 
 [tool.pdm]
 distribution = false
