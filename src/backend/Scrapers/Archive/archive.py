@@ -1,5 +1,6 @@
 import json
 import os
+from typing import List
 
 import arxiv
 from pypdf import PdfReader
@@ -182,14 +183,8 @@ class ArchiveScraper(BaseScraper):
         return info
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         old_indexes = set(cls.INDEX['indexes'])
         new_indexes = set(cls.query_ids_per_keyword(target.keywords, target.max_results))
         new_target_elements = new_indexes - old_indexes
-        print(
-            'New Arxiv target elements: '
-            + repr(new_target_elements)
-            + ' for keywords '
-            + repr(target.keywords)
-        )
         return [ArchiveScraper(element_id=id) for id in new_target_elements]

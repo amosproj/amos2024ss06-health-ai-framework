@@ -2,6 +2,7 @@ import json
 import os
 import re
 import wave
+from typing import List
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen, urlretrieve
 from zipfile import ZipFile
@@ -245,7 +246,7 @@ class PodCastScraper(BaseScraper):
         return info
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         """Get all possible elements from the target url."""
         cls.main_url = target.url
         cls.model = target.model
@@ -254,10 +255,4 @@ class PodCastScraper(BaseScraper):
         old_indexes = set(cls.INDEX['indexes'])
         new_indexes = set(cls.query_ids(cls.main_url, target.num_podcasts))
         new_target_elements = new_indexes - old_indexes
-        print(
-            'New Podcast target elements: '
-            + repr(new_target_elements)
-            + ' from url '
-            + repr(target.url)
-        )  # TODO: remove debug
         return [PodCastScraper(element_id=id) for id in new_target_elements]

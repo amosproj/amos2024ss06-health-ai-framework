@@ -2,6 +2,7 @@ import json
 import logging
 import re
 import time
+from typing import List
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -254,17 +255,11 @@ class NutritionScraper(BaseScraper):
         return info
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         cls.url = target.url
         cls.max_pages = target.max_pages
 
         old_indexes = set(cls.INDEX['indexes'])
         new_indexes = set(cls.query_ids())
         new_target_elements = new_indexes - old_indexes
-        print(
-            'New Nutritionfacts target elements: '
-            + repr(new_target_elements)
-            + ' for keywords '
-            + repr(target.url)
-        )
         return [NutritionScraper(element_id=id) for id in new_target_elements]

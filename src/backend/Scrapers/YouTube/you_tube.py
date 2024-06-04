@@ -2,6 +2,7 @@ import html
 import json
 import os
 import re
+from typing import List
 from xml.etree import ElementTree
 
 import pyyoutube
@@ -129,10 +130,9 @@ class YouTubeScraper(BaseScraper):
         return channel_id
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         old_indexes = set(cls.INDEX['indexes'])
         channel_id = cls.get_channel_id(url=target.url)
         new_indexes = set(cls.get_all_video_ids(channel_id=channel_id))
         new_target_elements = new_indexes - old_indexes
-        print(new_target_elements)
         return [YouTubeScraper(element_id=id) for id in new_target_elements]

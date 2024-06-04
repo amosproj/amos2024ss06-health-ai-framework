@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from typing import List
 
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
@@ -242,15 +243,9 @@ class PubMedScraper(BaseScraper):
         return data
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         old_indexes = set(cls.INDEX['indexes'])
         query_str = ' '.join(target.keywords)
         new_indexes = set(cls.search_free_fulltext(query_str, target.max_results))
         new_target_elements = new_indexes - old_indexes
-        print(
-            'New Pubmed target elements: '
-            + repr(new_target_elements)
-            + ' for keywords '
-            + repr(query_str)
-        )
         return [PubMedScraper(element_id=id) for id in new_target_elements]
