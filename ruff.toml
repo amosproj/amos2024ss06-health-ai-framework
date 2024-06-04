@@ -11,7 +11,7 @@ quote-style = "single"
 skip-magic-trailing-comma = true
 
 [lint]
-select = ["F401", "F632", "F841", "E", "W", "N", "D"]
+select = ["F401", "F632", "F841", "E", "W", "N", "D", "I"]
 ignore = [
   "D419",
   "D418",
@@ -32,5 +32,6 @@ ignore = [
   "D203",
   "D213",
   "D400",
-  "D415"
+  "D415",
+  "N815"
 ]

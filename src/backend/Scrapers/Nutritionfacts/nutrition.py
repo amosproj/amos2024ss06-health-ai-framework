@@ -1,19 +1,21 @@
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.Nutritionfacts import RAW_DIR_PATH, INDEX_FILE_PATH
-
-import time
 import json
+import logging
+import re
+import time
+from typing import List
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
-import re
-import logging
 
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Scrapers.Nutritionfacts import INDEX_FILE_PATH, RAW_DIR_PATH
+from src.backend.Types.nutrition import TypeNutritionScrappingData
 
 # Suppress Selenium log messages
 logging.getLogger('selenium').setLevel(logging.WARNING)
@@ -234,14 +236,13 @@ class NutritionScraper(BaseScraper):
             title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url = (
                 nutrition
             )
-            info = {
-                'title': title,
-                'date': date,
+            info: TypeNutritionScrappingData = {
                 'author': author,
-                'content': content_chunks,
-                'key take away': key_take_away_chunks,
-                'images': image_urls,
-                'url': blog_url,
+                'date': date,
+                'keyPoints': key_take_away_chunks,
+                'ref': blog_url,
+                'title': title,
+                'transcript': content_chunks,
             }
 
             time.sleep(2)
@@ -251,20 +252,14 @@ class NutritionScraper(BaseScraper):
             print(e)
             info = {}
 
-        return json.dumps(info, indent=2)
+        return info
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         cls.url = target.url
         cls.max_pages = target.max_pages
 
         old_indexes = set(cls.INDEX['indexes'])
         new_indexes = set(cls.query_ids())
         new_target_elements = new_indexes - old_indexes
-        print(
-            'New Nutritionfacts target elements: '
-            + repr(new_target_elements)
-            + ' for keywords '
-            + repr(target.url)
-        )
         return [NutritionScraper(element_id=id) for id in new_target_elements]

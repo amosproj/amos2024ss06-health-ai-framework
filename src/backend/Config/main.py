@@ -1,5 +1,4 @@
 from src.backend.Config.config import Config
-
 from src.backend.ScrappingTarget.nutrition_target import NutritionTarget
 
 if __name__ == '__main__':

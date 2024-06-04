@@ -1,15 +1,18 @@
-import ssl
 import json
-from bs4 import BeautifulSoup
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.AllRecipes import RAW_DIR_PATH, INDEX_FILE_PATH
+import ssl
 import urllib.request
+from typing import Dict, List
 from urllib.request import HTTPSHandler
+
+from bs4 import BeautifulSoup
+
+from src.backend.Scrapers.AllRecipes import INDEX_FILE_PATH, RAW_DIR_PATH
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Types.all_recipes import TypeAllRecipeScrappingData
 
 
 class AllRecipesScraper(BaseScraper):
     INDEX = json.loads(open(INDEX_FILE_PATH).read())
-    BASE_URL = 'https://www.allrecipes.com/recipe/{}/{}'
     HEADERS = {
         'User-Agent': (
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
@@ -25,8 +28,9 @@ class AllRecipesScraper(BaseScraper):
 
     def __init__(self, element_id: str, recipe_name: str):
         super().__init__(element_id=element_id)
-        url = self.BASE_URL.format(element_id, recipe_name)
-        req = urllib.request.Request(url, headers=self.HEADERS)
+        base_url = AllRecipesScraper.url + 'recipe/{}/{}'
+        self._url = base_url.format(element_id, recipe_name)
+        req = urllib.request.Request(self._url, headers=self.HEADERS)
         handler = HTTPSHandler(context=ssl._create_unverified_context())
         opener = urllib.request.build_opener(handler)
         try:
@@ -45,21 +49,21 @@ class AllRecipesScraper(BaseScraper):
     def base_dir(cls) -> str:
         return RAW_DIR_PATH
 
-    def get_heading(self):
+    def get_heading(self) -> str:
         try:
             heading = self._soup.select_one('.article-heading.type--lion').get_text(strip=True)
             return heading
         except AttributeError:
             return ''
 
-    def get_sub_heading(self):
+    def get_sub_heading(self) -> str:
         try:
-            s_heading = self._soup.select_one('.article-subheading').get_text(strip=True)[1:-1]
-            return s_heading
+            sub_heading = self._soup.select_one('.article-subheading').get_text(strip=True)[1:-1]
+            return sub_heading
         except AttributeError:
             return ''
 
-    def get_rating_count(self):
+    def get_rating_count(self) -> float:
         try:
             rating_count_text = self._soup.select_one('.mntl-recipe-review-bar__rating').get_text(
                 strip=True
@@ -69,7 +73,7 @@ class AllRecipesScraper(BaseScraper):
         except (AttributeError, ValueError):
             return 0.0
 
-    def get_recipe_details(self):
+    def get_recipe_details(self) -> Dict[str, str]:
         details = {}
         try:
             items = self._soup.find_all(class_='mntl-recipe-details__item')
@@ -85,7 +89,7 @@ class AllRecipesScraper(BaseScraper):
             pass
         return details
 
-    def get_ingredients(self):
+    def get_ingredients(self) -> List[str]:
         ingredients = []
         try:
             items = self._soup.find_all(class_='mntl-structured-ingredients__list-item')
@@ -101,7 +105,7 @@ class AllRecipesScraper(BaseScraper):
             pass
         return ingredients
 
-    def get_steps(self):
+    def get_steps(self) -> List[str]:
         try:
             steps = self._soup.select('.recipe__steps-content ol li')
             step_list = [step.get_text(strip=True) for step in steps]
@@ -109,7 +113,7 @@ class AllRecipesScraper(BaseScraper):
         except AttributeError:
             return []
 
-    def get_nutrition_facts(self):
+    def get_nutrition_facts(self) -> Dict[str, str]:
         nutrition_dict = {}
         try:
             rows = self._soup.select('.mntl-nutrition-facts-summary__table-row')
@@ -123,7 +127,7 @@ class AllRecipesScraper(BaseScraper):
             pass
         return nutrition_dict
 
-    def get_nutrition_info(self):
+    def get_nutrition_info(self) -> Dict[str, Dict[str, str]]:
         nutrition_dict = {}
         try:
             rows = self._soup.select('.mntl-nutrition-facts-label__table-body tr')
@@ -145,35 +149,27 @@ class AllRecipesScraper(BaseScraper):
             pass
         return nutrition_dict
 
-    def _scrape(self) -> str:
-        info = {
+    def _scrape(self) -> TypeAllRecipeScrappingData:
+        scrape_data: TypeAllRecipeScrappingData = {
             'title': self.get_heading(),
-            'sub_title': self.get_sub_heading(),
+            'subTitle': self.get_sub_heading(),
             'rating': self.get_rating_count(),
-            'recipe_details': self.get_recipe_details(),
+            'recipeDetails': self.get_recipe_details(),
             'ingredients': self.get_ingredients(),
             'steps': self.get_steps(),
-            'nutrition_facts': self.get_nutrition_facts(),
-            'nutrition_info': self.get_nutrition_info(),
+            'nutritionFacts': self.get_nutrition_facts(),
+            'nutritionInfo': self.get_nutrition_info(),
+            'ref': self._url,
         }
-
-        # Check for essential data points and raise an exception if missing
-        if (
-            self._soup is None
-            or not info['title']
-            or not info['get_recipe_details']
-            or not info['get_ingredients']
-            or not info['get_nutrition_facts']
-            or not info['get_nutrition_info']
-        ):
-            info = {}
-
-        return json.dumps(info, indent=2)
+        for key, value in scrape_data.items():
+            if value in ['', [], {}, None]:
+                return {}
+        return scrape_data
 
     @classmethod
-    def get_all_recipes_category_urls(cls):
+    def get_all_recipes_category_urls(cls) -> List[str]:
         category_urls = []
-        req = urllib.request.Request('https://www.allrecipes.com/', headers=cls.HEADERS)
+        req = urllib.request.Request(cls.url, headers=cls.HEADERS)
         handler = HTTPSHandler(context=ssl._create_unverified_context())
         opener = urllib.request.build_opener(handler)
         try:
@@ -184,14 +180,15 @@ class AllRecipesScraper(BaseScraper):
                 if '/recipes/' in link['href']:
                     category_urls.append(link['href'])
         except Exception as e:
-            print(f'Failed to fetch data due to: {e}')
+            print(f'Failed to fetch category URLs due to: {e}')
         return category_urls
 
     @classmethod
-    def get_all_recipes_of_page(cls, base_url):
+    def get_all_recipes_of_page(cls, link_url: str, limit: int = 10) -> List[Dict[str, str]]:
         recipes = []
-        current_url = base_url
-        while current_url:
+        current_url = link_url
+        fetched_count = 0
+        while current_url and fetched_count < limit:
             req = urllib.request.Request(current_url, headers=cls.HEADERS)
             handler = HTTPSHandler(context=ssl._create_unverified_context())
             opener = urllib.request.build_opener(handler)
@@ -202,37 +199,40 @@ class AllRecipesScraper(BaseScraper):
                 # Find all recipe URLs on the current page
                 recipe_links = soup.find_all('a', href=lambda href: href and '/recipe/' in href)
                 for link in recipe_links:
+                    if fetched_count >= limit:
+                        break
                     # Extract id and name from the URL
                     url_parts = link['href'].split('/')
                     recipe_id = url_parts[-3]
                     recipe_name = url_parts[-2]
+                    if recipe_id in cls.INDEX.get('indexes', []):
+                        continue
                     # Append id and name to the list as a dictionary
                     recipes.append({'id': recipe_id, 'name': recipe_name})
+                    fetched_count += 1
                 # Find the next page URL
                 next_button = soup.find(class_='mntl-pagination__next')
                 next_button_url = next_button.find('a')['href'] if next_button else None
                 current_url = next_button_url if next_button_url else None
             except Exception as e:
-                print(f'Failed to fetch data due to: {e}')
+                print(f'Failed to fetch recipes from {current_url} due to: {e}')
                 break
         return recipes
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
-        old_indexes = set(cls.INDEX['indexes'])
-        all_possible_category_urls = cls.get_all_recipes_category_urls()
-        all_possible_recipes_of_pages = []
-        for url in all_possible_category_urls:
-            all_possible_recipes_of_pages.extend(cls.get_all_recipes_of_page(url))
-        new_indexes = set(recipe['id'] for recipe in all_possible_recipes_of_pages)
-        new_possible_elements = new_indexes - old_indexes
-        new_targets = [
-            recipe
-            for recipe in all_possible_recipes_of_pages
-            if recipe['id'] in new_possible_elements
-        ]
-        print(new_targets)
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
+        cls.url = target.url
+        old_indexes = set(cls.INDEX.get('indexes', []))
+        all_category_urls = cls.get_all_recipes_category_urls()
+        all_recipes = []
+        for url in all_category_urls:
+            all_recipes.extend(cls.get_all_recipes_of_page(url, target.limit))
+            if len(all_recipes) >= target.limit:
+                break
+        new_recipe_ids = set(recipe['id'] for recipe in all_recipes)
+        new_recipe_ids.difference_update(old_indexes)
+        new_recipes = [recipe for recipe in all_recipes if recipe['id'] in new_recipe_ids]
         return [
-            AllRecipesScraper(element_id=target['id'], recipe_name=target['name'])
-            for target in new_targets
+            AllRecipesScraper(element_id=recipe['id'], recipe_name=recipe['name'])
+            for recipe in new_recipes
         ]

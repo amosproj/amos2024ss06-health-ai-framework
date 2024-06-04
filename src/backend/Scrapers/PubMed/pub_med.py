@@ -1,15 +1,17 @@
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
-
-import os
 import json
 import logging
+import os
+from typing import List
+
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
+from src.backend.Types.pub_med import TypePubMedScrappingData
 
 logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
 
 from Bio import Entrez  # noqa: E402
-from pypdf import PdfReader  # noqa: E402
 from paperscraper.pdf import save_pdf  # noqa: E402
+from pypdf import PdfReader  # noqa: E402
 
 
 class PubMedScraper(BaseScraper):
@@ -214,7 +216,7 @@ class PubMedScraper(BaseScraper):
     # MARK: _scrape, get_ids
     # ---------------------------------------------------------
 
-    def _scrape(self) -> str:
+    def _scrape(self) -> TypePubMedScrappingData:
         try:
             metadata = self.fetch_details(self.element_id)
 
@@ -227,29 +229,23 @@ class PubMedScraper(BaseScraper):
             file_name = self.get_paper_from_doi(doi, title)
             text_data = self.get_txt_from_pdf(file_name)
 
-            data = {
-                'title': title,
-                'authors': authors,
-                'publication_date': str(publication_date),
+            data: TypePubMedScrappingData = {
                 'abstract': abstract,
-                'pdf_url': doi,
-                'text': text_data,
+                'authors': authors,
+                'publicationDate': publication_date,
+                'ref': doi,
+                'title': title,
+                'transcript': text_data,
             }
         except Exception as e:
             print(f'Error occured in PubmedScraper: {e}')
             data = {}
-        return json.dumps(data, indent=2)
+        return data
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         old_indexes = set(cls.INDEX['indexes'])
         query_str = ' '.join(target.keywords)
         new_indexes = set(cls.search_free_fulltext(query_str, target.max_results))
         new_target_elements = new_indexes - old_indexes
-        print(
-            'New Pubmed target elements: '
-            + repr(new_target_elements)
-            + ' for keywords '
-            + repr(query_str)
-        )
         return [PubMedScraper(element_id=id) for id in new_target_elements]

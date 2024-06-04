@@ -1,11 +1,12 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
-from langchain.embeddings import OpenAIEmbeddings
-from langchain_community.llms.openai import OpenAI
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores.chroma import Chroma
-import os
 import json
+import os
+
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.schema import Document
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.llms.openai import OpenAI
+from langchain_community.vectorstores.chroma import Chroma
 
 
 class CustomJSONLoader:

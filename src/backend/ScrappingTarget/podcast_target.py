@@ -7,8 +7,8 @@ from src.backend.ScrappingTarget.base_target import BaseTarget
 class PodcastTarget(BaseTarget):
     def __init__(
         self,
-        url=str,
-        num_podcasts=None,
+        url='https://peterattiamd.com/podcast/archive/',
+        num_podcasts=1,
         model='vosk-model-small-en-us-0.15',
         model_download='https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip',
     ):

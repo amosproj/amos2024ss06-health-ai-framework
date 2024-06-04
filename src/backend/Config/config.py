@@ -13,10 +13,10 @@ import json
 from src.backend.Config import CONFIG_FILE_PATH
 from src.backend.ScrappingTarget.all_recipes_target import AllRecipesTarget
 from src.backend.ScrappingTarget.archive_target import ArchiveTarget
+from src.backend.ScrappingTarget.nutrition_target import NutritionTarget
 from src.backend.ScrappingTarget.podcast_target import PodcastTarget
 from src.backend.ScrappingTarget.pubmed_target import PubMedTarget
 from src.backend.ScrappingTarget.youtube_target import YouTubeTarget
-from src.backend.ScrappingTarget.nutrition_target import NutritionTarget
 
 
 class Config:

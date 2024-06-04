@@ -1,11 +1,16 @@
 import html
 import json
 import os
+import re
+from typing import List
+from xml.etree import ElementTree
+
 import pyyoutube
 import requests
+
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.YouTube import INDEX_FILE_PATH, RAW_DIR_PATH
-from xml.etree import ElementTree
+from src.backend.Types.you_tube import TypeYouTubeScrappingData
 
 
 class YouTubeScraper(BaseScraper):
@@ -27,29 +32,52 @@ class YouTubeScraper(BaseScraper):
     def base_dir(cls) -> str:
         return RAW_DIR_PATH
 
-    def _scrape(self) -> str:
+    def _get_video_data(self):
         payload = {
             'context': {'client': {'clientName': 'WEB', 'clientVersion': '2.20210721.00.00'}},
             'videoId': self.element_id,
         }
         headers = {'Content-Type': 'application/json'}
+        response = requests.post(self.YOUTUBE_BASE_URL, headers=headers, json=payload)
+        response.raise_for_status()
+        return response.json()
+
+    def _get_captions(self, captions):
+        for track in captions:
+            if track['languageCode'] == 'en':
+                track_url = track['baseUrl']
+                res = requests.get(track_url)
+                res.raise_for_status()
+                return res.content
+        return None
+
+    def _parse_transcript(self, xml_content):
+        root_xml = ElementTree.fromstring(xml_content)
+        transcript = [element.text for element in root_xml.findall('.//text')]
+        return html.unescape(' '.join(transcript))
+
+    def _scrape(self) -> TypeYouTubeScrappingData:
+        scrap_data: TypeYouTubeScrappingData = {}
         try:
-            response = requests.post(YouTubeScraper.YOUTUBE_BASE_URL, headers=headers, json=payload)
-            if response.status_code == 200:
-                data = response.json()
-                captions = data['captions']['playerCaptionsTracklistRenderer']['captionTracks']
-                for track in captions:
-                    if track['languageCode'] == 'en':
-                        track_url = track['baseUrl']
-                        res = requests.get(track_url)
-                        if res.status_code == 200:
-                            root_xml = ElementTree.fromstring(res.content)
-                            transcript = [element.text for element in root_xml.findall('.//text')]
-                            transcript = html.unescape(' '.join(transcript))
-                            return transcript
+            data = self._get_video_data()
+            captions = data['captions']['playerCaptionsTracklistRenderer']['captionTracks']
+            video_details = data['videoDetails']
+            transcript = ''
+            xml_content = self._get_captions(captions)
+            if xml_content:
+                transcript = self._parse_transcript(xml_content)
+            scrap_data['videoId'] = video_details.get('videoId', '')
+            scrap_data['title'] = video_details.get('title', '')
+            scrap_data['keywords'] = video_details.get('keywords', [])
+            scrap_data['shortDescription'] = video_details.get('shortDescription', '')
+            scrap_data['viewCount'] = int(video_details.get('viewCount', '0'))
+            scrap_data['author'] = video_details.get('author', '')
+            scrap_data['transcript'] = re.sub(r'\n+', ' ', transcript)
+            scrap_data['ref'] = f'https://www.youtube.com/watch?v={scrap_data["videoId"]}'
+            return scrap_data
         except Exception as e:
-            print(f'Error occurred: {e}')
-        return ''
+            print(f'Error: {e} No caption found for videoId: {self.element_id}')
+            return {}
 
     @classmethod
     def get_all_video_ids(cls, channel_id: str) -> list[str]:
@@ -102,10 +130,9 @@ class YouTubeScraper(BaseScraper):
         return channel_id
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         old_indexes = set(cls.INDEX['indexes'])
         channel_id = cls.get_channel_id(url=target.url)
         new_indexes = set(cls.get_all_video_ids(channel_id=channel_id))
         new_target_elements = new_indexes - old_indexes
-        print(new_target_elements)
         return [YouTubeScraper(element_id=id) for id in new_target_elements]

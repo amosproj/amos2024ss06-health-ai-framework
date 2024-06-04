@@ -1,17 +1,20 @@
-from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
-from src.backend.Scrapers.PodCast import INDEX_FILE_PATH, RAW_DIR_PATH, VOSK_DIR_PATH
-
+import json
 import os
 import re
-import json
+import wave
+from typing import List
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen, urlretrieve
+from zipfile import ZipFile
+
+import requests
 from bs4 import BeautifulSoup
 from pydub import AudioSegment
-from vosk import Model, KaldiRecognizer
-import wave
-from urllib.parse import urlparse
-import requests
-from zipfile import ZipFile
+from vosk import KaldiRecognizer, Model
+
+from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
+from src.backend.Scrapers.PodCast import INDEX_FILE_PATH, RAW_DIR_PATH, VOSK_DIR_PATH
+from src.backend.Types.pod_cast import TypePodCastScrappingData
 
 
 class PodCastScraper(BaseScraper):
@@ -199,6 +202,7 @@ class PodCastScraper(BaseScraper):
             parsed_url = urlparse(PodCastScraper.main_url)
             base_url = f'{parsed_url.scheme}://{parsed_url.netloc}/'
             link = f'{base_url}{title}'
+            self._url = link
             print(f'Downloading and transcribing: {link}')
 
             soup = self.soup_maker(link)
@@ -218,7 +222,7 @@ class PodCastScraper(BaseScraper):
         except Exception as e:
             raise e
 
-    def _scrape(self) -> str:
+    def _scrape(self) -> TypePodCastScrappingData:
         try:
             # download vosk model
             vosk = f'{VOSK_DIR_PATH}/{PodCastScraper.model}'
@@ -229,16 +233,20 @@ class PodCastScraper(BaseScraper):
             transcription = self.download_and_transcribe_from_podcast_id(title=self.element_id)
             if transcription is None:
                 raise ValueError('Podcast does not exist for id: ' + str(id))
-            info = {'title': self.element_id, 'transcription': transcription}
+            info: TypePodCastScrappingData = {
+                'title': self.element_id,
+                'transcript': transcription,
+                'ref': self._url,
+            }
 
         except Exception as e:
             print(e)
             info = {}
 
-        return json.dumps(info, indent=2)
+        return info
 
     @classmethod
-    def get_all_possible_elements(cls, target) -> []:
+    def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         """Get all possible elements from the target url."""
         cls.main_url = target.url
         cls.model = target.model
@@ -247,10 +255,4 @@ class PodCastScraper(BaseScraper):
         old_indexes = set(cls.INDEX['indexes'])
         new_indexes = set(cls.query_ids(cls.main_url, target.num_podcasts))
         new_target_elements = new_indexes - old_indexes
-        print(
-            'New Podcast target elements: '
-            + repr(new_target_elements)
-            + ' from url '
-            + repr(target.url)
-        )  # TODO: remove debug
         return [PodCastScraper(element_id=id) for id in new_target_elements]

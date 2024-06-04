@@ -1,7 +1,6 @@
 import json
 import os
 
-
 RAW_DIR_PATH = os.path.join('data', 'nutrition', 'raw')
 INDEX_FILE_PATH = os.path.join('data', 'nutrition', 'index.json')
 
