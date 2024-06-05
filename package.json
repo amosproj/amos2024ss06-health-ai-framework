@@ -1,7 +1,7 @@
 {
   "name": "ailixir",
   "version": "1.0.0",
-  "main": "./src/frontend/index.tsx",
+  "main": "./src/frontend/index.ts",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo start --android",
