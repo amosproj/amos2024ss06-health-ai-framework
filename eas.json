@@ -6,8 +6,7 @@
   "build": {
     "dev": {
       "developmentClient": true,
-      "distribution": "internal",
-      "channel": "dev"
+      "distribution": "internal"
     },
     "dev:android": {
       "extends": "dev",
