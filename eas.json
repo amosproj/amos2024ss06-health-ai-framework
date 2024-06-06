@@ -5,6 +5,7 @@
   },
   "build": {
     "dev": {
+      "autoIncrement": true,
       "developmentClient": true,
       "distribution": "internal"
     },
@@ -29,8 +30,7 @@
       }
     },
     "prod": {
-      "autoIncrement": true,
-      "channel": "prod"
+      "autoIncrement": true
     },
     "prod:android": {
       "extends": "prod",
