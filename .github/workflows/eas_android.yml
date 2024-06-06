@@ -1,0 +1,43 @@
+name: "CI: Build Android with EAS"
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Build Type"
+        required: true
+        type: choice
+        default: preview
+        options:
+          - dev
+          - preview
+          - production
+
+jobs:
+  build:
+    name: Install and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: yarn
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Set the variables
+        run: |
+          if [ "${{ inputs.build_type }}" == "dev" ]; then
+            echo "EAS_PROFILE=dev:android" >> $GITHUB_ENV
+          elif [ "${{ inputs.build_type }}" == "preview" ]; then
+            echo "EAS_PROFILE=pre:android" >> $GITHUB_ENV
+          else
+            echo "EAS_PROFILE=prod:android" >> $GITHUB_ENV
+          fi
+      - name: Build on EAS
+        run: eas build --platform android --profile $EAS_PROFILE --non-interactive --no-wait
