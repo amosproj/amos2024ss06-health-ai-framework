@@ -1,0 +1,58 @@
+name: "CI: Build iOS with EAS"
+
+on:
+  workflow_dispatch:
+    inputs:
+      device_type:
+        description: "Platform"
+        required: true
+        type: choice
+        default: device
+        options:
+          - device
+          - simulator
+      build_type:
+        description: "Build Type"
+        required: true
+        type: choice
+        default: preview
+        options:
+          - dev
+          - preview
+          - production
+
+jobs:
+  build:
+    name: Install and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: yarn
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Set the variables
+        run: |
+          if [ "${{ inputs.device_type }}" == "device" ]; then
+            if [ "${{ inputs.build_type }}" == "dev" ]; then
+              echo "EAS_PROFILE=dev:ios" >> $GITHUB_ENV
+            elif [ "${{ inputs.build_type }}" == "preview" ]; then
+              echo "EAS_PROFILE=pre:ios" >> $GITHUB_ENV
+            else
+              echo "EAS_PROFILE=prod:ios" >> $GITHUB_ENV
+          elif [ "${{ inputs.device_type }}" == "simulator" ]; then
+            if [ "${{ inputs.build_type }}" == "dev" ]; then
+              echo "EAS_PROFILE=dev:ios-simulator" >> $GITHUB_ENV
+            elif [ "${{ inputs.build_type }}" == "preview" ]; then
+              echo "EAS_PROFILE=pre:ios-simulator" >> $GITHUB_ENV
+            else
+              echo "EAS_PROFILE=prod:ios-simulator" >> $GITHUB_ENV
+      - name: Build on EAS
+        run: eas build --platform ios --profile $EAS_PROFILE --non-interactive --no-wait
