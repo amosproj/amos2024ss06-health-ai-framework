@@ -21,7 +21,7 @@
         "resourceClass": "m1-medium"
       }
     },
-    "dev:ios-device": {
+    "dev:ios": {
       "extends": "dev",
       "channel": "dev-ios-device",
       "ios": {
