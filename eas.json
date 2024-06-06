@@ -29,6 +29,33 @@
         "resourceClass": "m1-medium"
       }
     },
+    "pre": {
+      "autoIncrement": true,
+      "distribution": "internal"
+    },
+    "pre:android": {
+      "extends": "pre",
+      "channel": "pre-android",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "pre:ios": {
+      "extends": "pre",
+      "channel": "pre-ios",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m1-medium"
+      }
+    },
+    "pre:ios-simulator": {
+      "extends": "pre",
+      "channel": "pre-ios-simulator",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m1-medium"
+      }
+    },
     "prod": {
       "autoIncrement": true
     },
