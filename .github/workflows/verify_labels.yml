@@ -1,4 +1,4 @@
-name: "CI: Release Draft Helper"
+name: "CI: Verify Labels on Pull Request"
 
 on:
   pull_request:
@@ -17,7 +17,7 @@ permissions:
 jobs:
   verify-labels:
     runs-on: ubuntu-latest
-    name: "Job: Release Draft Helper"
+    name: "Job: Verify Labels on Pull Request"
     if: github.event.pull_request.merged == false
     steps:
       # Checkout to repository
