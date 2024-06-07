@@ -1,0 +1,32 @@
+name: "CI: Check Lint and Format TS & TSX Code"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
+
+jobs:
+  check-lint-format:
+    runs-on: ubuntu-latest
+    name: "Job: Check Lint and Format TS & TSX Code"
+    steps:
+      # Checkout to repository
+      - name: Checkout
+        uses: actions/checkout@v4
+      # Setup Biome
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+      - name: Run Biome
+        run: biome ci .
