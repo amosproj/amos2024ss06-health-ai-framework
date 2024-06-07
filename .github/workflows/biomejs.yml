@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
   pull_request:
     branches:
       - main
@@ -29,4 +34,4 @@ jobs:
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
       - name: Run Biome
-        run: biome ci .
+        run: biome ci ./src/frontend
