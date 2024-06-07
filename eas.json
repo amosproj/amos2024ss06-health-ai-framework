@@ -5,9 +5,9 @@
   },
   "build": {
     "dev": {
+      "autoIncrement": true,
       "developmentClient": true,
-      "distribution": "internal",
-      "channel": "dev"
+      "distribution": "internal"
     },
     "dev:android": {
       "extends": "dev",
@@ -21,7 +21,7 @@
         "resourceClass": "m1-medium"
       }
     },
-    "dev:ios-device": {
+    "dev:ios": {
       "extends": "dev",
       "channel": "dev-ios-device",
       "ios": {
@@ -29,9 +29,35 @@
         "resourceClass": "m1-medium"
       }
     },
-    "prod": {
+    "pre": {
       "autoIncrement": true,
-      "channel": "prod"
+      "distribution": "internal"
+    },
+    "pre:android": {
+      "extends": "pre",
+      "channel": "pre-android",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "pre:ios": {
+      "extends": "pre",
+      "channel": "pre-ios",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m1-medium"
+      }
+    },
+    "pre:ios-simulator": {
+      "extends": "pre",
+      "channel": "pre-ios-simulator",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m1-medium"
+      }
+    },
+    "prod": {
+      "autoIncrement": true
     },
     "prod:android": {
       "extends": "prod",
