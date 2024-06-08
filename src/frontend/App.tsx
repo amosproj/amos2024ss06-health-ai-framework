@@ -2,9 +2,11 @@ import { useFonts } from 'expo-font';
 import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
 import { useCallback, useEffect } from 'react';
 import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import { AppNavigation } from './AppNavigation';
 import { UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
 
@@ -35,13 +37,14 @@ export function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <PaperProvider theme={LightTheme}>
-          <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-            <UpdateApp />
+      <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <GestureHandlerRootView>
+          <PaperProvider theme={LightTheme}>
+            <AppNavigation />
             <Toast />
-          </View>
-        </PaperProvider>
+            <UpdateApp />
+          </PaperProvider>
+        </GestureHandlerRootView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
