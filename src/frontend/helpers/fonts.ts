@@ -4,5 +4,5 @@ export const Fonts = {
   MEDIUM: 'open-sans-medium',
   SEMI_BOLD: 'open-sans-semi-bold',
   BOLD: 'open-sans-bold',
-  EXTRA_BOLD: 'open-sans-extra-bold',
+  EXTRA_BOLD: 'open-sans-extra-bold'
 };

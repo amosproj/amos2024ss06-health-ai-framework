@@ -19,14 +19,14 @@ export function UpdateApp() {
       Toast.show({
         type: 'success',
         text1: 'Update Success',
-        text2: 'The app has been updated successfully.',
+        text2: 'The app has been updated successfully.'
       });
     } catch (error) {
       Toast.show({
         type: 'error',
         text1: 'Update Error',
-        text2: 'Failed to update the app. Please try again.',
-      })
+        text2: 'Failed to update the app. Please try again.'
+      });
     }
   };
 
