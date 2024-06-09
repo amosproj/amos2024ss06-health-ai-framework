@@ -29,7 +29,7 @@ export function CustomDrawerContent(props) {
     const [searchQuery, setSearchQuery] = React.useState('');
     const onChangeSearch = query => setSearchQuery(query);
 
-        // remove keyboard once menu is closed
+    // remove keyboard once menu is closed
     const navigation = useNavigation();
     React.useEffect(() => {
         const unsubscribe = navigation.addListener('state', () => {
@@ -41,6 +41,19 @@ export function CustomDrawerContent(props) {
         unsubscribe();
         };
     }, [navigation]);
+
+    // define navigation functions
+    const goToProfile = () => {
+        navigation.navigate('Profile');
+    }
+    const handleLogout = () => {
+        //TODO: additional stuff
+        navigation.navigate('Login');
+    }
+    const goToChat = () => {
+        //TODO: load correct chat
+        navigation.navigate('Chat');
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -56,22 +69,22 @@ export function CustomDrawerContent(props) {
                     <View style={{height: 10}}/>
                 </Drawer.Section>
                 <Drawer.Section style={{marginTop: 10}}>
-                    <Drawer.Item label="MedicineBot" onPress={() => {}} style={styles.agentSelectionItem} />
-                    <Drawer.Item label="CarBot" onPress={() => {}} style={styles.agentSelectionItem} />
-                    <Drawer.Item label="ChessBot" onPress={() => {}} style={styles.agentSelectionItem} />
+                    <Drawer.Item label="MedicineBot" onPress={ goToChat } style={styles.agentSelectionItem} />
+                    <Drawer.Item label="CarBot" onPress={ goToChat } style={styles.agentSelectionItem} />
+                    <Drawer.Item label="ChessBot" onPress={ goToChat } style={styles.agentSelectionItem} />
                     {/* custom padding because doesn't work with Drawer.Section props*/}
                     <View style={{height: 10}}/>
                 </Drawer.Section>
                 <Drawer.Section title="Recent Chats" showDivider={false}>
-                    <RecentChatButton label="How can I fix my diet?" onPress={() => { /* TODO: Open respective chat */ }}/>
-                    <RecentChatButton label="Which car should I buy next?" onPress={() => { /* TODO: Open respective chat */ }}/>
-                    <RecentChatButton label="What's insomnia?" onPress={() => { /* TODO: Open respective chat */}}/>
+                    <RecentChatButton label="How can I fix my diet?" onPress={ goToChat }/>
+                    <RecentChatButton label="Which car should I buy next?" onPress={ goToChat }/>
+                    <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
                 </Drawer.Section>
             </DrawerContentScrollView>
             <DrawerFooter
                 userName="Dave1234"
-                onProfilePress={() => { /* TODO: Open Profile Settings */ }}
-                onLogoutPress={() => { /* TODO: Handle logout */ }}
+                onProfilePress={() => { goToProfile() }}
+                onLogoutPress={() => { handleLogout() }}
             />
         </SafeAreaView>
     );
