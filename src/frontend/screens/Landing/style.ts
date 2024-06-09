@@ -6,5 +6,8 @@ export const Style = StyleSheet.create({
   },
   title: {
     textAlign: 'center'
+  },
+  sheetContainer: {
+    padding: 16
   }
 });
