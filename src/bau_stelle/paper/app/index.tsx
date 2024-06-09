@@ -3,7 +3,7 @@ import { Text} from "react-native-paper";
 import { View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { IconButton } from 'react-native-paper';
-import { CustomDrawerContent } from '@/components/CustomDrawerContent'; 
+import { CustomDrawerContent } from '@/components/CustomDrawerContent';
 
 /* setting up project
 npx create-expo-app@latest my-app
@@ -26,32 +26,50 @@ npm install react-native-paper
 
 const Drawer = createDrawerNavigator();
 
-function HomeScreen() {
+function ChatScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home Screen</Text>
+        <Text>Chat Screen</Text>
     </View>
   );
 }
 
+function LoginScreen() {
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Login Screen</Text>
+        </View>
+    );
+}
+
+function ProfileScreen() {
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Profile Screen</Text>
+        </View>
+    );
+}
+
 export default function Index() {
   return (
-      // <NavigationContainer>
-      <Drawer.Navigator
-        drawerContent={props => <CustomDrawerContent {...props} />}
-        screenOptions={({ navigation }) => ({
-          headerLeft: () => (
-            <IconButton
-              icon="menu"
-              size={24}
-              onPress={() => navigation.toggleDrawer()}
-            />
-          ),
-        })}
-      >
-        <Drawer.Screen name="Home" component={HomeScreen} />
-      </Drawer.Navigator>
-    // </NavigationContainer>
+        // <NavigationContainer>
+        <Drawer.Navigator
+            drawerContent={props => <CustomDrawerContent {...props} />}
+            screenOptions={({ navigation }) => ({
+            headerLeft: () => (
+                <IconButton
+                icon="menu"
+                size={24}
+                onPress={() => navigation.toggleDrawer()}
+                />
+            ),
+            })}
+        >
+            <Drawer.Screen name="Chat" component={ChatScreen} />
+            <Drawer.Screen name="Profile" component={ProfileScreen} />
+            <Drawer.Screen name="Login" component={LoginScreen} />
+        </Drawer.Navigator>
+        // </NavigationContainer>
   );
 }
 
