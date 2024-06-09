@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Avatar, Drawer, IconButton, Searchbar, Text } from 'react-native-paper';
+import { Drawer, IconButton, Searchbar, Text, Button } from 'react-native-paper';
 import { View, StyleSheet, Keyboard} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -26,99 +26,119 @@ npm install react-native-safe-area-context
 */
 
 export function CustomDrawerContent(props) {
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const onChangeSearch = query => setSearchQuery(query);
-  const navigation = useNavigation();
+    const [searchQuery, setSearchQuery] = React.useState('');
+    const onChangeSearch = query => setSearchQuery(query);
 
-  // remove keyboard once menu is closed
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('state', () => {
-      if (!navigation?.getState()?.index) {
-        Keyboard.dismiss();
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [navigation]);
+        // remove keyboard once menu is closed
+    const navigation = useNavigation();
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener('state', () => {
+        if (!navigation?.getState()?.index) {
+            Keyboard.dismiss();
+        }
+        });
+        return () => {
+        unsubscribe();
+        };
+    }, [navigation]);
 
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
-        <Searchbar
-            placeholder="Search chat history"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
-            style={styles.searchbar}
-          />
-        <Drawer.Section>
-          <Drawer.Item label="MedicineBot" onPress={() => {}} style={styles.bot} />
-          <Drawer.Item label="CarBot" onPress={() => {}} style={styles.bot} />
-          <Drawer.Item label="ChessBot" onPress={() => {}} style={styles.bot} />
-        </Drawer.Section>
-        <Drawer.Section title="Recent Chats">
-            <Drawer.Item
-                label="How can I fix my diet?"
-                onPress={() => {}}
-                style={styles.paragraph}
+    return (
+        <SafeAreaView style={{ flex: 1 }}>
+            <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
+                <Drawer.Section showDivider={false}>
+                    <Searchbar
+                        placeholder="Search chat history"
+                        onChangeText={onChangeSearch}
+                        value={searchQuery}
+                        style={styles.searchbar}
+                    />
+                    {/* custom padding because doesn't work with Drawer.Section props*/}
+                    <View style={{height: 10}}/>
+                </Drawer.Section>
+                <Drawer.Section style={{marginTop: 10}}>
+                    <Drawer.Item label="MedicineBot" onPress={() => {}} style={styles.agentSelectionItem} />
+                    <Drawer.Item label="CarBot" onPress={() => {}} style={styles.agentSelectionItem} />
+                    <Drawer.Item label="ChessBot" onPress={() => {}} style={styles.agentSelectionItem} />
+                    {/* custom padding because doesn't work with Drawer.Section props*/}
+                    <View style={{height: 10}}/>
+                </Drawer.Section>
+                <Drawer.Section title="Recent Chats" showDivider={false}>
+                    <RecentChatButton label="How can I fix my diet?" onPress={() => { /* TODO: Open respective chat */ }}/>
+                    <RecentChatButton label="Which car should I buy next?" onPress={() => { /* TODO: Open respective chat */ }}/>
+                    <RecentChatButton label="What's insomnia?" onPress={() => { /* TODO: Open respective chat */}}/>
+                </Drawer.Section>
+            </DrawerContentScrollView>
+            <DrawerFooter
+                userName="Dave1234"
+                onProfilePress={() => { /* TODO: Open Profile Settings */ }}
+                onLogoutPress={() => { /* TODO: Handle logout */ }}
             />
-          <Drawer.Item label="Which car should I buy next?" onPress={() => {}} style={styles.paragraph} />
-          <Drawer.Item label="What's insomnia?" onPress={() => {}} style={styles.paragraph} />
-        </Drawer.Section>
-      </DrawerContentScrollView>
+        </SafeAreaView>
+    );
+}
+
+// ---------- Custom Bold Text Button using React Native Paper ----------
+interface RecentChatButtonProps {
+    label: string;
+    onPress: () => void;
+}
+
+const RecentChatButton: React.FC<RecentChatButtonProps> = ({label, onPress, }) => {
+    return (
+        <Button
+            textColor='black'
+            onPress = {onPress}
+            style={{}}
+            contentStyle={{justifyContent: 'flex-start', paddingLeft: 16}}
+            labelStyle={{fontWeight: 'bold'}}
+        >
+            {label}
+        </Button>
+    );
+}
+
+// ---------- MARK: Footer ----------
+interface DrawerFooterProps {
+    userName: string;
+    onProfilePress: () => void;
+    onLogoutPress: () => void;
+}
+
+//TODO: fix that the footer doesn't get moved upwards when keyboard is opened
+const DrawerFooter: React.FC<DrawerFooterProps> = ({userName, onProfilePress, onLogoutPress}) => {
+    return (
         <View style={styles.footer}>
             <IconButton
                 icon="account"
-                size={30}
-                onPress={() => { /* Profile Settings */ }}
+                onPress={onProfilePress}
             />
-            <Text style={styles.title} variant="titleLarge">Dave1234</Text>
+            <Text variant="titleMedium">{userName}</Text>
             <IconButton
                 icon="logout"
-                size={30}
-                onPress={() => { /* Handle logout */ }}
+                onPress={onLogoutPress}
             />
         </View>
-
-    </SafeAreaView>
-  );
+    );
 }
+
+// ---------- MARK: styles ----------
 
 const styles = StyleSheet.create({
     drawerContent: {
         paddingTop: 20,
     },
     searchbar: {
-        marginBottom: 20,
-        marginHorizontal: 10,
+        marginHorizontal: 16,
     },
-    bot: {
-        backgroundColor: 'lightgrey',
-        marginBottom: 5,
+    agentSelectionItem: {
+        backgroundColor: '#FFE5FA',
+        marginVertical: 3,
         borderRadius: 30
-    },
-    paragraph: {
-        color: 'black',
-        marginVertical: 0,
-        paddingVertical: 0,
-    },
-    drawerItemContent: {
-        marginVertical: 0, // Override internal vertical margin
-        paddingVertical: 0, // Override internal vertical padding
-      },
-    title: {
-        marginLeft: 10,
-        fontSize: 20,
     },
     footer: {
         flexDirection: 'row',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
-        paddingLeft: 20,
-        paddingBottom: 5,
-        backgroundColor: 'white',
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-        zIndex: 1,
+        //position: 'absolute',
     },
 });
