@@ -7,7 +7,7 @@ import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { AppNavigation } from './AppNavigation';
-import { UpdateApp } from './components';
+import { FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
 
 export function App() {
@@ -40,9 +40,11 @@ export function App() {
       <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <GestureHandlerRootView>
           <PaperProvider theme={LightTheme}>
-            <AppNavigation />
-            <Toast />
-            <UpdateApp />
+            <FirebaseProvider>
+              <AppNavigation />
+              <Toast />
+              <UpdateApp />
+            </FirebaseProvider>
           </PaperProvider>
         </GestureHandlerRootView>
       </SafeAreaView>
