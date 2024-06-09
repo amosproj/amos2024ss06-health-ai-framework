@@ -22,6 +22,13 @@ if not os.path.exists(DATA_DIR_PATH):
     except Exception as e:
         print(f'Failed to create the data directory. Error: {e}')
 
+#create log directory if it does not exist
+if not os.path.exists(os.path.join('data', 'log')):
+    try:
+        os.mkdir(os.path.join('data', 'log'))
+        print('Log directory created successfully.')
+    except Exception as e:
+        print(f'Failed to create the log directory. Error: {e}')
 
 def read_env(file_path):
     """Read the contents of an environment file into a dictionary."""
