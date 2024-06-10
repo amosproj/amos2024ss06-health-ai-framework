@@ -2496,6 +2496,16 @@
     react-is "^18.2.0"
     use-latest-callback "^0.1.9"
 
+"@react-navigation/drawer@^7.0.0-alpha.21":
+  version "7.0.0-alpha.21"
+  resolved "https://registry.yarnpkg.com/@react-navigation/drawer/-/drawer-7.0.0-alpha.21.tgz#173d0ebc3a27378a7ce1f0ba1b9cccd9c175bb6f"
+  integrity sha512-vgP1kSkfLM2HG3VPhqQWgHtrR4i1pk03PrMsCoTfX991gDobdU5sNW8ckSuUwwAUi/deDmgFD5n78Ha+IPhkJg==
+  dependencies:
+    "@react-navigation/elements" "^2.0.0-alpha.17"
+    color "^4.2.3"
+    react-native-drawer-layout "^4.0.0-alpha.9"
+    use-latest-callback "^0.1.9"
+
 "@react-navigation/elements@^2.0.0-alpha.17":
   version "2.0.0-alpha.17"
   resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.0.0-alpha.17.tgz#433ca7ff49097c46e7db40a08b8dc37f344d688c"
@@ -6652,6 +6662,13 @@ react-is@^17.0.1:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
+
+react-native-drawer-layout@^4.0.0-alpha.9:
+  version "4.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/react-native-drawer-layout/-/react-native-drawer-layout-4.0.0-alpha.9.tgz#761722ddce43d37ea8d12e902fd5c550489e4c4e"
+  integrity sha512-/UchC4SB2dVP04c1llBD6O39YHfgja55PYFGkNShuXU66v992QlS1cpu6WjANYTI0HwP9Vayi9lXlLoxZt14Lw==
+  dependencies:
+    use-latest-callback "^0.1.9"
 
 react-native-gesture-handler@~2.16.1:
   version "2.16.2"
