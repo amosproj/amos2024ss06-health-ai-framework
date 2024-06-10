@@ -1,14 +1,13 @@
 import { useFonts } from 'expo-font';
 import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
 import { useCallback, useEffect } from 'react';
-import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { AppNavigation } from './AppNavigation';
 import { FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
+import { AppRoutes } from './routes';
 
 export function App() {
   // load fonts and other assets here
@@ -41,7 +40,7 @@ export function App() {
         <GestureHandlerRootView>
           <PaperProvider theme={LightTheme}>
             <FirebaseProvider>
-              <AppNavigation />
+              <AppRoutes />
               <Toast />
               <UpdateApp />
             </FirebaseProvider>
