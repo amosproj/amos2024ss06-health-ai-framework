@@ -8,6 +8,7 @@ import Toast from 'react-native-toast-message';
 import { FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
 import { AppRoutes } from './routes';
+import AwesomeIcon  from 'react-native-vector-icons/FontAwesome5';
 
 export function App() {
   // load fonts and other assets here
@@ -38,7 +39,7 @@ export function App() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <GestureHandlerRootView>
-          <PaperProvider theme={LightTheme}>
+          <PaperProvider theme={LightTheme} settings={{icon:props => <AwesomeIcon {...props} />}}>
             <FirebaseProvider>
               <AppRoutes />
               <Toast />

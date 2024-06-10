@@ -37,7 +37,7 @@ export function LogInWithGoogle() {
   };
 
   return (
-    <Button onPress={handleLogInWithGoogle} mode='outlined'>
+    <Button onPress={handleLogInWithGoogle} mode='outlined' icon={'google'}>
       Sign in with Google
     </Button>
   );
