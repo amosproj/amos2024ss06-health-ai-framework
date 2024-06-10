@@ -1,18 +1,23 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, type NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Fallback } from '../screens';
-import { AuthRoutes } from './AuthRoutes';
-import { MainRoutes } from './MainRoutes';
+import { AuthRoutes, type AuthStackParams } from './AuthRoutes';
+import { type MainDrawerParams, MainRoutes } from './MainRoutes';
 
-const AppRouteStack = createNativeStackNavigator();
+type AppRoutesParamList = {
+  Auth: NavigatorScreenParams<AuthStackParams>;
+  Main: NavigatorScreenParams<MainDrawerParams>;
+};
+
+const AppRouteStack = createNativeStackNavigator<AppRoutesParamList>();
 
 export function AppRoutes() {
   return (
     <NavigationContainer fallback={<Fallback />}>
-      <AppRouteStack.Navigator initialRouteName='AuthRoute' screenOptions={{ headerShown: false }}>
-        <AppRouteStack.Screen name='AuthRoute' component={AuthRoutes} />
-        <AppRouteStack.Screen name='MainRoutes' component={MainRoutes} />
+      <AppRouteStack.Navigator initialRouteName='Auth' screenOptions={{ headerShown: false }}>
+        <AppRouteStack.Screen name='Auth' component={AuthRoutes} />
+        <AppRouteStack.Screen name='Main' component={MainRoutes} />
       </AppRouteStack.Navigator>
     </NavigationContainer>
   );

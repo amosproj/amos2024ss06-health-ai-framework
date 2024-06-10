@@ -3,7 +3,12 @@ import React from 'react';
 import { Screens } from '../helpers';
 import { Landing, Login } from '../screens';
 
-const AuthStack = createNativeStackNavigator();
+export type AuthStackParams = {
+  [Screens.Landing]: undefined;
+  [Screens.LogIn]: undefined;
+};
+
+const AuthStack = createNativeStackNavigator<AuthStackParams>();
 
 export function AuthRoutes() {
   return (

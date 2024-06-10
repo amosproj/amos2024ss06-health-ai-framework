@@ -3,7 +3,11 @@ import React from 'react';
 import { Screens } from '../helpers';
 import { Chat } from '../screens';
 
-const MainRouteDrawer = createDrawerNavigator();
+export type MainDrawerParams = {
+  [Screens.Chat]: undefined;
+};
+
+const MainRouteDrawer = createDrawerNavigator<MainDrawerParams>();
 
 export function MainRoutes() {
   return (
