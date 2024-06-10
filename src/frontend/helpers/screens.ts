@@ -1,5 +1,6 @@
 export enum Screens {
   Landing = 'Landing',
   FallBack = 'FallBack',
-  LogIn = 'LogIn'
+  LogIn = 'LogIn',
+  Chat = 'Chat'
 }
