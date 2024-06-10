@@ -5,7 +5,7 @@ import { Fallback } from '../screens';
 import { AuthRoutes, type AuthStackParams } from './AuthRoutes';
 import { type MainDrawerParams, MainRoutes } from './MainRoutes';
 
-type AppRoutesParamList = {
+export type AppRoutesParamList = {
   Auth: NavigatorScreenParams<AuthStackParams>;
   Main: NavigatorScreenParams<MainDrawerParams>;
 };

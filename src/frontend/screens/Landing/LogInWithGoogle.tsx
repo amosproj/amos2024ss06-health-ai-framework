@@ -1,14 +1,16 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import React from 'react';
 import { Button } from 'react-native-paper';
 import { useAuth } from 'reactfire';
+import type { AppRoutesParamList } from 'src/frontend/routes';
 
 export function LogInWithGoogle() {
   const fireAuth = useAuth();
-  const { navigate } = useNavigation();
+  const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParamList>>();
 
   const handleLogInWithGoogle = async () => {
     try {
@@ -28,6 +30,7 @@ export function LogInWithGoogle() {
       // Sign in with the credential object using Firebase
       // This will create a Firebase user if it doesn't exist, or sign in the existing user
       const { user: fireUser } = await signInWithCredential(fireAuth, googleCredential);
+      reset({ index: 0, routes: [{ name: 'Main' }] });
     } catch (error) {
       console.error(error);
     }
