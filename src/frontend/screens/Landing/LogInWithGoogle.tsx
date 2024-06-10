@@ -4,13 +4,13 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import React from 'react';
-import { Button } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import { useAuth } from 'reactfire';
-import type { AppRoutesParamList } from 'src/frontend/routes';
+import type { AppRoutesParams } from 'src/frontend/routes';
 
 export function LogInWithGoogle() {
   const fireAuth = useAuth();
-  const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParamList>>();
+  const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
   const handleLogInWithGoogle = async () => {
     try {
@@ -37,7 +37,14 @@ export function LogInWithGoogle() {
   };
 
   return (
-    <Button onPress={handleLogInWithGoogle} mode='outlined' icon={'google'}>
+    <Button
+      onPress={handleLogInWithGoogle}
+      mode='contained'
+      contentStyle={{
+        height: 48
+      }}
+      labelStyle={{ fontSize: 18 }}
+    >
       Sign in with Google
     </Button>
   );

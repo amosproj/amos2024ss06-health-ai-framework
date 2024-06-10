@@ -35,7 +35,7 @@ export function TextInput(props: TextInputProps) {
           ? {
               right: (
                 <BaseTextInput.Icon
-                  icon={isTextVisible ? 'eye-off' : 'eye'}
+                  icon={isTextVisible ? 'eye-slash' : 'eye'}
                   onPress={() => setTextVisible(!isTextVisible)}
                 />
               )

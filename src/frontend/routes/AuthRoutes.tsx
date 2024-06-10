@@ -8,7 +8,7 @@ export type AuthStackParams = {
   [Screens.LogIn]: undefined;
   [Screens.SignUp]: undefined;
   [Screens.ForgotPassword]: undefined;
-  [Screens.ResetPassword]: undefined;
+  [Screens.ResetPassword]: { oobCode: string };
 };
 
 const AuthStack = createNativeStackNavigator<AuthStackParams>();
