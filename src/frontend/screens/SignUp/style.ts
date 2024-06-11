@@ -4,13 +4,13 @@ export const Style = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20
+    alignItems: 'center'
   },
   header: {
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 16
   },
   formContainer: {
     width: '100%',
