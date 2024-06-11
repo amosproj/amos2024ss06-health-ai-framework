@@ -4,7 +4,7 @@ import { Button, type ButtonProps } from 'react-native-paper';
 
 export function SubmitButton(props: ButtonProps) {
   const { children, ...rest } = props;
-  const { submitForm } = useFormikContext();
+  const { submitForm, isSubmitting: isSubmittingGlobal } = useFormikContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handles form submission
@@ -19,7 +19,7 @@ export function SubmitButton(props: ButtonProps) {
     <Button
       mode='contained'
       onPress={handleSubmit}
-      disabled={isSubmitting}
+      disabled={isSubmitting || isSubmittingGlobal}
       loading={isSubmitting}
       {...rest}
     >

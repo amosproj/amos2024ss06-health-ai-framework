@@ -26,21 +26,11 @@ export function TextInput(props: TextInputProps) {
   return (
     <>
       <BaseTextInput
-        mode='outlined'
+        mode='flat'
         {...rest}
         onChangeText={handleTextInputChange}
         secureTextEntry={secureTextEntry ? !isTextVisible : undefined}
         onSubmitEditing={submitOnEnter ? handleSubmitEditing : undefined}
-        {...(secureTextEntry
-          ? {
-              right: (
-                <BaseTextInput.Icon
-                  icon={isTextVisible ? 'eye-slash' : 'eye'}
-                  onPress={() => setTextVisible(!isTextVisible)}
-                />
-              )
-            }
-          : {})}
       />
       <HelperText type='error' visible={meta?.touched && Boolean(meta?.error)}>
         {meta?.error}
