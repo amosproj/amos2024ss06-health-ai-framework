@@ -162,7 +162,6 @@ class NutritionScraper(BaseScraper):
 
             return text
         except Exception:
-            url = NutritionScraper.url + self.element_id + '/'
             write_to_log(self.element_id, self.__class__.__name__ , 'Error cleaning text')
             raise ValueError('Error cleaning text')
 
@@ -216,7 +215,6 @@ class NutritionScraper(BaseScraper):
         except Exception:
             print(f'Error getting content from url: {blog_url}')
             error_msg =  f'Error getting content from url: {blog_url}'
-            url = NutritionScraper.url + self.element_id + '/'
             write_to_log(self.element_id, self.__class__.__name__ , error_msg)
             return None
 

@@ -242,7 +242,9 @@ class PubMedScraper(BaseScraper):
                 'transcript': text_data,
             }
         except Exception as e:    
-            write_to_log(self.element_id, self.__class__.__name__ , f'Error occured in PubmedScraper: {e}')
+            write_to_log(
+                self.element_id, self.__class__.__name__ , f'Error occured in PubmedScraper: {e}'
+                )
             print(f'Error occured in PubmedScraper: {e}')
             data = {}
         return data
