@@ -162,7 +162,7 @@ class ArchiveScraper(BaseScraper):
             paper = self.get_paper_from_arxiv_id(self.element_id)
             if paper is None:
                 error_msg = 'Paper does not exist for id: ' + str(id)
-                write_to_log(self.url, self.__class__.__name__ , error_msg)
+                write_to_log(self.element_id, self.__class__.__name__ , error_msg)
                 raise ValueError('Paper does not exist for id: ' + str(id))
                 
 
@@ -181,7 +181,7 @@ class ArchiveScraper(BaseScraper):
             }
 
         except Exception as e:
-            write_to_log(self.url, self.__class__.__name__ , f'Failed due to {e}')
+            write_to_log(self.element_id, self.__class__.__name__ , f'Failed due to {e}')
             print(e)
             info = {}
 
