@@ -78,7 +78,8 @@ class YouTubeScraper(BaseScraper):
             return scrap_data
         except Exception as e:
             print(f'Error: {e} No caption found for videoId: {self.element_id}')
-            write_to_log(self.url, self.__class__.__name__ , f'Error: {e} No caption found for videoId: {self.element_id}')
+            error_msg = f'Error: {e} No caption found for videoId: {self.element_id}'
+            write_to_log(self.url, self.__class__.__name__ ,error_msg )
             return {}
 
     @classmethod

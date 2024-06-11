@@ -221,7 +221,8 @@ class NutritionScraper(BaseScraper):
             return title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url
         except Exception:
             print(f'Error getting content from url: {blog_url}')
-            write_to_log(self.url, self.__class__.__name__ , f'Error getting content from url: {blog_url}')
+            error_msg =  f'Error getting content from url: {blog_url}'
+            write_to_log(self.url, self.__class__.__name__ , error_msg)
             return None
 
     # ---------------------------------------------------------

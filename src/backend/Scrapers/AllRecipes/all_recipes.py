@@ -183,7 +183,8 @@ class AllRecipesScraper(BaseScraper):
                     category_urls.append(link['href'])
         except Exception as e:
             print(f'Failed to fetch category URLs due to: {e}')
-            write_to_log(self.url, self.__class__.__name__ , f'Failed to fetch category URLs due to: {e}')
+            error_msg = f'Failed to fetch category URLs due to: {e}'
+            write_to_log(self.url, self.__class__.__name__ , error_msg)
         return category_urls
 
     @classmethod
@@ -219,7 +220,8 @@ class AllRecipesScraper(BaseScraper):
                 current_url = next_button_url if next_button_url else None
             except Exception as e:
                 print(f'Failed to fetch recipes from {current_url} due to: {e}')
-                write_to_log(self.url, self.__class__.__name__ , f'Failed to fetch recipes from {current_url} due to: {e}')
+                error_msg =  f'Failed to fetch recipes from {current_url} due to: {e}'
+                write_to_log(self.url, self.__class__.__name__ , error_msg)
                 break
         return recipes
 

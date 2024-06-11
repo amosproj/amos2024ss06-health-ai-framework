@@ -161,7 +161,8 @@ class ArchiveScraper(BaseScraper):
         try:
             paper = self.get_paper_from_arxiv_id(self.element_id)
             if paper is None:
-                write_to_log(self.url, self.__class__.__name__ , 'Paper does not exist for id: ' + str(id))
+                error_msg = 'Paper does not exist for id: ' + str(id)
+                write_to_log(self.url, self.__class__.__name__ , error_msg)
                 raise ValueError('Paper does not exist for id: ' + str(id))
                 
 
