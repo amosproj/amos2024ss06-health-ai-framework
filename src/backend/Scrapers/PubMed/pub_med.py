@@ -136,7 +136,7 @@ class PubMedScraper(BaseScraper):
                 author_strings.append(author)
             return ', '.join(author_strings)
         except Exception as e:
-            error_msg = f'Error: pubmed_scraping: get_authors_from_details: Could not retrieve authors. {e}'
+            error_msg = f'Error: pubmed_scraping: get_authors_from_details:{e}'
             write_to_log(self.url, self.__class__.__name__ , error_msg)
             print(
                 'Error: pubmed_scraping: get_authors_from_details:' + ' Could not retrieve authors.'
