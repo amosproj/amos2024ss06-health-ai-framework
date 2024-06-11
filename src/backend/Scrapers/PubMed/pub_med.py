@@ -6,12 +6,14 @@ from typing import List
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.pub_med import TypePubMedScrappingData
+from src.backend.log.log import write_to_log
 
 logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
 
 from Bio import Entrez  # noqa: E402
 from paperscraper.pdf import save_pdf  # noqa: E402
 from pypdf import PdfReader  # noqa: E402
+
 
 
 class PubMedScraper(BaseScraper):
@@ -80,6 +82,8 @@ class PubMedScraper(BaseScraper):
             # return doi
         except Exception as e:
             print('Error: pubmed_scraping: get_doi_from_pubmed_id: Could not retrieve doi.')
+            error_msg = f'Error: pubmed_scraping: get_doi_from_pubmed_id:{e}'
+            write_to_log(self.url, self.__class__.__name__ ,error_msg )
             print(e)
             return ''
 
@@ -93,6 +97,8 @@ class PubMedScraper(BaseScraper):
             abstract = abstract['Abstract']['AbstractText'][0]
             return str(abstract)
         except Exception as e:
+            error_msg = f'Error: pubmed_scraping: get_abstract_from_details: {e}'
+            write_to_log(self.url, self.__class__.__name__ , error_msg )
             print(
                 'Error: pubmed_scraping: get_abstract_from_details:'
                 + ' Could not retrieve abstract.'
@@ -110,6 +116,8 @@ class PubMedScraper(BaseScraper):
                 title = title[:-1]
             return title
         except Exception as e:
+            error_msg = f'Error: pubmed_scraping: get_title_from_details: {e}'
+            write_to_log(self.url, self.__class__.__name__ ,error_msg )
             print('Error: pubmed_scraping: get_title_from_details: Could not retrieve title.')
             print(e)
             return ''
@@ -128,6 +136,8 @@ class PubMedScraper(BaseScraper):
                 author_strings.append(author)
             return ', '.join(author_strings)
         except Exception as e:
+            error_msg = f'Error: pubmed_scraping: get_authors_from_details:{e}'
+            write_to_log(self.url, self.__class__.__name__ , error_msg)
             print(
                 'Error: pubmed_scraping: get_authors_from_details:' + ' Could not retrieve authors.'
             )
@@ -159,6 +169,8 @@ class PubMedScraper(BaseScraper):
                 pass
             return date
         except Exception as e:
+            error_msg = f'Error: pubmed_scraping: get_publication_date_from_details: {e}'
+            write_to_log(self.url, self.__class__.__name__ ,error_msg )
             print(
                 'Error: pubmed_scraping: get_publication_date_from_details:'
                 + 'Could not retrieve date.'
@@ -205,7 +217,9 @@ class PubMedScraper(BaseScraper):
             if keep_pdfs is not True:
                 if os.path.exists(filepath):
                     os.remove(filepath)
-        except Exception:
+        except Exception as e:
+            error_msg = f'Warning: PubmedScraper: Could not retrieve text data from pdf for id: {e}'
+            write_to_log(self.url, self.__class__.__name__ ,error_msg )
             print('Warning: PubmedScraper: Could not retrieve text data from pdf for id:', end=' ')
             print(self.element_id)
             # print('Error message: ' + repr(e))
@@ -238,6 +252,8 @@ class PubMedScraper(BaseScraper):
                 'transcript': text_data,
             }
         except Exception as e:
+            
+            write_to_log(self.url, self.__class__.__name__ , f'Error occured in PubmedScraper: {e}')
             print(f'Error occured in PubmedScraper: {e}')
             data = {}
         return data

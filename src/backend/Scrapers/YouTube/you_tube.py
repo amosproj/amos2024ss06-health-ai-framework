@@ -11,6 +11,7 @@ import requests
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.YouTube import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.you_tube import TypeYouTubeScrappingData
+from src.backend.log.log import write_to_log
 
 
 class YouTubeScraper(BaseScraper):
@@ -77,6 +78,8 @@ class YouTubeScraper(BaseScraper):
             return scrap_data
         except Exception as e:
             print(f'Error: {e} No caption found for videoId: {self.element_id}')
+            error_msg = f'Error: {e} No caption found for videoId: {self.element_id}'
+            write_to_log(self.url, self.__class__.__name__ ,error_msg )
             return {}
 
     @classmethod

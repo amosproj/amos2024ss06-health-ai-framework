@@ -16,6 +16,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.Nutritionfacts import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.nutrition import TypeNutritionScrappingData
+from src.backend.log.log import write_to_log
 
 # Suppress Selenium log messages
 logging.getLogger('selenium').setLevel(logging.WARNING)
@@ -71,6 +72,7 @@ class NutritionScraper(BaseScraper):
                 '"Sorry, no results were found.")]',
             ):
                 print('No more results found.')
+                write_to_log(self.url, self.__class__.__name__ , 'No more results found')
                 break
 
             links = driver.find_elements(By.TAG_NAME, 'a')
@@ -122,6 +124,7 @@ class NutritionScraper(BaseScraper):
 
             return chrome_options
         except Exception as e:
+            write_to_log(self.url, self.__class__.__name__ , f'Error getting ChromeOptions: {e}')
             print(f'Error getting ChromeOptions: {e}')
             return None
 
@@ -133,6 +136,7 @@ class NutritionScraper(BaseScraper):
             driver = webdriver.Chrome(service=service, options=options)
             return driver
         except Exception as e:
+            write_to_log(self.url, self.__class__.__name__ , f'Error starting ChromeDriver: {e}')
             print(f'Error starting ChromeDriver: {e}')
             return None
 
@@ -141,6 +145,7 @@ class NutritionScraper(BaseScraper):
         try:
             return cls.start_driver()
         except Exception as e:
+            write_to_log(self.url, self.__class__.__name__ , f'Error getting ChromeDriver: {e}')
             print(f'Error getting ChromeDriver: {e}')
             return None
 
@@ -164,6 +169,7 @@ class NutritionScraper(BaseScraper):
 
             return text
         except Exception:
+            write_to_log(self.url, self.__class__.__name__ , 'Error cleaning text')
             raise ValueError('Error cleaning text')
 
     def get_url_content(self, driver, blog_url):
@@ -215,6 +221,8 @@ class NutritionScraper(BaseScraper):
             return title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url
         except Exception:
             print(f'Error getting content from url: {blog_url}')
+            error_msg =  f'Error getting content from url: {blog_url}'
+            write_to_log(self.url, self.__class__.__name__ , error_msg)
             return None
 
     # ---------------------------------------------------------
@@ -249,6 +257,7 @@ class NutritionScraper(BaseScraper):
             driver.quit()
 
         except Exception as e:
+            write_to_log(self.url, self.__class__.__name__ , f'failed due to {e}')
             print(e)
             info = {}
 
