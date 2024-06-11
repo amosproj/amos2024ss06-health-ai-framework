@@ -25,7 +25,11 @@
     "backgroundColor": "#FFFFFF",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.amos.ailixir"
+      "bundleIdentifier": "com.amos.ailixir",
+      "associatedDomains": [
+        "applinks:ailixir.page.link"
+      ],
+      "googleServicesFile": "./google-services.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,14 +37,29 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.amos.ailixir",
-      "intentFilters": []
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "ailixir.page.link"
+            }
+          ],
+          "category":["BROWSABLE", "DEFAULT"]
+        }
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "@react-native-firebase/app",
+      "@react-native-firebase/dynamic-links",
+      "@react-native-google-signin/google-signin"
     ],
     "extra": {
       "eas": {

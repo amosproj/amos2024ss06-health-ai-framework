@@ -1,12 +1,14 @@
 import { useFonts } from 'expo-font';
 import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
 import { useCallback, useEffect } from 'react';
-import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { UpdateApp } from './components';
+import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
+import { FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
+import { AppRoutes } from './routes';
 
 export function App() {
   // load fonts and other assets here
@@ -35,13 +37,19 @@ export function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <PaperProvider theme={LightTheme}>
-          <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-            <UpdateApp />
-            <Toast />
-          </View>
-        </PaperProvider>
+      <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <GestureHandlerRootView>
+          <PaperProvider
+            theme={LightTheme}
+            settings={{ icon: (props) => <AwesomeIcon {...props} /> }}
+          >
+            <FirebaseProvider>
+              <AppRoutes />
+              <Toast />
+              <UpdateApp />
+            </FirebaseProvider>
+          </PaperProvider>
+        </GestureHandlerRootView>
       </SafeAreaView>
     </SafeAreaProvider>
   );

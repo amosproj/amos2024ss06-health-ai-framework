@@ -76,3 +76,7 @@ yarn-debug.*
 
 # TypeScript build info files
 *.tsbuildinfo
+
+# Google Service Files
+google-services.json
+google-services.plist
