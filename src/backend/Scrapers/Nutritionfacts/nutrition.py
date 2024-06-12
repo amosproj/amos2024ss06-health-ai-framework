@@ -47,7 +47,6 @@ class NutritionScraper(BaseScraper):
     def query_ids(cls) -> list[str]:
         """Queries the nutrition facts site for podcast ids and returns them as a list"""
         driver = cls.start_driver()
-
         ids = []
         nutrition_links = NutritionScraper.search_nutrition_ids(driver)
         ids.extend([cls.extract_nutrition_id_from_url(link) for link in nutrition_links])
@@ -72,7 +71,6 @@ class NutritionScraper(BaseScraper):
                 '"Sorry, no results were found.")]',
             ):
                 print('No more results found.')
-                write_to_log(self.url, self.__class__.__name__ , 'No more results found')
                 break
 
             links = driver.find_elements(By.TAG_NAME, 'a')
@@ -124,7 +122,6 @@ class NutritionScraper(BaseScraper):
 
             return chrome_options
         except Exception as e:
-            write_to_log(self.url, self.__class__.__name__ , f'Error getting ChromeOptions: {e}')
             print(f'Error getting ChromeOptions: {e}')
             return None
 
@@ -136,7 +133,6 @@ class NutritionScraper(BaseScraper):
             driver = webdriver.Chrome(service=service, options=options)
             return driver
         except Exception as e:
-            write_to_log(self.url, self.__class__.__name__ , f'Error starting ChromeDriver: {e}')
             print(f'Error starting ChromeDriver: {e}')
             return None
 
@@ -145,7 +141,6 @@ class NutritionScraper(BaseScraper):
         try:
             return cls.start_driver()
         except Exception as e:
-            write_to_log(self.url, self.__class__.__name__ , f'Error getting ChromeDriver: {e}')
             print(f'Error getting ChromeDriver: {e}')
             return None
 
@@ -159,17 +154,15 @@ class NutritionScraper(BaseScraper):
             text = re.sub(r'(\w)\n(\w)', r'\1 \2', text)
             text = re.sub(r'(\w)\n(\W)', r'\1 \2', text)
             text = re.sub(r'(\W)\n(\w)', r'\1 \2', text)
-
             # Replace multiple newlines with a single newline
             text = re.sub(r'\n+', '\n', text)
-
             # Remove non-printable characters and replace non-breaking spaces with regular spaces
             text = re.sub(r'\u00a0', ' ', text)
             text = re.sub(r'[^\x00-\x7F]+', ' ', text)
 
             return text
         except Exception:
-            write_to_log(self.url, self.__class__.__name__ , 'Error cleaning text')
+            write_to_log(self.element_id, self.__class__.__name__ , 'Error cleaning text')
             raise ValueError('Error cleaning text')
 
     def get_url_content(self, driver, blog_url):
@@ -222,7 +215,7 @@ class NutritionScraper(BaseScraper):
         except Exception:
             print(f'Error getting content from url: {blog_url}')
             error_msg =  f'Error getting content from url: {blog_url}'
-            write_to_log(self.url, self.__class__.__name__ , error_msg)
+            write_to_log(self.element_id, self.__class__.__name__ , error_msg)
             return None
 
     # ---------------------------------------------------------
@@ -256,8 +249,8 @@ class NutritionScraper(BaseScraper):
             time.sleep(2)
             driver.quit()
 
-        except Exception as e:
-            write_to_log(self.url, self.__class__.__name__ , f'failed due to {e}')
+        except Exception as e:    
+            write_to_log(self.element_id, self.__class__.__name__ , f'failed due to {e}')
             print(e)
             info = {}
 

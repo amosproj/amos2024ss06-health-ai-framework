@@ -40,7 +40,9 @@ class AllRecipesScraper(BaseScraper):
             self._soup = BeautifulSoup(html_content, 'html.parser')
         except Exception as e:
             print(f'Failed to fetch data due to: {e}')
-            write_to_log(self.url, self.__class__.__name__ , f'Failed to fetch data due to: {e}')
+            write_to_log(
+                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
+                )
             self._soup = None  # Handle the case where the request fails
 
     @classmethod
@@ -184,7 +186,7 @@ class AllRecipesScraper(BaseScraper):
         except Exception as e:
             print(f'Failed to fetch category URLs due to: {e}')
             error_msg = f'Failed to fetch category URLs due to: {e}'
-            write_to_log(self.url, self.__class__.__name__ , error_msg)
+            write_to_log(self.element_id, self.__class__.__name__ , error_msg)
         return category_urls
 
     @classmethod
@@ -221,7 +223,7 @@ class AllRecipesScraper(BaseScraper):
             except Exception as e:
                 print(f'Failed to fetch recipes from {current_url} due to: {e}')
                 error_msg =  f'Failed to fetch recipes from {current_url} due to: {e}'
-                write_to_log(self.url, self.__class__.__name__ , error_msg)
+                write_to_log(self.element_id, self.__class__.__name__ , error_msg)
                 break
         return recipes
 

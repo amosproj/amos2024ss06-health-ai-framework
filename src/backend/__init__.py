@@ -26,7 +26,6 @@ if not os.path.exists(DATA_DIR_PATH):
 if not os.path.exists(os.path.join('data', 'log')):
     try:
         os.mkdir(os.path.join('data', 'log'))
-        print('Log directory created successfully.')
     except Exception as e:
         print(f'Failed to create the log directory. Error: {e}')
 
