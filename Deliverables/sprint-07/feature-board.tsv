@@ -1,0 +1,126 @@
+Title	URL	Assignees	Status	Labels	Linked pull requests	Sprint	Reviewers	Timing	Estimation	Actual
+Add documents for sprint 06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/161	tubamos	Item Archive	domain: po, release: sprint-deliverables, sprint-06		Sprint 06	preetvadaliya	sprint-end	1	1
+(data acquisition) Integrate the nutritionfacts blog posts scraper into the new orchestrator structure	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/89	lukas-varga, manikg08	Item Archive	data pipeline, enhancement, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/151	Sprint 06		independent	3	5
+Catch errors from missing api-keys in .env file 	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/122	eloinoel, preetvadaliya	Item Archive	bug, env+tooling, sprint-06		Sprint 06		independent	1	1
+Orchestrator: automatically create data/ folder and config.json	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/123	eloinoel, preetvadaliya	Item Archive	bug, sprint-06		Sprint 06		independent	1	1
+Integrate the NIH-PubMed scraper into the new orchestrator structure	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/88	eloinoel	Item Archive	data pipeline, enhancement, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/145	Sprint 06		independent	5	5
+Patch for the PubMed Scraper pdf downloading problems	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/126	eloinoel	Item Archive	bug, data pipeline, external API, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/146	Sprint 06		independent	3	3
+Setup and write project documentation in GitHub Wiki	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/82	eloinoel, lukas-varga	Item Archive	amos formal, documentation, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/150	Sprint 06		sprint-start	8	8
+Develop item #126 that was captured during the sprint meeting on Wednesday May29th	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/137	tubamos	Item Archive	domain: po, sprint-06		Sprint 06		sprint-start	2	2
+Update README.md	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/116	tubamos	Item Archive	domain: po, release: sprint-deliverables, sprint-05		Sprint 05	lukas-varga	sprint-end	1	1
+LangChain - Basic retrival and generation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/39	manikg08, potthoffjan	Item Archive	data pipeline, external API, feature, sprint-05, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/112	Sprint 05		sprint-end	8	8
+Create frontend interaction wireframes for the user app	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/93	EnescuDavid, preetvadaliya	Item Archive	app frontend, feature, sprint-05		Sprint 05		independent	8	8
+Finalize LangChain query construction	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/101	potthoffjan, preetvadaliya	Item Archive	data pipeline, external API, sprint-05	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/113	Sprint 05		sprint-start	5	3
+Create build process video	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/98	eloinoel, lukas-varga	Item Archive	amos formal, documentation, env+tooling, sprint-05	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/110	Sprint 05		independent	5	5
+Error handling in the orchestrator	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/87	lukas-varga, preetvadaliya	Item Archive	data pipeline, sprint-05	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/109	Sprint 05		independent	5	3
+Extend the "save" functionality of the base-scraper	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/91	preetvadaliya	Item Archive	data pipeline, enhancement, sprint-05	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/111	Sprint 05		sprint-start	5	2
+Integrate the podcast scraper into the latest version of the orchestrator	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/61	lukas-varga	Item Archive	data pipeline, enhancement, sprint-05	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/105	Sprint 05		sprint-start	3	5
+Formulate product mission	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/70	tubamos	Item Archive	amos formal, domain: po, sprint-05		Sprint 05		sprint-mid	2	2
+Set Sprint Goal	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/74	Ghemechis, tubamos	Item Archive	amos formal, domain: po, sprint-05		Sprint 05		sprint-start	2	1
+Formulate the definition done	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/73	Ghemechis, tubamos	Item Archive	amos formal, domain: po, sprint-05		Sprint 05		sprint-start	3	2
+Create a release plan	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/72	Ghemechis, tubamos	Item Archive	amos formal, domain: po, sprint-05		Sprint 05		sprint-start	3	2
+Formulate product vision	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/71	tubamos	Item Archive	amos formal, domain: po, sprint-05		Sprint 05		sprint-mid	2	1
+Add documents for sprint 05	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/120	tubamos	Item Archive	domain: po, release: sprint-deliverables, sprint-05		Sprint 05	lukas-varga	sprint-end	1	1
+Enhance Allrecipes scraper to include the latest orchestrator methods	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/62	manikg08	Item Archive	data pipeline, enhancement, sprint-04	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/78	Sprint 04		sprint-start	3	3
+Migrate the YouTube data extraction pipeline to GC	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/27	preetvadaliya	Item Archive	data pipeline, env+tooling, sprint-04, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/76	Sprint 04		sprint-mid	8	3
+LangChain - Query Contruction	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/41	potthoffjan, preetvadaliya	Item Archive	data pipeline, feature, sprint-04, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/83	Sprint 04		sprint-mid	8	5
+Create storage solution for extracted data in the server of the FAU HPC server	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/4	lukas-varga, preetvadaliya	Item Archive	question, re-evaluate, sprint-03, sprint-04, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/34, https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/42, https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/80	Sprint 03		sprint-start	8	3
+Create automated PR	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/103	preetvadaliya	Item Archive	env+tooling, sprint-05	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/104	Sprint 05		sprint-start	1	1
+LangChain - get on the same page	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/53	eloinoel, EnescuDavid, lukas-varga	Item Archive	research spike, sprint-04		Sprint 04		independent	5	5
+Extract recipe data from recipe website Allrecipes	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/26	manikg08	Item Archive	data pipeline, feature, sprint-03, sprint-04, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/78	Sprint 04		independent	8	8
+Extract text content from academic repository: Arxiv	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/7	lukas-varga	Item Archive	data pipeline, external API, feature, sprint-04, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/63	Sprint 04		sprint-mid	8	5
+Create the DB for extracted data in Google Cloud	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/48	eloinoel, preetvadaliya	Item Archive	env+tooling, sprint-04, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/76	Sprint 04		sprint-start	8	5
+Enhance Arxiv scraper to include the new orchestrator methods	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/69	eloinoel, lukas-varga	Item Archive	data pipeline, enhancement, sprint-04	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/79	Sprint 04		sprint-start	3	5
+Enhance YouTube scraper to include the new orhestrator methods	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/60	preetvadaliya	Item Archive	data pipeline, enhancement, external API, sprint-04	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/76	Sprint 04		sprint-start	3	5
+Familiarise with the RAG technique and the LangChain framework	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/25	potthoffjan, tubamos	Item Archive	research spike, sprint-03, sprint-04		Sprint 04		independent	5	5
+Create CI/CD pipeline for Github	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/12	eloinoel, preetvadaliya	Item Archive	env+tooling, sprint-03	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/33	Sprint 03		sprint-start	3	3
+Extract data from academic repository PubMed Central (PMC) of the NIH	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/23	eloinoel, potthoffjan	Item Archive	data pipeline, external API, feature, sprint-03	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/44	Sprint 03		independent	8	8
+Implement the "orchestrator" functionality	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/3	eloinoel, EnescuDavid	Item Archive	data pipeline, feature, sprint-03	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/43, https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/97	Sprint 03		independent	8	8
+Extract transcripts from podcasts	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/6	lukas-varga, potthoffjan	Item Archive	feature, sprint-02	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/22, https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/29, https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/65	Sprint 02		independent	8	13
+Extract transcript from a single YouTube video locally	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/5	manikg08, preetvadaliya	Item Archive	external API, feature, sprint-02		Sprint 02		independent	8	3
+Extend transcript extraction from YouTube	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/9	manikg08, preetvadaliya	Item Archive	external API, feature, sprint-02		Sprint 02		independent	5	5
+Create concept for the sources input functionality (config)	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/2	eloinoel, EnescuDavid	Item Archive	feature, sprint-02	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/11	Sprint 02		independent	5	5
+Setup Development Environment	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/1	eloinoel, EnescuDavid, lukas-varga, manikg08, potthoffjan, preetvadaliya	Item Archive	env+tooling, sprint-02	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/8	Sprint 02		sprint-start	3	3
+Extract blog posts from the website Nutritionfacts	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/24	manikg08	Item Archive	data pipeline, feature, sprint-04, storage	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/77	Sprint 04		independent	8	8
+Create system architecture for the app	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/52	EnescuDavid	Item Archive	app backend, app frontend, env+tooling, sprint-04	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/97	Sprint 04		independent	5	5
+Scrum spike: Research prompt engineering techniques	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/160		Sprint Backlog	research spike, sprint-07		Sprint 07		independent	5	
+Create short video as status update for IP and the Mid-Project product demo	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/124		Sprint Backlog	documentation, sprint-07		Sprint 07		sprint-end	3	
+Write unit tests for orchestrator/config functionality	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/117		Sprint Backlog	data pipeline, sprint-07, testing		Sprint 07		independent	5	
+Setup react-native dev-environment	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/92	preetvadaliya	Item Archive	app frontend, env+tooling, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/157	Sprint 06		sprint-start	8	8
+Implement the appropriate JSON chunking technique	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/106	manikg08, preetvadaliya	In Progress	data pipeline, sprint-06, storage		Sprint 06		independent	5	
+Setup a Firestore within Firebase	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/115	preetvadaliya	Awaiting Review	app backend, sprint-06, storage		Sprint 06		sprint-mid	8	5
+Add a logging functionality for failed scrapping tasks	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/159	EnescuDavid	Awaiting Review	data pipeline, sprint-07	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/173	Sprint 07			5	
+Create components for basic visual navigation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/153	eloinoel, lukas-varga	Awaiting Review	app frontend, sprint-07	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/170	Sprint 07		sprint-start	8	
+Create components for the chat screen	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/154	lukas-varga, potthoffjan	Awaiting Review	app frontend, sprint-07	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/171	Sprint 07		sprint-start	8	
+Setup user authentication	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/119	preetvadaliya	Awaiting Review	app backend, question		Sprint 07		sprint-start	8	8
+Create components for login with email	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/152	preetvadaliya	Awaiting Review	app frontend, sprint-07		Sprint 07		sprint-start	8	8
+Implement form management for the login workflow	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/166	preetvadaliya	Awaiting Review	app frontend, sprint-07		Sprint 07		sprint-start	5	5
+Implement deep-linking	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/167	preetvadaliya	Awaiting Review	app backend, app frontend, sprint-07		Sprint 07		sprint-start	5	5
+Implement the LangChain pipeline in Typescript	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/118	potthoffjan, preetvadaliya	Item Archive	app frontend, sprint-06		Sprint 06		sprint-start	8	8
+Complete the Wireframe task to include the document download functionality	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/125	EnescuDavid	Item Archive	app frontend, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/158	Sprint 06		independent	3	3
+Update the frontend wireframe pdf	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/156	EnescuDavid	Item Archive	amos formal, documentation, sprint-06		Sprint 06		independent	1	2
+Save conversations in the DB	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/176		Product Backlog	app backend, storage		Sprint 08		sprint-start		
+Present recent conversations	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/172		Product Backlog	app backend, app frontend, external API, sprint-08		Sprint 08		independent		
+Create dropdown UI for conversation options	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/175		Product Backlog	app frontend, sprint-08		Sprint 08		sprint-start		
+Create option to change LLM	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/177		Product Backlog	data pipeline, sprint-08		Sprint 08		sprint-mid		
+Create option to save / export the conversation as formated txt	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/149		Product Backlog	app frontend, data pipeline, sprint-08		Sprint 08		sprint-mid		
+Present references in agent answers	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/174		Product Backlog	app frontend, data pipeline		Sprint 08		independent		
+Create documentation on how the user can run the build and start testing the app	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/178		Product Backlog	documentation, sprint-08		Sprint 08				
+[EPIC] Data aquisition	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/132		EPICS	EPIC						
+[EPIC] Data pipeline	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/131		EPICS	EPIC						
+[EPIC] Create components for the basic app functionality	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/94		EPICS	app frontend, EPIC						
+[EPIC] User App frontend	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/134		EPICS	app frontend, EPIC						
+[EPIC] User App backend	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/135		EPICS	question, re-evaluate						
+[EPIC] Data pipeline optimisations	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/136		EPICS	data pipeline, EPIC						
+Option to create a new chat			WIP Core							
+Merge and commit individual videos of this sprint's progress			WIP Core							
+(EPIC) Develop components for basic app settings			WIP Core							
+Integrate the screens of login, chat and navigation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/155		WIP Core	app frontend, question				sprint-mid		
+Save the youtube transcript in JSON format	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/141		WIP Core							
+Limit results from nutritionfacts to >=2020	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/138		WIP Core	question				independent		
+Standardise the JSON format so that all scrapers save the same	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/139		WIP Core	question, re-evaluate						
+User can store questions to ask agents with different underlying LLMs.			WIP Core							
+Create evals			WIP Core							
+Promt Engineering - Implement DSP			WIP Core							
+Promt Engineering - Implement COT			WIP Core							
+Promt Engineering - Implement ReACT			WIP Core							
+Develop Agent Selection UI - Create the user interface for selecting different agents within the app.			WIP Core							
+Create logger for the orchestrator			WIP Core							
+(Data) Preprocess / Clean scraped data from website allrecipes to facilitate embeddings generation			WIP Core							
+(Data) Connect the chat model of Gemini via the Google API to the langChain Pipeline (~5)			WIP Core							
+(Data) Create Propt Templates for the model (Gemini) in LangChain			WIP Core							
+(Data) Implement error handling for interactions with the LLM API (Gemini)			WIP Core							
+(Data) Develop a standardised LangChain setup that enables different models to be queried			WIP Core							
+(Data) Change the base LangChain Pipeline to use the OpenAI API (LLM, Chat)			WIP Core							
+(Data) Implement error handling for interactions with the LLM API (OpenAI)			WIP Core							
+(Data) (Data) Change the base LangChain Pipeline that uses the LLama 3 API (LLM, Chat)			WIP Core							
+(Data) Implement error handling for interactions with the LLM API (Llama3)			WIP Core							
+(App frontend) Unit testing			WIP Core							
+(App backend) unit testing			WIP Core							
+(App) Integration testing			WIP Core							
+translation of results			WIP Core							
+LangChain - Optimise querying	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/54		WIP Optimisations	data pipeline, enhancement						
+LangChain - Optimise Retrieval	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/55		WIP Optimisations	data pipeline, enhancement						
+LangChain Optimise Generation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/56		WIP Optimisations	data pipeline, enhancement						
+Extend config functionality to read sources from a file	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/14		WIP Optimisations	enhancement, feature					5	
+Create multi-platform podcast availability checker	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/99		WIP Optimisations	data pipeline, enhancement, feature					13	
+Data Pipeline: Create a DB for the personal context of a user (prompt engineering step?)	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/38		WIP Optimisations	feature, question, storage						
+Agent personality			WIP Optimisations							
+Update the mid-project release plan with sprint 05 actual sizes	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/147	tubamos	Item Archive	domain: po		Sprint 06		sprint-mid	1	1
+Develop items for sprint 08	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/162		AMOS	domain: po, sprint-07		Sprint 07		independent	8	
+Create checklist for PO tasks prior and during the AMOS sprint meeting	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/143		AMOS	domain: po		Sprint 07		independent	1	
+Develop items for sprint 07	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/142	Ghemechis, tubamos	Item Archive	domain: po		Sprint 06		sprint-start	8	8
+Create a final project release plan for sprints 07-13	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/144	Ghemechis, tubamos	Item Archive	domain: po		Sprint 06		sprint-start	8	8
+Update the mid-project release plan with sprint 06 estimates	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/129	tubamos	Item Archive	domain: po		Sprint 06		sprint-start	1	1
+Create Burndown chart in the planning document	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/128	tubamos	Item Archive	domain: po		Sprint 06		sprint-start	2	3
+Preapare the mid-project review presentation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/66	Ghemechis, tubamos	Item Archive	amos formal, domain: po		Sprint 06		sprint-start	5	5
+Create text-based status update for IP	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/130		AMOS	domain: po		Sprint 07		sprint-end	2	
+Preapare demo day presentation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/67	Ghemechis, tubamos	AMOS	amos formal, domain: po		Sprint 12		sprint-start	8	
+Prepare for demo day	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/169		AMOS	documentation, domain: po, sprint-12		Sprint 12		sprint-start	13	
+Project Setup	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/8	preetvadaliya	Item Archive	env+tooling, sprint-02		Sprint 02	eloinoel, EnescuDavid, lukas-varga, manikg08, potthoffjan	sprint-start	3	3
+Create architecture diagram and text description of the diagram	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/15	EnescuDavid, preetvadaliya	Item Archive	amos formal, documentation, domain: po, sprint-02		Sprint 02		independent	3	3
+Create runtime components diagram and text descripton of the diagram	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/16	eloinoel, manikg08	Item Archive	amos formal, documentation, domain: po, sprint-02		Sprint 02		independent	3	3
+Create text description for the tech stack	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/17	preetvadaliya	Item Archive	amos formal, documentation, domain: po, sprint-02		Sprint 02		sprint-mid	3	3
+Review and edit runtime components diagram and text description	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/19	eloinoel, EnescuDavid, lukas-varga, manikg08, potthoffjan, preetvadaliya	Item Archive	amos formal, documentation, domain: po, sprint-02	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/97	Sprint 02		sprint-end	3	3
+Review and edit architecture diagram and text description	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/18	eloinoel, EnescuDavid, lukas-varga, manikg08, potthoffjan, preetvadaliya	Item Archive	amos formal, documentation, domain: po, sprint-02	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/97	Sprint 02		sprint-end	3	3
+Review and edit tech stack description	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/20	eloinoel, EnescuDavid, lukas-varga, manikg08, potthoffjan, preetvadaliya	Item Archive	amos formal, documentation, domain: po, sprint-02		Sprint 02		sprint-end	3	3
