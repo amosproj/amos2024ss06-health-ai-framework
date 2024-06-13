@@ -12,10 +12,10 @@ from bs4 import BeautifulSoup
 from pydub import AudioSegment
 from vosk import KaldiRecognizer, Model
 
+from src.backend.log.log import write_to_log
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PodCast import INDEX_FILE_PATH, RAW_DIR_PATH, VOSK_DIR_PATH
 from src.backend.Types.pod_cast import TypePodCastScrappingData
-from src.backend.log.log import write_to_log
 
 
 class PodCastScraper(BaseScraper):
@@ -43,7 +43,7 @@ class PodCastScraper(BaseScraper):
             req_single = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
             single_page = urlopen(req_single).read()
             return BeautifulSoup(single_page, 'html.parser')
-        except Exception as e:
+        except Exception:
             return None
 
     @classmethod
@@ -107,8 +107,8 @@ class PodCastScraper(BaseScraper):
             print(f'Removed {filename}.')
         except Exception as e:
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
-                )
+                self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
+            )
             raise e
 
     def mp3_scrape(self, page_soup):
@@ -125,8 +125,8 @@ class PodCastScraper(BaseScraper):
             return mp3_url
         except Exception as e:
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
-                )
+                self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
+            )
             raise e
 
     def download_mp3(self, folder: str, link: str):
@@ -141,8 +141,8 @@ class PodCastScraper(BaseScraper):
             return filename
         except Exception as e:
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
-                )
+                self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
+            )
             raise e
 
     def convert_to_wav(self, mp3_file):
@@ -157,8 +157,8 @@ class PodCastScraper(BaseScraper):
             return output_file
         except Exception as e:
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
-                )
+                self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
+            )
             raise e
 
     def transcribe_pretrained(self, file_path, model_path):
@@ -194,8 +194,8 @@ class PodCastScraper(BaseScraper):
             return first_result_text
         except Exception as e:
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
-                )
+                self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
+            )
             raise e
 
     def remove_raw_audio(self, audio_file_path):
@@ -209,8 +209,8 @@ class PodCastScraper(BaseScraper):
                 print(f'File does not exist: {audio_file_path}')
         except Exception as e:
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
-                )
+                self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
+            )
             raise e
 
     def download_and_transcribe_from_podcast_id(self, title=None, path='audios/'):
@@ -238,8 +238,8 @@ class PodCastScraper(BaseScraper):
             return transcription
         except Exception as e:
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'Failed to fetch data due to: {e}'
-                )
+                self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
+            )
             raise e
 
     def _scrape(self) -> TypePodCastScrappingData:

@@ -5,10 +5,10 @@ from typing import List
 import arxiv
 from pypdf import PdfReader
 
+from src.backend.log.log import write_to_log
 from src.backend.Scrapers.Archive import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Types.archive import TypeArchiveScrappingData
-from src.backend.log.log import write_to_log
 
 
 class ArchiveScraper(BaseScraper):
@@ -162,9 +162,8 @@ class ArchiveScraper(BaseScraper):
             paper = self.get_paper_from_arxiv_id(self.element_id)
             if paper is None:
                 error_msg = 'Paper does not exist for id: ' + str(id)
-                write_to_log(self.element_id, self.__class__.__name__ , error_msg)
+                write_to_log(self.element_id, self.__class__.__name__, error_msg)
                 raise ValueError('Paper does not exist for id: ' + str(id))
-                
 
             title = self.get_title_from_paper(paper)
             pdf_url = self.get_pdf_url_from_paper(paper)
@@ -181,7 +180,7 @@ class ArchiveScraper(BaseScraper):
             }
 
         except Exception as e:
-            write_to_log(self.element_id, self.__class__.__name__ , f'Failed due to {e}')
+            write_to_log(self.element_id, self.__class__.__name__, f'Failed due to {e}')
             print(e)
             info = {}
 
