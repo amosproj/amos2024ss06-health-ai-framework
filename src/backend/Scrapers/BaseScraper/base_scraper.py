@@ -1,6 +1,7 @@
 import json
 import os.path
 from abc import ABCMeta, abstractmethod
+
 from src.backend.log.log import write_to_log
 
 
@@ -45,8 +46,8 @@ class BaseScraper(metaclass=ABCMeta):
         if not scrapped_dict:
             print(f'No data found for {self.element_id}')
             write_to_log(
-                self.element_id, self.__class__.__name__ , f'No data found for {self.element_id}'
-                )
+                self.element_id, self.__class__.__name__, f'No data found for {self.element_id}'
+            )
             return
         # save scrapped json file
         self._save(scrapped_dict)
