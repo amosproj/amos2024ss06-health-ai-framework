@@ -15,7 +15,7 @@ export function FirebaseProvider(props: FirebaseProviderProps) {
 
   const fireApp = useMemo(() => initializeApp(Constants.expoConfig?.extra?.firebase), []);
   const fireAuth = useMemo(() => getAuth(fireApp, { persistence: store(AsyncStorage) }), [fireApp]);
-  const fireStore = useMemo(() => getFirestore(fireApp), [fireApp]);
+  const fireStore = useMemo(() => getFirestore(fireApp, 'ailixir-users'), [fireApp]);
 
   return (
     <FirebaseAppProvider
