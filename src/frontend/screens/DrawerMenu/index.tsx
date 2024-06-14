@@ -3,39 +3,43 @@ import { View, Keyboard} from 'react-native';
 import { Drawer, IconButton, Searchbar, Text, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Style } from './style';
+import { useGetAllChat } from 'src/frontend/hooks';
 
 export function DrawerMenu() {
-    const [searchQuery, setSearchQuery] = React.useState('');
-    const onChangeSearch = (query: string) => setSearchQuery(query);
+  const {chats, status, error} = useGetAllChat();
+  console.log(chats, status, error);
 
-    // remove keyboard once menu is closed
-    const navigation = useNavigation();
-    React.useEffect(() => {
-        const unsubscribe = navigation.addListener('state', () => {
-        if (!navigation?.getState()?.index) {
-            Keyboard.dismiss();
-        }
-        });
-        return () => {
-        unsubscribe();
-        };
-    }, [navigation]);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const onChangeSearch = (query: string) => setSearchQuery(query);
 
-    // define navigation functions
-    const goToProfile = () => {
-        //navigation.navigate('Profile');
-        console.log("goToProfile");
+  // define navigation functions
+  const goToProfile = () => {
+    //navigation.navigate('Profile');
+    console.log("goToProfile");
+  }
+  const handleLogout = () => {
+    //TODO: additional stuff
+    //navigation.navigate('Login');
+    console.log("handleLogout");
+  }
+  const goToChat = () => {
+    //TODO: load correct chat
+    //navigation.navigate('Chat');
+    console.log("gotToChat");
+  }
+
+  // remove keyboard once menu is closed
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('state', () => {
+    if (!navigation?.getState()?.index) {
+      Keyboard.dismiss();
     }
-    const handleLogout = () => {
-        //TODO: additional stuff
-        //navigation.navigate('Login');
-        console.log("handleLogout");
-    }
-    const goToChat = () => {
-        //TODO: load correct chat
-        //navigation.navigate('Chat');
-        console.log("gotToChat");
-    }
+    });
+    return () => {
+    unsubscribe();
+    };
+  }, [navigation]);
 
   return (
     <View style={Style.drawerContainer}>
