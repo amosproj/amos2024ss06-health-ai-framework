@@ -4,8 +4,7 @@ import { useFirestore, useFirestoreDocData, useUser } from 'reactfire';
 import { FirestoreCollections, currentChatIdAtom } from '../helpers';
 import type { Chat } from '../types';
 
-export function useGetChat() {
-  const chatId = useAtomValue(currentChatIdAtom);
+export function useGetChat(chatId: string) {
   const { data: users } = useUser();
   const firestore = useFirestore();
   const chatRef = doc(
@@ -13,7 +12,7 @@ export function useGetChat() {
     FirestoreCollections.USERS,
     users?.uid || '',
     FirestoreCollections.CHATS,
-    chatId || ''
+    chatId
   );
   const { data, status, error } = useFirestoreDocData(chatRef, { idField: 'id' });
   return { chat: data as Chat, status, error };
