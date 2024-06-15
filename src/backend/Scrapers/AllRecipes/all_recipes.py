@@ -57,23 +57,25 @@ class AllRecipesScraper(BaseScraper):
 
     def get_heading(self) -> str:
         try:
-            heading = self._soup.select_one('.article-heading.type--lion').get_text(strip=True)
+            heading = self._soup.select_one('#article-header--recipe_1-0 > h1').get_text(strip=True)
             return heading
         except AttributeError:
             return ''
 
     def get_sub_heading(self) -> str:
         try:
-            sub_heading = self._soup.select_one('.article-subheading').get_text(strip=True)[1:-1]
+            sub_heading = self._soup.select_one('#article-header--recipe_1-0 > p').get_text(
+                strip=True
+            )[1:-1]
             return sub_heading
         except AttributeError:
             return ''
 
     def get_rating_count(self) -> float:
         try:
-            rating_count_text = self._soup.select_one('.mntl-recipe-review-bar__rating').get_text(
-                strip=True
-            )
+            rating_count_text = self._soup.select_one(
+                '#mm-recipes-review-bar__rating_1-0'
+            ).get_text(strip=True)
             rating_count_number = rating_count_text[1:-1]
             return float(rating_count_number)
         except (AttributeError, ValueError):
@@ -82,15 +84,15 @@ class AllRecipesScraper(BaseScraper):
     def get_recipe_details(self) -> Dict[str, str]:
         details = {}
         try:
-            items = self._soup.find_all(class_='mntl-recipe-details__item')
+            items = self._soup.find_all(class_='mm-recipes-details__item')
             for item in items:
-                label = (
-                    item.find(class_='mntl-recipe-details__label')
+                label: str = (
+                    item.find(class_='mm-recipes-details__label')
                     .get_text(strip=True)
                     .replace(':', '')
                 )
-                value = item.find(class_='mntl-recipe-details__value').get_text(strip=True)
-                details[label] = value
+                value = item.find(class_='mm-recipes-details__value').get_text(strip=True)
+                details[label.replace(' ', '')] = value
         except AttributeError:
             pass
         return details
@@ -98,7 +100,7 @@ class AllRecipesScraper(BaseScraper):
     def get_ingredients(self) -> List[str]:
         ingredients = []
         try:
-            items = self._soup.find_all(class_='mntl-structured-ingredients__list-item')
+            items = self._soup.find_all(class_='mm-recipes-structured-ingredients__list-item')
             for item in items:
                 quantity = item.find('span', {'data-ingredient-quantity': 'true'}).get_text(
                     strip=True
@@ -113,7 +115,7 @@ class AllRecipesScraper(BaseScraper):
 
     def get_steps(self) -> List[str]:
         try:
-            steps = self._soup.select('.recipe__steps-content ol li')
+            steps = self._soup.select('.mm-recipes-steps__content ol li')
             step_list = [step.get_text(strip=True) for step in steps]
             return step_list
         except AttributeError:
@@ -122,13 +124,13 @@ class AllRecipesScraper(BaseScraper):
     def get_nutrition_facts(self) -> Dict[str, str]:
         nutrition_dict = {}
         try:
-            rows = self._soup.select('.mntl-nutrition-facts-summary__table-row')
+            rows = self._soup.select('.mm-recipes-nutrition-facts-summary__table-row')
             for row in rows:
-                cells = row.find_all('td', class_='mntl-nutrition-facts-summary__table-cell')
+                cells = row.find_all('td', class_='mm-recipes-nutrition-facts-summary__table-cell')
                 if len(cells) == 2:
-                    key = cells[1].text.strip()
+                    key: str = cells[1].text.strip()
                     value = cells[0].text.strip()
-                    nutrition_dict[key] = value
+                    nutrition_dict[key.replace(' ', '')] = value
         except AttributeError:
             pass
         return nutrition_dict
@@ -136,20 +138,20 @@ class AllRecipesScraper(BaseScraper):
     def get_nutrition_info(self) -> Dict[str, Dict[str, str]]:
         nutrition_dict = {}
         try:
-            rows = self._soup.select('.mntl-nutrition-facts-label__table-body tr')
+            rows = self._soup.select('.mm-recipes-nutrition-facts-label__table-body tr')
             for row in rows:
                 cells = row.find_all('td')
                 if len(cells) == 2:
-                    nutrient_name = (
+                    nutrient_name: str = (
                         cells[0]
-                        .find('span', class_='mntl-nutrition-facts-label__nutrient-name')
+                        .find('span', class_='mm-recipes-nutrition-facts-label__nutrient-name')
                         .text.strip()
                     )
                     nutrient_value = cells[0].contents[-1].strip()
                     daily_value = cells[1].text.strip()
-                    nutrition_dict[nutrient_name] = {
+                    nutrition_dict[nutrient_name.replace(' ', '')] = {
                         'Amount': nutrient_value,
-                        'Daily Value': daily_value,
+                        'DailyValue': daily_value,
                     }
         except AttributeError:
             pass
@@ -183,6 +185,7 @@ class AllRecipesScraper(BaseScraper):
             'nutritionInfo': self.get_nutrition_info(),
             'ref': self._url,
         }
+        print(f'Scraped data for {scrape_data}')
         for key, value in scrape_data.items():
             if value in ['', [], {}, None]:
                 return {}
@@ -235,7 +238,7 @@ class AllRecipesScraper(BaseScraper):
                     recipes.append({'id': recipe_id, 'name': recipe_name})
                     fetched_count += 1
                 # Find the next page URL
-                next_button = soup.find(class_='mntl-pagination__next')
+                next_button = soup.find(class_='mm-pagination__next')
                 next_button_url = next_button.find('a')['href'] if next_button else None
                 current_url = next_button_url if next_button_url else None
             except Exception as e:
