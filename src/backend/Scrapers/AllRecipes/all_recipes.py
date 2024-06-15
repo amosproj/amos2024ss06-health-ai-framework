@@ -5,11 +5,13 @@ from typing import Dict, List
 from urllib.request import HTTPSHandler
 
 from bs4 import BeautifulSoup
+from langchain.schema import Document
 
 from src.backend.log.log import write_to_log
 from src.backend.Scrapers.AllRecipes import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Types.all_recipes import TypeAllRecipeScrappingData
+from src.backend.Utils.splitter import get_text_chunks
 
 
 class AllRecipesScraper(BaseScraper):
@@ -152,6 +154,22 @@ class AllRecipesScraper(BaseScraper):
         except AttributeError:
             pass
         return nutrition_dict
+
+    def get_documents(self, data: TypeAllRecipeScrappingData) -> List[Document]:
+        title = data.get('title', '')
+        chunks = get_text_chunks(title)
+        metadata = {
+            'subTitle': data.get('subTitle', ''),
+            'rating': data.get('rating', 0.0),
+            'recipeDetails': data.get('recipeDetails', {}),
+            'ingredients': data.get('ingredients', []),
+            'steps': data.get('steps', []),
+            'nutritionFacts': data.get('nutritionFacts', {}),
+            'nutritionInfo': data.get('nutritionInfo', {}),
+            'ref': data.get('ref', ''),
+        }
+        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        return documents
 
     def _scrape(self) -> TypeAllRecipeScrappingData:
         scrape_data: TypeAllRecipeScrappingData = {
