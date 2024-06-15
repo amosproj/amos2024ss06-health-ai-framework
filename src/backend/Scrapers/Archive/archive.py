@@ -3,12 +3,14 @@ import os
 from typing import List
 
 import arxiv
+from langchain.schema import Document
 from pypdf import PdfReader
 
 from src.backend.log.log import write_to_log
 from src.backend.Scrapers.Archive import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Types.archive import TypeArchiveScrappingData
+from src.backend.Utils.splitter import get_text_chunks
 
 
 class ArchiveScraper(BaseScraper):
@@ -156,6 +158,19 @@ class ArchiveScraper(BaseScraper):
     # ---------------------------------------------------------
     # MARK: _scrape & get_ids
     # ---------------------------------------------------------
+
+    def get_documents(self, data: TypeArchiveScrappingData) -> List[Document]:
+        transcript = data.get('transcript', '')
+        chunks = get_text_chunks(transcript)
+        metadata = {
+            'abstract': data.get('abstract', ''),
+            'authors': data.get('authors', ''),
+            'publicationDate': data.get('publicationDate', ''),
+            'title': data.get('title', ''),
+            'ref': data.get('ref', ''),
+        }
+        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        return documents
 
     def _scrape(self) -> TypeArchiveScrappingData:
         try:
