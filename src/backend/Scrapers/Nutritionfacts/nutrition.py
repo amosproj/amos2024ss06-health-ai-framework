@@ -5,6 +5,7 @@ import time
 from typing import List
 
 from bs4 import BeautifulSoup
+from langchain.schema import Document
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -17,6 +18,7 @@ from src.backend.log.log import write_to_log
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.Nutritionfacts import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.nutrition import TypeNutritionScrappingData
+from src.backend.Utils.splitter import get_text_chunks
 
 # Suppress Selenium log messages
 logging.getLogger('selenium').setLevel(logging.WARNING)
@@ -221,6 +223,19 @@ class NutritionScraper(BaseScraper):
     # ---------------------------------------------------------
     # MARK: _scrape & get_ids
     # ---------------------------------------------------------
+
+    def get_documents(self, data: TypeNutritionScrappingData) -> List[Document]:
+        transcript = data.get('transcript', '')
+        chunks = get_text_chunks(transcript)
+        metadata = {
+            'author': data.get('author', ''),
+            'date': data.get('date', ''),
+            'keyPoints': data.get('keyPoints', ''),
+            'title': data.get('title', ''),
+            'ref': data.get('ref', ''),
+        }
+        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        return documents
 
     def _scrape(self) -> str:
         try:
