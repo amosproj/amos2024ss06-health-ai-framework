@@ -1,8 +1,14 @@
 import json
-import os.path
+import os
 from abc import ABCMeta, abstractmethod
+from typing import List
+
+from langchain.schema import Document
+from langchain_astradb import AstraDBVectorStore
+from langchain_openai import OpenAIEmbeddings
 
 from src.backend.log.log import write_to_log
+from src.backend.Types.base_type import TypeBaseScrappingData
 
 
 class BaseScraper(metaclass=ABCMeta):
@@ -19,7 +25,7 @@ class BaseScraper(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def base_dir(cls):
+    def base_dir(cls) -> str:
         pass
 
     @abstractmethod
@@ -31,14 +37,28 @@ class BaseScraper(metaclass=ABCMeta):
     def get_all_possible_elements(cls, target) -> []:
         pass
 
+    @abstractmethod
+    def get_documents(self, data: TypeBaseScrappingData) -> List[Document]:
+        pass
+
     def is_scrapped(self) -> bool:
-        indexes: [str] = json.load(open(self.index_file(), 'r').read()).get('indexes', [])
+        indexes: List[str] = json.load(open(self.index_file(), 'r').read()).get('indexes', [])
         return self.element_id in indexes
 
     def _save(self, scrapped_dict: dict):
         file_path = os.path.join(self.base_dir(), f'{self.element_id}.json')
         with open(file_path, 'w') as file:
             json.dump(scrapped_dict, file, indent=2)
+
+    def _save_vector_docs(self, documents: List[Document]):
+        vector_store = AstraDBVectorStore(
+            embedding=OpenAIEmbeddings(api_key=os.getenv('OPEN_AI_API')),
+            api_endpoint=os.getenv('ASTRA_DB_API_ENDPOINT'),
+            token=os.getenv('ASTRA_DB_TOKEN'),
+            namespace=os.getenv('ASTRA_DB_NAMESPACE'),
+            collection_name=os.getenv('ASTRA_DB_COLLECTION'),
+        )
+        vector_store.add_documents(documents=documents)
 
     def scrape_and_save(self):
         scrapped_dict = self._scrape()
@@ -51,6 +71,10 @@ class BaseScraper(metaclass=ABCMeta):
             return
         # save scrapped json file
         self._save(scrapped_dict)
+        # create chunk documents
+        documents = self.get_documents(scrapped_dict)
+        # Save the vector documents
+        self._save_vector_docs(documents)
         # Update the indexes
         with open(type(self).index_file(), 'r+') as file:
             index_data = json.load(file)
