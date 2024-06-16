@@ -4,7 +4,7 @@ import { useTheme } from 'react-native-paper';
 // don't know how to do properly
 export const Style = StyleSheet.create({
     drawerContainer: {
-      paddingTop: 16,
+      paddingTop: 24,
       //backgroundColor: 'red',
       flex: 1,
     },
@@ -12,6 +12,7 @@ export const Style = StyleSheet.create({
       marginHorizontal: 16,
     },
     footer: {
+      padding: 16,
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       alignItems: 'center',

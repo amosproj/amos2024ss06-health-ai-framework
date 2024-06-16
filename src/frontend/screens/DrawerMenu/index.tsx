@@ -24,10 +24,13 @@ export function DrawerMenu() {
   const { data: user } = useUser();
   const {chats, status, error} = useGetAllChat();
   const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
+  const { colors } = useTheme();
 
-  // Filter chats based on search query
-  const [filteredChats, setFilteredChats] = React.useState<Chat[]>([]);
+  // ------------ Filter chats based on search query ------------
   const [searchText, setSearchQuery] = React.useState('');
+  const [filteredChats, setFilteredChats] = React.useState<Chat[]>([]);
+  const [sortedChats, setSortedChats] = React.useState<Chat[]>([]); //TODO: sort
+
   React.useEffect(() => {
     setFilteredChats(chats);
   }, [chats?.length]);
@@ -42,7 +45,18 @@ export function DrawerMenu() {
     }
   }, [searchText, chats?.length]);
 
-
+  // Sort filteredChats by date
+  React.useEffect(() => {
+      if (filteredChats) {
+          const sortedChats = [...filteredChats].sort((a, b) => {
+              const dateA = a.createdAt;
+              const dateB = b.createdAt;
+              return dateA.toMillis() - dateB.toMillis();
+          });
+          setSortedChats(sortedChats);
+      }
+  }, [filteredChats]);
+  // ------------ End filter chats ------------
 
   // define navigation functions
   const goToProfile = () => {
@@ -85,47 +99,16 @@ export function DrawerMenu() {
           placeholder="Search chat history"
           onChangeText={setSearchQuery}
           value={searchText}
-          style={Style.searchbar}
+          style={[Style.searchbar, {backgroundColor: colors.secondaryContainer}]}
         />
         {/* custom padding because doesn't work with Drawer.Section props*/}
         <View style={{height: 10}}/>
       </Drawer.Section>
       <Drawer.Section title="Recent Chats" showDivider={false} style={{flex: 1}}>
         <ScrollView style={{flexGrow: 1}}>
-          {/* <RecentChatButton label="How can I fix my diet?" onPress={ goToChat }/>
-          <RecentChatButton label="Which car should I buy next?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
-          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/> */}
           {status === 'loading' && <ActivityIndicator />}
           {status === 'success' &&
-          filteredChats?.map((chat) => (
+          sortedChats?.map((chat) => (
             <ChatItem key={chat.id} id={chat.id || ''} title={chat.title} />
           ))}
         </ScrollView>
@@ -175,7 +158,7 @@ const DrawerFooter: React.FC<DrawerFooterProps> = ({userName, onProfilePress, on
               icon="user-alt"
               onPress={onProfilePress}
             />
-            <Text variant="titleMedium">{userName}</Text>
+            <Text variant="titleMedium" style={{marginHorizontal: 8}}>{userName}</Text>
             <IconButton
               icon="sign-out-alt"
               onPress={onLogoutPress}
