@@ -1,26 +1,63 @@
 import React from 'react';
 import { View, Keyboard} from 'react-native';
-import { Drawer, IconButton, Searchbar, Text, Button } from 'react-native-paper';
+import { Drawer, IconButton, Searchbar, Text, Button, ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Style } from './style';
+import { StyleSheet } from 'react-native';
+
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { AppRoutesParams } from 'src/frontend/routes';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { signOut } from 'firebase/auth';
+import { useTheme } from 'react-native-paper';
+import { useAuth, useUser } from 'reactfire';
 import { useGetAllChat } from 'src/frontend/hooks';
+import type { Chat } from 'src/frontend/types';
+import { ChatItem } from 'src/frontend/components';
 
+/**
+ * NOTE: needs to be called DrawerMenu because Drawer is already defined in react-native-paper
+ */
 export function DrawerMenu() {
+  const fireAuth = useAuth();
+  const { data: user } = useUser();
   const {chats, status, error} = useGetAllChat();
-  console.log(chats, status, error);
+  const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const onChangeSearch = (query: string) => setSearchQuery(query);
+  // Filter chats based on search query
+  const [filteredChats, setFilteredChats] = React.useState<Chat[]>([]);
+  const [searchText, setSearchQuery] = React.useState('');
+  React.useEffect(() => {
+    setFilteredChats(chats);
+  }, [chats?.length]);
+
+  React.useEffect(() => {
+    if (searchText) {
+      setFilteredChats(
+        chats?.filter((chat) => chat.title.toLowerCase().includes(searchText.toLowerCase()))
+      );
+    } else {
+      setFilteredChats(chats);
+    }
+  }, [searchText, chats?.length]);
+
+
 
   // define navigation functions
   const goToProfile = () => {
     //navigation.navigate('Profile');
-    console.log("goToProfile");
+    console.log("TODO: implement Profile Screen");
   }
-  const handleLogout = () => {
-    //TODO: additional stuff
-    //navigation.navigate('Login');
-    console.log("handleLogout");
+  const handleLogout = async () => {
+    //TODO: fix errors
+    try {
+      await signOut(fireAuth);
+      await GoogleSignin.revokeAccess();
+      reset({ index: 0, routes: [{ name: 'Auth' }] });
+    } catch (error) {
+      console.error(error);
+    }
   }
   const goToChat = () => {
     //TODO: load correct chat
@@ -46,20 +83,55 @@ export function DrawerMenu() {
       <Drawer.Section showDivider={false}>
         <Searchbar
           placeholder="Search chat history"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
+          onChangeText={setSearchQuery}
+          value={searchText}
           style={Style.searchbar}
         />
         {/* custom padding because doesn't work with Drawer.Section props*/}
         <View style={{height: 10}}/>
       </Drawer.Section>
-      <Drawer.Section title="Recent Chats" showDivider={false}>
-        <RecentChatButton label="How can I fix my diet?" onPress={ goToChat }/>
-        <RecentChatButton label="Which car should I buy next?" onPress={ goToChat }/>
-        <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+      <Drawer.Section title="Recent Chats" showDivider={false} style={{flex: 1}}>
+        <ScrollView style={{flexGrow: 1}}>
+          {/* <RecentChatButton label="How can I fix my diet?" onPress={ goToChat }/>
+          <RecentChatButton label="Which car should I buy next?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/>
+          <RecentChatButton label="What's insomnia?" onPress={ goToChat }/> */}
+          {status === 'loading' && <ActivityIndicator />}
+          {status === 'success' &&
+          filteredChats?.map((chat) => (
+            <ChatItem key={chat.id} id={chat.id || ''} title={chat.title} />
+          ))}
+        </ScrollView>
       </Drawer.Section>
       <DrawerFooter
-        userName="Dave1234"
+        userName={user?.displayName || 'User'}
         onProfilePress={() => { goToProfile() }}
         onLogoutPress={() => { handleLogout() }}
       />
@@ -96,8 +168,9 @@ interface DrawerFooterProps {
 
 //TODO: fix that the footer doesn't get moved upwards when keyboard is opened
 const DrawerFooter: React.FC<DrawerFooterProps> = ({userName, onProfilePress, onLogoutPress}) => {
-    return (
-        <View style={Style.footer}>
+  const { colors } = useTheme();
+  return (
+        <View style={[Style.footer]}>
             <IconButton
               icon="user-alt"
               onPress={onProfilePress}
