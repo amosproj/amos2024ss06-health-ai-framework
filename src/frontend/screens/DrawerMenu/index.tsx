@@ -46,7 +46,7 @@ export function DrawerMenu() {
   // ------------ Filter chats based on search query ------------
   const [searchText, setSearchQuery] = React.useState('');
   const [filteredChats, setFilteredChats] = React.useState<Chat[]>([]);
-  const [sortedChats, setSortedChats] = React.useState<Chat[]>([]); //TODO: sort
+  const [sortedChats, setSortedChats] = React.useState<Chat[]>([]);
 
   React.useEffect(() => {
     setFilteredChats(chats);
