@@ -11,7 +11,7 @@ const MainRouteDrawer = createDrawerNavigator<MainDrawerParams>();
 
 export function MainRoutes() {
   return (
-    <MainRouteDrawer.Navigator drawerContent={(props) => <DrawerMenu/>}>
+    <MainRouteDrawer.Navigator drawerContent={(props) => <DrawerMenu />}>
       <MainRouteDrawer.Screen key={'123'} name={Screens.Chat} component={Chat} />
     </MainRouteDrawer.Navigator>
   );

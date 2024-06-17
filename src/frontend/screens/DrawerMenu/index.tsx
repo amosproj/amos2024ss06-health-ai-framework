@@ -1,19 +1,19 @@
-import React from 'react';
-import { View, Keyboard, KeyboardAvoidingView} from 'react-native';
-import { Drawer, IconButton, Searchbar, Text, Button, ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Keyboard, KeyboardAvoidingView, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { ActivityIndicator, Button, Drawer, IconButton, Searchbar, Text } from 'react-native-paper';
 import { Style } from './style';
 
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { AppRoutesParams } from 'src/frontend/routes';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { signOut } from 'firebase/auth';
 import { useTheme } from 'react-native-paper';
 import { useAuth, useUser } from 'reactfire';
-import { useGetAllChat } from 'src/frontend/hooks';
-import type { Chat } from 'src/frontend/types';
 import { ChatItem } from 'src/frontend/components';
+import { useGetAllChat } from 'src/frontend/hooks';
+import type { AppRoutesParams } from 'src/frontend/routes';
+import type { Chat } from 'src/frontend/types';
 
 /**
  * NOTE: needs to be called DrawerMenu because Drawer is already defined in react-native-paper
@@ -21,15 +21,15 @@ import { ChatItem } from 'src/frontend/components';
 export function DrawerMenu() {
   const fireAuth = useAuth();
   const { data: user } = useUser();
-  const {chats, status, error} = useGetAllChat();
+  const { chats, status, error } = useGetAllChat();
   const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
   const { colors } = useTheme();
 
   // ------------ Define navigation functions ------------
   const goToProfile = () => {
     //navigation.navigate('Profile');
-    console.log("TODO: implement Profile Screen");
-  }
+    console.log('TODO: implement Profile Screen');
+  };
   const handleLogout = async () => {
     //TODO: fix errors
     try {
@@ -39,10 +39,9 @@ export function DrawerMenu() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   // ------------ End navigation functions ------------
-
 
   // ------------ Filter chats based on search query ------------
   const [searchText, setSearchQuery] = React.useState('');
@@ -65,14 +64,14 @@ export function DrawerMenu() {
 
   // Sort filteredChats by date
   React.useEffect(() => {
-      if (filteredChats) {
-          const sortedChats = [...filteredChats].sort((a, b) => {
-              const dateA = a.createdAt;
-              const dateB = b.createdAt;
-              return dateA.toMillis() - dateB.toMillis();
-          });
-          setSortedChats(sortedChats);
-      }
+    if (filteredChats) {
+      const sortedChats = [...filteredChats].sort((a, b) => {
+        const dateA = a.createdAt;
+        const dateB = b.createdAt;
+        return dateA.toMillis() - dateB.toMillis();
+      });
+      setSortedChats(sortedChats);
+    }
   }, [filteredChats]);
   // ------------ End filter chats ------------
 
@@ -80,12 +79,12 @@ export function DrawerMenu() {
   const navigation = useNavigation();
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('state', () => {
-    if (!navigation?.getState()?.index) {
-      Keyboard.dismiss();
-    }
+      if (!navigation?.getState()?.index) {
+        Keyboard.dismiss();
+      }
     });
     return () => {
-    unsubscribe();
+      unsubscribe();
     };
   }, [navigation]);
   // ------------ End remove keyboard ------------
@@ -94,27 +93,31 @@ export function DrawerMenu() {
     <View style={Style.drawerContainer}>
       <Drawer.Section showDivider={false}>
         <Searchbar
-          placeholder="Search chat history"
+          placeholder='Search chat history'
           onChangeText={setSearchQuery}
           value={searchText}
-          style={[Style.searchbar, /*{backgroundColor: colors.secondaryContainer}*/]}
+          style={[Style.searchbar /*{backgroundColor: colors.secondaryContainer}*/]}
         />
         {/* custom padding because doesn't work with Drawer.Section props*/}
-        <View style={{height: 10}}/>
+        <View style={{ height: 10 }} />
       </Drawer.Section>
-      <Drawer.Section title="Recent Chats" showDivider={false} style={{flex: 1}}>
-        <ScrollView style={{flexGrow: 1}}>
+      <Drawer.Section title='Recent Chats' showDivider={false} style={{ flex: 1 }}>
+        <ScrollView style={{ flexGrow: 1 }}>
           {status === 'loading' && <ActivityIndicator />}
           {status === 'success' &&
-          sortedChats?.map((chat) => (
-            <ChatItem key={chat.id} id={chat.id || ''} title={chat.title} />
-          ))}
+            sortedChats?.map((chat) => (
+              <ChatItem key={chat.id} id={chat.id || ''} title={chat.title} />
+            ))}
         </ScrollView>
       </Drawer.Section>
       <DrawerFooter
         userName={user?.displayName || 'User'}
-        onProfilePress={() => { goToProfile() }}
-        onLogoutPress={() => { handleLogout() }}
+        onProfilePress={() => {
+          goToProfile();
+        }}
+        onLogoutPress={() => {
+          handleLogout();
+        }}
       />
     </View>
   );
@@ -122,25 +125,21 @@ export function DrawerMenu() {
 
 // ---------- MARK: Footer ----------
 interface DrawerFooterProps {
-    userName: string;
-    onProfilePress: () => void;
-    onLogoutPress: () => void;
+  userName: string;
+  onProfilePress: () => void;
+  onLogoutPress: () => void;
 }
 
 //TODO: fix that the footer doesn't get moved upwards when keyboard is opened
-const DrawerFooter: React.FC<DrawerFooterProps> = ({userName, onProfilePress, onLogoutPress}) => {
+const DrawerFooter: React.FC<DrawerFooterProps> = ({ userName, onProfilePress, onLogoutPress }) => {
   const { colors } = useTheme();
   return (
-        <View style={[Style.footer]}>
-            <IconButton
-              icon="user-alt"
-              onPress={onProfilePress}
-            />
-            <Text variant="titleMedium" style={{marginHorizontal: 8}}>{userName}</Text>
-            <IconButton
-              icon="sign-out-alt"
-              onPress={onLogoutPress}
-            />
-        </View>
-    );
-}
+    <View style={[Style.footer]}>
+      <IconButton icon='user-alt' onPress={onProfilePress} />
+      <Text variant='titleMedium' style={{ marginHorizontal: 8 }}>
+        {userName}
+      </Text>
+      <IconButton icon='sign-out-alt' onPress={onLogoutPress} />
+    </View>
+  );
+};

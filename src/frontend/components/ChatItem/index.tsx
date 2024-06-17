@@ -1,7 +1,7 @@
 import { useDrawerStatus } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, View } from 'react-native';
-import { Menu, Text, TouchableRipple, Button} from 'react-native-paper';
+import { Button, Menu, Text, TouchableRipple } from 'react-native-paper';
 import { useDeleteChat, useGetChat, useUpdateChat } from 'src/frontend/hooks';
 
 type ChatItemProps = {
@@ -32,18 +32,21 @@ export function ChatItem(props: ChatItemProps) {
         onDismiss={() => setMenuVisible(false)}
         anchorPosition='bottom'
         anchor={
-        <Button
-          textColor='black'
-          onPress = {() => {console.log('TODO: implement this.');}}
-          onLongPress={() => setMenuVisible(true)}
-          style={{}}
-          contentStyle={{justifyContent: 'flex-start', paddingLeft: 16}}
-          // labelStyle={{fontWeight: 'bold'}}
-        >
-          {/* {title} */}
-            <Text variant='titleSmall' style={{fontWeight: 'bold'}}>{title}</Text>
-        </Button>
-
+          <Button
+            textColor='black'
+            onPress={() => {
+              console.log('TODO: implement this.');
+            }}
+            onLongPress={() => setMenuVisible(true)}
+            style={{}}
+            contentStyle={{ justifyContent: 'flex-start', paddingLeft: 16 }}
+            // labelStyle={{fontWeight: 'bold'}}
+          >
+            {/* {title} */}
+            <Text variant='titleSmall' style={{ fontWeight: 'bold' }}>
+              {title}
+            </Text>
+          </Button>
         }
       >
         <Menu.Item leadingIcon='archive' onPress={handleArchive} title='Archive' />
