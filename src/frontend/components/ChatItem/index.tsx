@@ -1,7 +1,7 @@
 import { useDrawerStatus } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, View } from 'react-native';
-import { Menu, Text, TouchableRipple } from 'react-native-paper';
+import { Button, Menu, Text, TouchableRipple } from 'react-native-paper';
 import { useDeleteChat, useGetChat, useUpdateChat } from 'src/frontend/hooks';
 
 type ChatItemProps = {
@@ -32,13 +32,21 @@ export function ChatItem(props: ChatItemProps) {
         onDismiss={() => setMenuVisible(false)}
         anchorPosition='bottom'
         anchor={
-          <TouchableRipple
-            rippleColor='rgba(0, 0, 0, .32)'
-            style={{ height: 48, paddingHorizontal: 16, justifyContent: 'center' }}
+          <Button
+            textColor='black'
+            onPress={() => {
+              console.log('TODO: implement this.');
+            }}
             onLongPress={() => setMenuVisible(true)}
+            style={{}}
+            contentStyle={{ justifyContent: 'flex-start', paddingLeft: 16 }}
+            // labelStyle={{fontWeight: 'bold'}}
           >
-            <Text variant='titleSmall'>{title}</Text>
-          </TouchableRipple>
+            {/* {title} */}
+            <Text variant='titleSmall' style={{ fontWeight: 'bold' }}>
+              {title}
+            </Text>
+          </Button>
         }
       >
         <Menu.Item leadingIcon='archive' onPress={handleArchive} title='Archive' />
@@ -47,3 +55,12 @@ export function ChatItem(props: ChatItemProps) {
     </View>
   );
 }
+
+//old anchor
+/*<TouchableRipple
+  rippleColor='rgba(0, 0, 0, .32)'
+  style={{ height: 48, paddingHorizontal: 16, justifyContent: 'center' }}
+  onLongPress={() => setMenuVisible(true)}
+>
+  <Text variant='titleSmall'>{title}</Text>
+</TouchableRipple>*/
