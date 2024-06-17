@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Keyboard} from 'react-native';
+import { View, Keyboard, KeyboardAvoidingView} from 'react-native';
 import { Drawer, IconButton, Searchbar, Text, Button, ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Style } from './style';
-import { StyleSheet } from 'react-native';
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AppRoutesParams } from 'src/frontend/routes';
@@ -25,6 +24,25 @@ export function DrawerMenu() {
   const {chats, status, error} = useGetAllChat();
   const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
   const { colors } = useTheme();
+
+  // ------------ Define navigation functions ------------
+  const goToProfile = () => {
+    //navigation.navigate('Profile');
+    console.log("TODO: implement Profile Screen");
+  }
+  const handleLogout = async () => {
+    //TODO: fix errors
+    try {
+      await signOut(fireAuth);
+      await GoogleSignin.revokeAccess();
+      reset({ index: 0, routes: [{ name: 'Auth' }] });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // ------------ End navigation functions ------------
+
 
   // ------------ Filter chats based on search query ------------
   const [searchText, setSearchQuery] = React.useState('');
@@ -58,28 +76,7 @@ export function DrawerMenu() {
   }, [filteredChats]);
   // ------------ End filter chats ------------
 
-  // define navigation functions
-  const goToProfile = () => {
-    //navigation.navigate('Profile');
-    console.log("TODO: implement Profile Screen");
-  }
-  const handleLogout = async () => {
-    //TODO: fix errors
-    try {
-      await signOut(fireAuth);
-      await GoogleSignin.revokeAccess();
-      reset({ index: 0, routes: [{ name: 'Auth' }] });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  const goToChat = () => {
-    //TODO: load correct chat
-    //navigation.navigate('Chat');
-    console.log("gotToChat");
-  }
-
-  // remove keyboard once menu is closed
+  // ------------ Remove keyboard once menu is closed ------------
   const navigation = useNavigation();
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('state', () => {
@@ -91,6 +88,7 @@ export function DrawerMenu() {
     unsubscribe();
     };
   }, [navigation]);
+  // ------------ End remove keyboard ------------
 
   return (
     <View style={Style.drawerContainer}>
@@ -99,7 +97,7 @@ export function DrawerMenu() {
           placeholder="Search chat history"
           onChangeText={setSearchQuery}
           value={searchText}
-          style={[Style.searchbar, {backgroundColor: colors.secondaryContainer}]}
+          style={[Style.searchbar, /*{backgroundColor: colors.secondaryContainer}*/]}
         />
         {/* custom padding because doesn't work with Drawer.Section props*/}
         <View style={{height: 10}}/>
@@ -120,26 +118,6 @@ export function DrawerMenu() {
       />
     </View>
   );
-}
-
-// ---------- Custom Bold Text Button using React Native Paper ----------
-interface RecentChatButtonProps {
-    label: string;
-    onPress: () => void;
-}
-
-const RecentChatButton: React.FC<RecentChatButtonProps> = ({label, onPress, }) => {
-    return (
-        <Button
-            textColor='black'
-            onPress = {onPress}
-            style={{}}
-            contentStyle={{justifyContent: 'flex-start', paddingLeft: 16}}
-            labelStyle={{fontWeight: 'bold'}}
-        >
-            {label}
-        </Button>
-    );
 }
 
 // ---------- MARK: Footer ----------
