@@ -12,7 +12,7 @@ const data = [
   { label: 'Claude', value: 'Claude' }
 ];
 
-const DropdownMenu = () => {
+export const DropdownMenu = () => {
   const [selectedValue, setSelectedValue] = useState(data[0].label);
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>

@@ -4,3 +4,4 @@ export * from './SubmitButton';
 export * from './FirebaseProvider';
 export * from './ScreenLayout';
 export * from './ChatItem';
+export * from './DropdownMenu';
