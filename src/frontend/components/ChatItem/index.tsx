@@ -1,8 +1,12 @@
 import { useDrawerStatus } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, View } from 'react-native';
-import { Button, Menu, Text, TouchableRipple } from 'react-native-paper';
-import { useDeleteChat, useGetChat, useUpdateChat } from 'src/frontend/hooks';
+import { Button, Menu, Text } from 'react-native-paper';
+import { Screens } from 'src/frontend/helpers';
+import { useDeleteChat, useGetChat } from 'src/frontend/hooks';
+import type { AppRoutesParams } from 'src/frontend/routes';
 
 type ChatItemProps = {
   id: string;
@@ -15,6 +19,7 @@ export function ChatItem(props: ChatItemProps) {
   const drawerStatus = useDrawerStatus();
   const { chat } = useGetChat(id);
   const { handleDelete } = useDeleteChat(id);
+  const { navigate } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
   useEffect(() => {
     if (drawerStatus === 'closed') {
@@ -34,13 +39,10 @@ export function ChatItem(props: ChatItemProps) {
         anchor={
           <Button
             textColor='black'
-            onPress={() => {
-              console.log('TODO: implement this.');
-            }}
+            onPress={() => navigate('Main', { screen: Screens.Chat, params: { chatId: id } })}
             onLongPress={() => setMenuVisible(true)}
             style={{}}
             contentStyle={{ justifyContent: 'flex-start', paddingLeft: 16 }}
-            // labelStyle={{fontWeight: 'bold'}}
           >
             {/* {title} */}
             <Text variant='titleSmall' style={{ fontWeight: 'bold' }}>
@@ -55,12 +57,3 @@ export function ChatItem(props: ChatItemProps) {
     </View>
   );
 }
-
-//old anchor
-/*<TouchableRipple
-  rippleColor='rgba(0, 0, 0, .32)'
-  style={{ height: 48, paddingHorizontal: 16, justifyContent: 'center' }}
-  onLongPress={() => setMenuVisible(true)}
->
-  <Text variant='titleSmall'>{title}</Text>
-</TouchableRipple>*/

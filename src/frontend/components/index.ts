@@ -5,3 +5,4 @@ export * from './FirebaseProvider';
 export * from './ScreenLayout';
 export * from './ChatItem';
 export * from './DropdownMenu';
+export * from './Header';

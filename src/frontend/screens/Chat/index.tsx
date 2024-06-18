@@ -1,19 +1,20 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useNavigation } from '@react-navigation/native';
+import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import { signOut } from 'firebase/auth';
 import React from 'react';
 import { View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Text } from 'react-native';
 import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
 import type { AppRoutesParams } from 'src/frontend/routes';
-import { DropdownMenu } from '../../components';
+import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 
 export function Chat() {
   const fireAuth = useAuth();
   const { navigate } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
+  const router = useRoute<RouteProp<MainDrawerParams>>();
 
   const handleSignOut = async () => {
     try {
@@ -33,8 +34,7 @@ export function Chat() {
 
   return (
     <View>
-      <DropdownMenu />
-      <Button onPress={handleSignOut}>Sign Out</Button>
+      <Text>{router.params?.chatId}</Text>
     </View>
   );
 }
