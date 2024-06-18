@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as FileSystem from 'expo-file-system';
+import { IconButton } from 'react-native-paper';
 
 
 const data = [
@@ -17,7 +18,7 @@ const DropdownMenu = () => {
 
   const handleModelChange = (option) => {
     setSelectedValue(option.label);
-    Alert.alert('Model Changed', `Selected Model: ${option.label}`);
+    // Alert.alert('Model Changed', `Selected Model: ${option.label}`);
   };
 
   const handleSave = async () => {
@@ -44,9 +45,7 @@ const DropdownMenu = () => {
           labelField={'label'}
           valueField={'value'}
         />
-        <TouchableOpacity onPress={handleSave} style={styles.iconButton}>
-          <Icon name="share-alt" size={24} color="#000" />
-        </TouchableOpacity>
+        <IconButton icon='download' onPress={handleSave} />
       </View>
   );
 };
