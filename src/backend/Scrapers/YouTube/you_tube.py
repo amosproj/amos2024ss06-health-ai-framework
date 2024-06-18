@@ -7,11 +7,13 @@ from xml.etree import ElementTree
 
 import pyyoutube
 import requests
+from langchain.schema import Document
 
 from src.backend.log.log import write_to_log
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.YouTube import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.you_tube import TypeYouTubeScrappingData
+from src.backend.Utils.splitter import get_text_chunks
 
 
 class YouTubeScraper(BaseScraper):
@@ -56,6 +58,19 @@ class YouTubeScraper(BaseScraper):
         root_xml = ElementTree.fromstring(xml_content)
         transcript = [element.text for element in root_xml.findall('.//text')]
         return html.unescape(' '.join(transcript))
+
+    def get_documents(self, data: TypeYouTubeScrappingData) -> List[Document]:
+        transcript = data.get('transcript', '')
+        chunks = get_text_chunks(transcript)
+        metadata = {
+            'title': data.get('title', ''),
+            'keywords': data.get('keywords', []),
+            'viewCount': data.get('viewCount', 0),
+            'author': data.get('author', ''),
+            'ref': data.get('ref', ''),
+        }
+        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        return documents
 
     def _scrape(self) -> TypeYouTubeScrappingData:
         scrap_data: TypeYouTubeScrappingData = {}

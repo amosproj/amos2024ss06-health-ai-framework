@@ -3,10 +3,13 @@ import logging
 import os
 from typing import List
 
+from langchain.schema import Document
+
 from src.backend.log.log import write_to_log
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PubMed import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.pub_med import TypePubMedScrappingData
+from src.backend.Utils.splitter import get_text_chunks
 
 logging.getLogger('paperscraper').setLevel(logging.ERROR)  # suppress warnings
 
@@ -218,6 +221,19 @@ class PubMedScraper(BaseScraper):
     # ---------------------------------------------------------
     # MARK: _scrape, get_ids
     # ---------------------------------------------------------
+
+    def get_documents(self, data: TypePubMedScrappingData) -> List[Document]:
+        transcript = data.get('transcript', '')
+        chunks = get_text_chunks(transcript)
+        metadata = {
+            'abstract': data.get('abstract', ''),
+            'authors': data.get('authors', ''),
+            'publicationDate': data.get('publicationDate', ''),
+            'title': data.get('title', ''),
+            'ref': data.get('ref', ''),
+        }
+        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        return documents
 
     def _scrape(self) -> TypePubMedScrappingData:
         try:

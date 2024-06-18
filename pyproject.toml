@@ -27,6 +27,8 @@ dependencies = [
     "langchain-community>=0.2.0",
     "chromadb>=0.5.0",
     "requests>=2.31.0",
+    "langchain-astradb>=0.3.3",
+    "langchain-openai>=0.1.8",
 ]
 
 [tool.pdm.dev-dependencies]

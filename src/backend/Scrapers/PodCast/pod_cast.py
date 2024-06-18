@@ -9,6 +9,7 @@ from zipfile import ZipFile
 
 import requests
 from bs4 import BeautifulSoup
+from langchain.schema import Document
 from pydub import AudioSegment
 from vosk import KaldiRecognizer, Model
 
@@ -16,6 +17,7 @@ from src.backend.log.log import write_to_log
 from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.PodCast import INDEX_FILE_PATH, RAW_DIR_PATH, VOSK_DIR_PATH
 from src.backend.Types.pod_cast import TypePodCastScrappingData
+from src.backend.Utils.splitter import get_text_chunks
 
 
 class PodCastScraper(BaseScraper):
@@ -241,6 +243,13 @@ class PodCastScraper(BaseScraper):
                 self.element_id, self.__class__.__name__, f'Failed to fetch data due to: {e}'
             )
             raise e
+
+    def get_documents(self, data: TypePodCastScrappingData) -> List[Document]:
+        transcript = data.get('transcript', '')
+        chunks = get_text_chunks(transcript)
+        metadata = {'title': data.get('title', ''), 'ref': data.get('ref', '')}
+        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        return documents
 
     def _scrape(self) -> TypePodCastScrappingData:
         try:
