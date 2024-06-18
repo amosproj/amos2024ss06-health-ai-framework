@@ -49,18 +49,18 @@ class PodCastScraper(BaseScraper):
             return None
 
     @classmethod
-    def query_ids(cls, url, num_podcasts) -> list[str]:
+    def query_ids(cls, url) -> list[str]:
         """Queries the podcast site for podcast ids and returns them as a list"""
         try:
             ids = []
-            podcast_links = PodCastScraper.search_podcast_ids(url, num_podcasts)
+            podcast_links = PodCastScraper.search_podcast_ids(url)
             ids.extend([cls.extract_podcast_id_from_url(url) for url in podcast_links])
             return ids
         except Exception as e:
             raise e
 
     @classmethod
-    def search_podcast_ids(cls, url, num_podcasts) -> list[str]:
+    def search_podcast_ids(cls, url) -> list[str]:
         """Search podcast site for podcasts related to a query and return the ids."""
         try:
             page_soup = PodCastScraper.soup_maker(url)
@@ -68,10 +68,8 @@ class PodCastScraper(BaseScraper):
             article = page_soup.find('article')
             hrefs = [a['href'] for a in article.findAll('a', href=True)]
 
-            # Take only the last num_podcasts
+            # From older to newer
             hrefs = hrefs[::-1]
-            if num_podcasts is not None:
-                hrefs = hrefs[:num_podcasts]
             return hrefs
         except Exception as e:
             raise e
@@ -282,6 +280,13 @@ class PodCastScraper(BaseScraper):
         cls.model_download = target.model_download
 
         old_indexes = set(cls.INDEX['indexes'])
-        new_indexes = set(cls.query_ids(cls.main_url, target.num_podcasts))
+        new_indexes = set(cls.query_ids(cls.main_url))
         new_target_elements = new_indexes - old_indexes
+
+        # From new target only takes first n-th IDs
+        if target.num_podcasts is not None:
+            nth_elements = list(new_target_elements)
+            nth_elements = nth_elements[: target.num_podcasts]
+            new_target_elements = set(nth_elements)
+
         return [PodCastScraper(element_id=id) for id in new_target_elements]
