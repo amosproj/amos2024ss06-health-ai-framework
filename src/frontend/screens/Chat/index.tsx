@@ -9,7 +9,6 @@ import { Button } from 'react-native-paper';
 import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
 import type { AppRoutesParams } from 'src/frontend/routes';
-import { DropdownMenu } from '../../components';
 
 export function Chat() {
   const fireAuth = useAuth();
@@ -33,7 +32,6 @@ export function Chat() {
 
   return (
     <View>
-      <DropdownMenu />
       <Button onPress={handleSignOut}>Sign Out</Button>
     </View>
   );
