@@ -1,5 +1,3 @@
-
-/*
 import * as React from 'react';
 import { Text} from "react-native-paper";
 import { View } from 'react-native';
@@ -24,7 +22,7 @@ npm install @react-navigation/native @react-navigation/drawer
 npm install react-native-gesture-handler react-native-reanimated
 npm install react-native-paper
 
-
+*/
 
 const Drawer = createDrawerNavigator();
 
@@ -76,4 +74,3 @@ export default function Index() {
 }
 
 
-*/
