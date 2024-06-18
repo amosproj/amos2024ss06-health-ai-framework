@@ -13,9 +13,7 @@ class PodcastTarget(BaseTarget):
         model_download='https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip',
     ):
         self.url = url  # Url to scape from
-        self.num_podcasts = (
-            num_podcasts  # How many items to scrape, can be 'None' for no limit or number
-        )
+        self.num_podcasts = num_podcasts  # How many items to scrape, can be 'None'
         self.model = model  # Vosk model name for transcription
         self.model_download = model_download
 
