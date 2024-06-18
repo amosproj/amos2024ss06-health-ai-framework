@@ -5,7 +5,7 @@ import { Screens } from '../helpers';
 import { Chat, DrawerMenu } from '../screens';
 
 export type MainDrawerParams = {
-  [Screens.Chat]: { chatId: string };
+  [Screens.Chat]: { chatId: string | null };
 };
 
 const MainRouteDrawer = createDrawerNavigator<MainDrawerParams>();
