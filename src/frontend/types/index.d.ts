@@ -5,7 +5,7 @@ export type Chat = {
   title: string;
   createdAt: Timestamp;
   model: string;
-  conversion: [];
+  conversation: string[];
 };
 
 export type User = {

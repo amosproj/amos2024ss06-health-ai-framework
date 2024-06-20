@@ -2,7 +2,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
 import { Header } from '../components';
 import { Screens } from '../helpers';
-import { Chat, DrawerMenu } from '../screens';
+import { ChatUI, DrawerMenu } from '../screens';
 
 export type MainDrawerParams = {
   [Screens.Chat]: { chatId: string | null };
@@ -15,7 +15,7 @@ export function MainRoutes() {
     <MainRouteDrawer.Navigator drawerContent={(props) => <DrawerMenu />}>
       <MainRouteDrawer.Screen
         name={Screens.Chat}
-        component={Chat}
+        component={ChatUI}
         options={{ header: (props) => <Header {...props} /> }}
       />
     </MainRouteDrawer.Navigator>
