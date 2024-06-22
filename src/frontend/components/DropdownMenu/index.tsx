@@ -1,33 +1,18 @@
 import { type RouteProp, useRoute } from '@react-navigation/native';
-import React, { useMemo, useState } from 'react';
-import { Button, Menu } from 'react-native-paper';
-import { useGetChat, useUpdateChat } from 'src/frontend/hooks';
+import React, { useState } from 'react';
+import { Button, Menu, Checkbox, List } from 'react-native-paper';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
+import { useLLMs } from 'src/frontend/hooks/useLLMs';
 
 export const DropdownMenu = () => {
   const router = useRoute<RouteProp<MainDrawerParams>>();
   const chatId = router.params?.chatId;
   const [isVisible, setIsVisible] = useState(false);
-  const { chat, status } = useGetChat(chatId || 'default');
-  const { updateChat, isUpdating } = useUpdateChat(chatId || 'default');
+  const { activeLLMs, toggleLLM, status } = useLLMs(chatId || 'default');
 
-  const llmModels: { [key: string]: string } = useMemo(() => {
-    return {
-      'gpt-4': 'OpenAi',
-      'google-gemini': 'Gemini',
-      'mistral-ai': 'Mistral',
-      'claude-ai': 'Claude'
-    };
-  }, []);
-
-  const handleLLMModelChange = async (model: string) => {
-    setIsVisible(false);
-    try {
-      await updateChat({ model: model });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const activeLLMsCount = Object.values(activeLLMs).filter(llm => llm.active).length;
+  const activeLLMsNames = Object.values(activeLLMs).filter(llm => llm.active).map(llm => llm.name);
+  const buttonLabel = activeLLMsCount === 1 ? activeLLMsNames[0] : `${activeLLMsCount} LLMs Selected`;
 
   return (
     <Menu
@@ -39,24 +24,30 @@ export const DropdownMenu = () => {
           mode='outlined'
           onPress={() => setIsVisible(true)}
           icon={'brain'}
-          loading={status === 'loading' || isUpdating}
+          loading={status === 'loading'}
         >
-          {llmModels[chat?.model || 'gpt-4']}
+          {buttonLabel}
         </Button>
       }
     >
-      {Object.entries(llmModels).map((model) => {
-        const [key, value] = model;
-        return (
+      <List.Section>
+        {Object.entries(activeLLMs).map(([key, llm]) => (
           <Menu.Item
             key={key}
-            onPress={async () => {
-              await handleLLMModelChange(key);
-            }}
-            title={value}
+            title={
+              <List.Item
+                title={llm.name}
+                right={() => (
+                  <Checkbox
+                    status={llm.active ? 'checked' : 'unchecked'}
+                    onPress={() => toggleLLM(key)}
+                  />
+                )}
+              />
+            }
           />
-        );
-      })}
+        ))}
+      </List.Section>
     </Menu>
   );
 };
