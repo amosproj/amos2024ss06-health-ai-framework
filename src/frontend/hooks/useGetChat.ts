@@ -1,8 +1,8 @@
 import { doc } from 'firebase/firestore';
 import { useAtomValue } from 'jotai';
 import { useFirestore, useFirestoreDocData, useUser } from 'reactfire';
-import { FirestoreCollections, currentChatIdAtom } from '../helpers';
-import type { Chat } from '../types';
+import { FirestoreCollections, currentChatIdAtom } from 'src/frontend/helpers';
+import type { Chat } from 'src/frontend/types';
 
 export function useGetChat(chatId: string) {
   const { data: users } = useUser();

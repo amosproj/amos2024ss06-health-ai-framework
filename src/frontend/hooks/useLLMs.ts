@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useFirestore } from 'reactfire';
 import { useGetChat } from 'src/frontend/hooks';
-
-export type LLM = {
-  name: string;
-  active: boolean;
-};
+import type { LLM } from 'src/frontend/types';
+import { useFirestore, useFirestoreDocData, useUser } from 'reactfire';
+import { FirestoreCollections, currentChatIdAtom } from 'src/frontend/helpers';
 
 const LLM_MODELS = [
   { key: 'gpt-4', name: 'OpenAi' },
@@ -17,8 +14,9 @@ const LLM_MODELS = [
 
 export function useLLMs(chatId: string) {
   const { chat, status } = useGetChat(chatId);
+  const { data: users } = useUser();
   const firestore = useFirestore();
-  const [llms, setLlms] = useState<{ [key: string]: LLM }>({});
+  const [LLMs, setLLMs] = useState<{ [key: string]: LLM }>({});
 
   useEffect(() => {
     if (chat) {
@@ -26,26 +24,31 @@ export function useLLMs(chatId: string) {
         acc[key] = { name, active: chat.model.includes(key) };
         return acc;
       }, {});
-      setLlms(initialLlms);
+      setLLMs(initialLlms);
     }
   }, [chat]);
 
   const toggleLLM = async (llmKey: string) => {
     const updatedLLMs = {
-      ...llms,
-      [llmKey]: { ...llms[llmKey], active: !llms[llmKey].active },
+      ...LLMs,
+      [llmKey]: { ...LLMs[llmKey], active: !LLMs[llmKey].active },
     };
-    setLlms(updatedLLMs);
+    setLLMs(updatedLLMs);
 
     const activeModels = Object.keys(updatedLLMs).filter((key) => updatedLLMs[key].active);
 
     try {
-      const chatRef = doc(firestore, 'users', 'USER_ID', 'chats', chatId); // Replace USER_ID with actual user ID
+      const chatRef = doc(
+        firestore,
+        FirestoreCollections.USERS,
+        users?.uid || '',
+        FirestoreCollections.CHATS,
+        chatId);
       await updateDoc(chatRef, { model: activeModels });
     } catch (error) {
       console.error('Error updating document: ', error);
     }
   };
 
-  return { activeLLMs: llms, toggleLLM, status };
+  return { activeLLMs: LLMs, toggleLLM };
 }

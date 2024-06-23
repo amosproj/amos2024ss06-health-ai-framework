@@ -18,14 +18,34 @@ export function Header(props: DrawerHeaderProps) {
 
   const handleDownload = async () => {
     try {
-      // TODO: Save chat content to a file
-      const chatContent = '';
-      const fileUri = `${FileSystem.documentDirectory}chat.txt`;
+      if (!chat || !chat.conversation || chat.conversation.length === 0) {
+        Alert.alert('No Chat Available', 'There is no chat content available to download.');
+        return;
+      }
+
+      const chatContent = chat.conversation.join('\n'); // Join messages with newline character
+      
+
+      // Create filename with timestamp
+      const timestamp = new Date().getTime();
+      const fileName = `chat_${timestamp}.txt`;
+
+      // Get Downloads directory path
+      const downloadDir = FileSystem.documentDirectory + 'Download/';
+      console.log(downloadDir);
+
+      // Ensure Downloads directory exists, create if not
+      await FileSystem.makeDirectoryAsync(downloadDir, { intermediates: true });
+
+      // Save file to Downloads directory
+      const fileUri = `${downloadDir}${fileName}`;
       await FileSystem.writeAsStringAsync(fileUri, chatContent);
-      Alert.alert('Chat saved', `Chat saved to ${fileUri}`);
+
+      Alert.alert('Chat Saved', `Chat saved to Downloads/${fileName}`);
+
     } catch (error) {
       console.error(error);
-      Alert.alert('Error saving chat', 'An error occurred while saving the chat');
+      Alert.alert('Error Saving Chat', 'An error occurred while saving the chat.');
     }
   };
 
