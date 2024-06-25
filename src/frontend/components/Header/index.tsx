@@ -41,7 +41,7 @@ export function Header(props: DrawerHeaderProps) {
       const fileUri = `${downloadDir}${fileName}`;
       await FileSystem.writeAsStringAsync(fileUri, chatContent);
 
-      Alert.alert('Chat Saved', `Chat saved to Downloads/${fileName}`);
+      Alert.alert('Chat Saved', `Chat saved to ${fileUri}`);
 
     } catch (error) {
       console.error(error);
