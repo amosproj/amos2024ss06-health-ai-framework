@@ -1,6 +1,8 @@
 import type { DrawerHeaderProps } from '@react-navigation/drawer';
 import { DrawerActions, type RouteProp, useRoute } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
+import * as StorageAccessFramework from 'expo-file-system';
+import * as Permissions from 'expo-permissions';
 import React from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import { IconButton, Surface, Text } from 'react-native-paper';
@@ -31,7 +33,7 @@ export function Header(props: DrawerHeaderProps) {
       const fileName = `chat_${timestamp}.txt`;
 
       // Get Downloads directory path
-      const downloadDir = FileSystem.documentDirectory + 'Download/';
+      const downloadDir = `${FileSystem.documentDirectory}Download/`;
       console.log(downloadDir);
 
       // Ensure Downloads directory exists, create if not

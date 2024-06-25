@@ -15,13 +15,23 @@ import { useRef, useEffect } from 'react';
 
 import { styles } from './style';
 import type { Chat } from 'src/frontend/types';
-import { useGetAllChat, useUpdateChat} from 'src/frontend/hooks';
+import { useGetAllChat, useUpdateChat, useGetChat, useActiveChatId} from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import {ActivityIndicator, IconButton} from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 
+export type ChatUiProps = {
+    chatId: string;
+};
 
-export function ChatUI() {
+export function ChatUI(/*props: ChatUiProps*/) {
+  // const chatId = props.chatId;
+  // console.log("ChatId: ", chatId)
+
+  const { activeChatId, setActiveChatId } = useActiveChatId();
+
+
+
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const router = useRoute<RouteProp<MainDrawerParams>>(); //TODO: delete if not necessary
@@ -29,6 +39,7 @@ export function ChatUI() {
   // ------------- Render Chat from firebase -------------
   const { chats, status, error } = useGetAllChat();
   const [chat, setChat] = useState<Chat | null>(null); 
+  //const { chat, status, error } = useGetChat(activeChatId); //TODO: replace this with real chat once we know which chat to get
   //TODO: useGetChat hook and update chat everytime it changes in firestore
   useEffect(() => {
     if (status === 'success' && chats?.length > 0) {
@@ -113,7 +124,7 @@ export function ChatUI() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.chatContainer}  ref={scrollViewRef}>
+      <ScrollView style={styles.chatContainer} contentContainerStyle={styles.scrollViewContent}  ref={scrollViewRef}>
         {renderMessages()}
       </ScrollView>
       <View style={[styles.inputContainer, {borderColor: colors.outlineVariant}]}>

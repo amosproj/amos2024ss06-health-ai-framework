@@ -6,7 +6,7 @@ import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
-import { FirebaseProvider, UpdateApp } from './components';
+import { ActiveChatProvider, FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
 import { AppRoutes } from './routes';
 
@@ -43,11 +43,13 @@ export function App() {
             theme={LightTheme}
             settings={{ icon: (props) => <AwesomeIcon {...props} /> }}
           >
-            <FirebaseProvider>
-              <AppRoutes />
-              <Toast />
-              <UpdateApp />
-            </FirebaseProvider>
+            <ActiveChatProvider>
+              <FirebaseProvider>
+                <AppRoutes />
+                <Toast />
+                <UpdateApp />
+              </FirebaseProvider>
+            </ActiveChatProvider>
           </PaperProvider>
         </GestureHandlerRootView>
       </SafeAreaView>

@@ -5,12 +5,15 @@ export const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: 'white',
-      paddingHorizontal: 16,
-      paddingTop: 50,
+      paddingHorizontal: 4,
     },
     chatContainer: {
       flex: 1,
-      marginVertical: 20,
+    },
+    scrollViewContent:{
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 8
     },
     message: {
       padding: 15,

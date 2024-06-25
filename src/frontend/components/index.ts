@@ -6,3 +6,4 @@ export * from './ScreenLayout';
 export * from './ChatItem';
 export * from './DropdownMenu';
 export * from './Header';
+export * from './ActiveChatProvider';

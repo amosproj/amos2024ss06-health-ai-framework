@@ -5,7 +5,8 @@ import type { LLM } from 'src/frontend/types';
 import { useFirestore, useFirestoreDocData, useUser } from 'reactfire';
 import { FirestoreCollections, currentChatIdAtom } from 'src/frontend/helpers';
 
-const LLM_MODELS = [
+
+export const LLM_MODELS = [
   { key: 'gpt-4', name: 'OpenAi' },
   { key: 'google', name: 'Gemini' },
   { key: 'mistral', name: 'Mistral' },
