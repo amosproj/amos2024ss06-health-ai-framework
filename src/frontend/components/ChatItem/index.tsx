@@ -5,19 +5,20 @@ import React, { useEffect, useState } from 'react';
 import { Keyboard, View } from 'react-native';
 import { Button, Menu, Text } from 'react-native-paper';
 import { Screens } from 'src/frontend/helpers';
-import { useDeleteChat, useGetChat } from 'src/frontend/hooks';
+import { useDeleteChat, useGetChat, useActiveChatId } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 
-type ChatItemProps = {
+export type ChatItemProps = {
   id: string;
   title: string;
 };
 
 export function ChatItem(props: ChatItemProps) {
+  const { activeChatId, setActiveChatId } = useActiveChatId();
   const { id, title } = props;
+  //const { chat } = useGetChat(id);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const drawerStatus = useDrawerStatus();
-  const { chat } = useGetChat(id);
   const { handleDelete } = useDeleteChat(id);
   const { navigate } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
@@ -39,7 +40,10 @@ export function ChatItem(props: ChatItemProps) {
         anchor={
           <Button
             textColor='black'
-            onPress={() => navigate('Main', { screen: Screens.Chat, params: { chatId: id } })}
+            onPress={() => {
+              setActiveChatId(id)
+              navigate('Main', { screen: Screens.Chat, params: { chatId: id } })
+            }}
             onLongPress={() => setMenuVisible(true)}
             style={{}}
             contentStyle={{ justifyContent: 'flex-start', paddingLeft: 16 }}
