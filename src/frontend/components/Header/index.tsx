@@ -1,8 +1,6 @@
 import type { DrawerHeaderProps } from '@react-navigation/drawer';
 import { DrawerActions, type RouteProp, useRoute } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
-import * as StorageAccessFramework from 'expo-file-system';
-import * as Permissions from 'expo-permissions';
 import React from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import { IconButton, Surface, Text } from 'react-native-paper';

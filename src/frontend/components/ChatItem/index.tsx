@@ -14,7 +14,7 @@ export type ChatItemProps = {
 };
 
 export function ChatItem(props: ChatItemProps) {
-  //const { activeChatId, setActiveChatId } = useActiveChatId();
+  const { activeChatId, setActiveChatId } = useActiveChatId();
   const { id, title } = props;
   //const { chat } = useGetChat(id);
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -40,7 +40,10 @@ export function ChatItem(props: ChatItemProps) {
         anchor={
           <Button
             textColor='black'
-            onPress={() => navigate('Main', { screen: Screens.Chat, params: { chatId: id } })}
+            onPress={() => {
+              setActiveChatId(id)
+              navigate('Main', { screen: Screens.Chat, params: { chatId: id } })
+            }}
             onLongPress={() => setMenuVisible(true)}
             style={{}}
             contentStyle={{ justifyContent: 'flex-start', paddingLeft: 16 }}

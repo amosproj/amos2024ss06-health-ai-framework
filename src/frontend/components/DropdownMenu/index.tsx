@@ -5,7 +5,7 @@ import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import { useLLMs } from 'src/frontend/hooks/useLLMs';
 import { View } from 'react-native';
 import { Style } from './style';
-import { useGetAllChat, useGetChat} from 'src/frontend/hooks';
+import { useActiveChatId, useGetAllChat, useGetChat} from 'src/frontend/hooks';
 import type { Chat } from 'src/frontend/types';
 import type { ChatItemProps } from 'src/frontend/components/ChatItem'
 
@@ -16,23 +16,21 @@ export const DropdownMenu = () => {
   const chatId = route.params?.chatId;
   const [isVisible, setIsVisible] = useState(false);
   const { activeLLMs, toggleLLM } = useLLMs(chatId || 'default');
+
+  const { activeChatId, setActiveChatId } = useActiveChatId();
+  const { chat, status, error } = useGetChat(activeChatId);
+
   const activeLLMsCount = Object.values(activeLLMs).filter(llm => llm.active).length;
   const activeLLMsNames = Object.values(activeLLMs).filter(llm => llm.active).map(llm => llm.name);
-  const buttonLabel = activeLLMsCount === 1 ? activeLLMsNames[0] : `${activeLLMsCount} LLMs`;
+  let buttonLabel = activeLLMsCount === 1 ? activeLLMsNames[0] : `${activeLLMsCount} LLMs`;
 
-  //TODO: useGetChat hook and update chat everytime it changes in firestore
-  const { chats, status, error } = useGetAllChat();
-  const [chad, setChad] = useState<Chat | null>(null); 
-  useEffect(() => {
-    if (status === 'success' && chats?.length > 0) {
-        //TODO: replace this with real chat once we know which chat to get
-        setChad(chats[0]);
-    }
-    else
-    {
-        setChad(null);
-    }
-  }, [chats?.length]); //TODO: also change this condition
+  // If no chatId is selected, set button label to "SELECT"
+  if (chat === undefined) {
+    buttonLabel = "";
+  }
+
+  // Determine if the button should be disabled
+  const isButtonDisabled = chat === undefined || activeLLMsCount === 0;
 
   return (
       
@@ -45,6 +43,7 @@ export const DropdownMenu = () => {
             onPress={() => setIsVisible(true)}
             icon="brain"
             loading={status === 'loading'}
+            disabled={isButtonDisabled}
           >
             {buttonLabel}
           </Button>
@@ -54,7 +53,11 @@ export const DropdownMenu = () => {
         {Object.entries(activeLLMs).map(([key, llm]) => (
           <Menu.Item
             key={key}
-            onPress={() => toggleLLM(key)}
+            onPress={() => {
+              if (activeLLMsCount > 1 || !llm.active) {
+                toggleLLM(key);
+              }
+            }}
             title={
               <View style={Style.menuItem}>
                 <List.Item
@@ -63,6 +66,7 @@ export const DropdownMenu = () => {
                 />
                 <Checkbox
                   status={llm.active ? 'checked' : 'unchecked'}
+                  disabled={activeLLMsCount === 1 && llm.active}
                 />
               </View>
             }

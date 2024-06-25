@@ -28,38 +28,31 @@ export function ChatUI(/*props: ChatUiProps*/) {
   // const chatId = props.chatId;
   // console.log("ChatId: ", chatId)
 
-  const { activeChatId, setActiveChatId } = useActiveChatId();
-
-
-
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const router = useRoute<RouteProp<MainDrawerParams>>(); //TODO: delete if not necessary
 
   // ------------- Render Chat from firebase -------------
-  const { chats, status, error } = useGetAllChat();
-  const [chat, setChat] = useState<Chat | null>(null); 
-  //const { chat, status, error } = useGetChat(activeChatId); //TODO: replace this with real chat once we know which chat to get
-  //TODO: useGetChat hook and update chat everytime it changes in firestore
-  useEffect(() => {
-    if (status === 'success' && chats?.length > 0) {
-        //TODO: replace this with real chat once we know which chat to get
-        setChat(chats[0]);
-    }
-    else
-    {
-        setChat(null);
-    }
-  }, [chats?.length]); //TODO: also change this condition
+  //const { chats, status, error } = useGetAllChat();
+  //const [chat, setChat] = useState<Chat | null>(null); 
+  const { activeChatId, setActiveChatId } = useActiveChatId();
+  const { chat, status, error } = useGetChat(activeChatId);
+  //console.log("chatId: ", activeChatId)
 
   useEffect(() => {
     renderMessages();
   }, [chat?.conversation.length]);
 
   const renderMessages = () => {
+    if(status === 'loading') 
+      return ( <ActivityIndicator/> );
     //console.log("Chat: ", chat)
-    if(chat === null)
-      return (<ActivityIndicator/>);
+    if(chat === undefined) //TODO: This is Work in Progress
+      return (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text> Select a chat in the drawer to begin. </Text>
+        </View>
+      );
 
     let i = 0;
     return chat?.conversation.map((message, index) => (
@@ -78,19 +71,19 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
 
   // ------------- Sending new message to firebase -------------
-  
+
   const [text, setText] = useState('');
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
 
   function sendMessage() {
-    if (text.trim() && chat?.id) {
+    if ( chat?.id && text.trim()) {
       updateChat({
         conversation: [...(chat?.conversation || []), text]
       }).then(() => {
         chat?.conversation.push(text)
-        setChat(chat);
+        //setChat(chat);
         setText('');
-        setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+        //setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
       }).catch(error => {
         console.error('Error updating chat:', error);
       });
@@ -98,9 +91,9 @@ export function ChatUI(/*props: ChatUiProps*/) {
   }
 
   // ------------- End sending new message to firebase -------------
-  
+
   // ------------- Keyboard and scrolling -------------
-  
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -147,25 +140,3 @@ export function ChatUI(/*props: ChatUiProps*/) {
     </View>
   );
 }
-
-
-//TODO: ----------- delete this if not needed in the end -----------
-const handleSignOut = async () => {
-  const fireAuth = useAuth();
-  const { navigate } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
-  
-  try {
-    GoogleSignin.configure({
-      // Get the web client ID from the Expo configuration
-      webClientId: Constants.expoConfig?.extra?.googleAuthClientId,
-      // We want to force the code for the refresh token
-      forceCodeForRefreshToken: true
-    });
-    await GoogleSignin.revokeAccess();
-    await signOut(fireAuth);
-    navigate('Auth', { screen: Screens.Landing });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
