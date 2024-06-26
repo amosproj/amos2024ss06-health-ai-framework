@@ -60,9 +60,9 @@ Create system architecture for the app	https://github.com/amosproj/amos2024ss06-
 Setup react-native dev-environment	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/92	preetvadaliya	Item Archive	app frontend, env+tooling, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/157	Sprint 06		sprint-start	8	8
 Create option to save / export the conversation as formated txt	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/149	preetvadaliya	In Progress	app frontend, data pipeline, sprint-08		Sprint 08		sprint-mid	5	
 Present references in agent answers	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/174	preetvadaliya	In Progress	app frontend, data pipeline, sprint-08		Sprint 08		independent	8	
+Data retrieval - recipes from Nutritionfacts	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/218	manikg08	In Progress	data pipeline, sprint-09		Sprint 09		sprint-end	8	
 Query and display multiple LLM responses simultaneously - frontend	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/204	eloinoel, lukas-varga	In Progress	app frontend, sprint-09		Sprint 09		sprint-mid	8	
 Integrate custom user context input components into main navigation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/200	EnescuDavid	In Progress	app frontend, domain: po, question, sprint-09		Sprint 09		independent	5	
-Data retrieval - recipes from Nutritionfacts	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/218	manikg08	Awaiting Review	data pipeline, sprint-09		Sprint 09		sprint-end	8	
 Create option to change LLM	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/177	preetvadaliya	Awaiting Review	data pipeline, sprint-08		Sprint 08		sprint-mid	5	
 Integrate chat in the main app	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/210	eloinoel, lukas-varga	Awaiting Review	app frontend, sprint-09	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/212	Sprint 09			5	5
 Implement multiselect option for LLM selection dropdown	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/211	lukas-varga	Awaiting Review	app frontend, sprint-09	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/212	Sprint 09			5	5
@@ -77,18 +77,20 @@ Implement deep-linking	https://github.com/amosproj/amos2024ss06-health-ai-framew
 Implement the LangChain pipeline in Typescript	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/118	potthoffjan, preetvadaliya	Item Archive	app frontend, sprint-06		Sprint 06		sprint-start	8	8
 Complete the Wireframe task to include the document download functionality	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/125	EnescuDavid	Item Archive	app frontend, sprint-06	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/158	Sprint 06		independent	3	3
 Update the frontend wireframe pdf	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/156	EnescuDavid	Item Archive	amos formal, documentation, sprint-06		Sprint 06		independent	1	2
+Enable the fetching of an initialisation prompt from Google Docs	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/214		Product Backlog	app backend, feature, sprint-10		Sprint 10		independent		
+Create an initialisation prompt	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/220		Product Backlog	app backend, feature, sprint-10		Sprint 10		independent		
+Save answers provided to the initialisation prompt as custom user-context	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/222		Product Backlog	app backend, feature, sprint-10		Sprint 10		sprint-mid		
+Enable the change of the initialisation prompt	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/221		Product Backlog	app backend, sprint-10		Sprint 10		sprint-mid		
 Voice Interaction - user voice input	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/196		Product Backlog	app backend, app frontend, sprint-10		Sprint 10		sprint-start	8	
-Develop option to retrieve base prompt from a google docs url	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/214		Product Backlog	app backend, sprint-10		Sprint 10		independent		
-Integrate LLM3: Llama	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/188	EnescuDavid, potthoffjan	Product Backlog	data pipeline, sprint-10		Sprint 10		sprint-start	0	
-Create prompt chain to facilitate prompt engineering with Llama	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/213		Product Backlog	app backend, data pipeline, sprint-10		Sprint 10		sprint-mid		
+Develop option to create new chat	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/215		Product Backlog	app backend, app frontend, sprint-10		Sprint 10		sprint-start		
 Fix issue with custom context retrieval	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/199		Product Backlog	bug, sprint-10		Sprint 10		sprint-start	8	
 Query and display multiple LLM responses simultaneously - backend	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/208		Product Backlog	app backend, sprint-10		Sprint 10		sprint-start	8	
 Saving responses from multiple LLMs	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/205		Product Backlog	app backend, app frontend, sprint-10		Sprint 10		sprint-mid	8	
-Develop option to create new chat	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/215		Product Backlog	app backend, app frontend, sprint-10		Sprint 10		sprint-start		
+Integrate LLM3: Llama	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/188	EnescuDavid, potthoffjan	Product Backlog	data pipeline, sprint-10		Sprint 10		sprint-start	0	
 Write unit tests for orchestrator/config functionality	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/117		Product Backlog	data pipeline, sprint-10, testing		Sprint 10		independent	5	
 Voice interaction - agent reply voice output - TTS 	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/207		Product Backlog	app backend, app frontend, sprint-10		Sprint 10				
 Develop workaround for pubmed API	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/201		Product Backlog	data pipeline, external API				independent		
-Select and integrate LLM4	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/197		Product Backlog	app backend, data pipeline, domain: po				sprint-start	5	
+Integrate LLM4 Claude	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/197		Product Backlog	app backend, data pipeline, domain: po				sprint-start	5	
 [EPIC] Data aquisition	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/132		EPICS	EPIC						
 [EPIC] Data pipeline	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/131		EPICS	EPIC						
 (EPIC) Develop components for basic app settings			EPICS							
@@ -96,6 +98,7 @@ Select and integrate LLM4	https://github.com/amosproj/amos2024ss06-health-ai-fra
 [EPIC] User App frontend	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/134		EPICS	app frontend, EPIC						
 [EPIC] User App backend	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/135		EPICS	question, re-evaluate						
 [EPIC] Data pipeline optimisations	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/136		EPICS	data pipeline, EPIC						
+Create prompt chain to facilitate prompt engineering with Llama	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/213		WIP Core	app backend, data pipeline				sprint-mid		
 Data Pipeline: Create a DB for the personal context of a user (prompt engineering step?)	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/38		WIP Core	feature, question, storage						
 Select and integrate LLM5	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/198		WIP Core	app backend, data pipeline				sprint-start	5	
 Integrate the screens of login, chat and navigation	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/155		Item Archive	app frontend, question				sprint-mid		
@@ -135,4 +138,5 @@ Review and edit runtime components diagram and text description	https://github.c
 Review and edit architecture diagram and text description	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/18	eloinoel, EnescuDavid, lukas-varga, manikg08, potthoffjan, preetvadaliya	Item Archive	amos formal, documentation, domain: po, sprint-02	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/97	Sprint 02		sprint-end	3	3
 Review and edit tech stack description	https://github.com/amosproj/amos2024ss06-health-ai-framework/issues/20	eloinoel, EnescuDavid, lukas-varga, manikg08, potthoffjan, preetvadaliya	Item Archive	amos formal, documentation, domain: po, sprint-02		Sprint 02		sprint-end	3	3
 Added prompt engineering and LLM selection option Co-authored-by: Jan Potthof <potthoff.jan@googlemail.com>	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/216	manikg08	Awaiting Review	app backend, feature, release: feature			potthoffjan			
-Added prompt engineering techniques and selection of two LLM models > Co-authored-by : Jan Potthoff<potthoff.jan@googlemail.com>	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/217	manikg08		app backend, feature, release: feature			potthoffjan			
+Added prompt engineering techniques and selection of two LLM models > Co-authored-by : Jan Potthoff<potthoff.jan@googlemail.com>	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/217	manikg08, potthoffjan	Awaiting Review	app backend, feature, release: feature			eloinoel, potthoffjan			
+Add documents for sprint 09	https://github.com/amosproj/amos2024ss06-health-ai-framework/pull/219	tubamos	Awaiting Review	release: sprint-deliverables, sprint-09			eloinoel, EnescuDavid, lukas-varga, potthoffjan			
