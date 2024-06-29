@@ -96,10 +96,10 @@ export function DrawerMenu() {
           placeholder='Search chat history'
           onChangeText={setSearchQuery}
           value={searchText}
-          style={[Style.searchbar, {backgroundColor: colors.secondaryContainer}]}
+          style={[Style.searchbar, { backgroundColor: colors.secondaryContainer }]}
         />
         {/* custom padding because doesn't work with Drawer.Section props*/}
-        <View style={{ height: 10 }}/>
+        <View style={{ height: 10 }} />
       </Drawer.Section>
       <Drawer.Section title='Recent Chats' showDivider={false} style={{ flex: 1 }}>
         <ScrollView style={{ flexGrow: 1 }}>

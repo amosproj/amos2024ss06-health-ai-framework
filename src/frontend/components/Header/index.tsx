@@ -24,7 +24,6 @@ export function Header(props: DrawerHeaderProps) {
       }
 
       const chatContent = chat.conversation.join('\n'); // Join messages with newline character
-      
 
       // Create filename with timestamp
       const timestamp = new Date().getTime();
@@ -42,7 +41,6 @@ export function Header(props: DrawerHeaderProps) {
       await FileSystem.writeAsStringAsync(fileUri, chatContent);
 
       Alert.alert('Chat Saved', `Chat saved to ${fileUri}`);
-
     } catch (error) {
       console.error(error);
       Alert.alert('Error Saving Chat', 'An error occurred while saving the chat.');
