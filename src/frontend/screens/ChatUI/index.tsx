@@ -68,7 +68,6 @@ export function ChatUI(/*props: ChatUiProps*/) {
           : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
         ]}
       >
-        <Text>{message}</Text>
         {index % 2 !== 1 && (
           <IconButton
             icon="volume-up"
@@ -80,6 +79,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
             style={styles.speakButton}
           />
         )}
+        <Text>{message}</Text>
       </View>
     ));
   };

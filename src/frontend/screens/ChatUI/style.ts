@@ -31,9 +31,9 @@ export const styles = StyleSheet.create({
       alignSelf: 'flex-start',
     },
     speakButton: {
-      marginLeft: 10,
+      alignSelf: 'flex-start',
+      marginLeft: -10,
     },
-    
     inputContainer: {
       flexDirection: 'row',
       alignItems: 'center',
