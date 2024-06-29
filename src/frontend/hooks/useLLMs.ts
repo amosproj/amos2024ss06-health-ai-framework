@@ -2,16 +2,9 @@ import { useState, useEffect } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useGetChat } from 'src/frontend/hooks';
 import type { LLM } from 'src/frontend/types';
+import { LLM_MODELS } from './useLLMsTypes';
 import { useFirestore, useFirestoreDocData, useUser } from 'reactfire';
 import { FirestoreCollections, currentChatIdAtom } from 'src/frontend/helpers';
-
-
-export const LLM_MODELS = [
-  { key: 'gpt-4', name: 'OpenAi' },
-  { key: 'google', name: 'Gemini' },
-  { key: 'mistral', name: 'Mistral' },
-  { key: 'claude', name: 'Claude' },
-];
 
 export function useLLMs(chatId: string) {
   const { chat, status } = useGetChat(chatId);

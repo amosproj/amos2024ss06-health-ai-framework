@@ -20,6 +20,8 @@ import { Timestamp } from 'firebase/firestore';
 import {ActivityIndicator, IconButton} from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 import Voice from '@react-native-voice/voice';
+import * as Speech from 'expo-speech';
+import { Vibration } from 'react-native';
 
 
 export type ChatUiProps = {
@@ -39,6 +41,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
   //const [chat, setChat] = useState<Chat | null>(null); 
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { chat, status, error } = useGetChat(activeChatId);
+  const [isRecording, setIsRecording] = useState(false);  // Added state for button color
   //console.log("chatId: ", activeChatId)
 
   useEffect(() => {
@@ -48,7 +51,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const renderMessages = () => {
     if(status === 'loading') 
       return ( <ActivityIndicator/> );
-    //console.log("Chat: ", chat)
+    //console.log("Chat: ", chat)paper
     if(chat === undefined) //TODO: This is Work in Progress
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -66,6 +69,14 @@ export function ChatUI(/*props: ChatUiProps*/) {
         ]}
       >
         <Text>{message}</Text>
+        {index % 2 !== 1 && (
+          <IconButton
+            icon="volume-up"
+            size={16}
+            onPress={() => Speech.speak(message)}
+            style={styles.speakButton}
+          />
+        )}
       </View>
     ));
   };
@@ -132,20 +143,23 @@ export function ChatUI(/*props: ChatUiProps*/) {
     };
   }, []);
 
-  const onSpeechStart = (e) => {
+  const onSpeechStart = (e: any) => {
     setStarted('√');
   };
 
-  const onSpeechRecognized = (e) => {
+  const onSpeechRecognized = (e: any) => {
     setRecognized('√');
   };
 
-  const onSpeechResults = (e) => {
+  const onSpeechResults = (e: any) => {
     setResults(e.value);
     setText(e.value[0]); // Set the first result to the text input
   };
 
   const startRecognition = async () => {
+    setIsRecording(true);  // Set recording state to true
+    Vibration.vibrate(50); // Vibrate for 50 milliseconds on press
+
     setRecognized('');
     setStarted('');
     setResults([]);
@@ -153,6 +167,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
       await Voice.start('en-US');
     } catch (e) {
       console.error(e);
+      setIsRecording(false);  // Reset recording state on error
     }
   };
 
@@ -162,49 +177,49 @@ export function ChatUI(/*props: ChatUiProps*/) {
     } catch (e) {
       console.error(e);
     }
+    Vibration.vibrate(50); // Vibrate for 50 milliseconds on release
+    setIsRecording(false);  // Reset recording state
   };
 
   // ------------- End Voice Recognition Setup -------------
-
   // ------------- Conditional Rendering of Voice/Send Button -------------
   
 // ------------- Conditional Rendering of Voice/Send Button -------------
+
 return (
   <View style={styles.container}>
-    <ScrollView style={styles.chatContainer} contentContainerStyle={styles.scrollViewContent} ref={scrollViewRef}>
-      {renderMessages()}
-    </ScrollView>
-    <View style={[styles.inputContainer, { borderColor: colors.outlineVariant }]}>
-      <TextInput
-        style={[styles.input, { borderColor: colors.outlineVariant }]}
-        placeholder="Write something here..."
-        value={text}
-        onChangeText={text => setText(text)}
-        onSubmitEditing={sendMessage}
-        blurOnSubmit={false}
-      />
-      {text.trim() ? (
-        <IconButton
-          icon="paper-plane"
-          onPress={sendMessage}
-          iconColor={colors.onPrimary}
-          containerColor={colors.primary}
-          style={{ marginHorizontal: 5, paddingRight: 3 }}
-        />
-      ) : (
-        <IconButton
-          icon="microphone"
-          onPressIn={startRecognition}
-          onPressOut={stopRecognition}
-          iconColor={colors.onPrimary}
-          containerColor={colors.primary}
-          style={{ marginHorizontal: 5, paddingRight: 3 }}
-        />
-      )}
-    </View>
-    {results.map((result, index) => (
-      <Text key={index} style={styles.transcript}> {result}</Text>
-    ))}
+      <ScrollView style={styles.chatContainer} contentContainerStyle={styles.scrollViewContent} ref={scrollViewRef}>
+          {renderMessages()}
+      </ScrollView>
+      <View style={[styles.inputContainer, { borderColor: colors.outlineVariant }]}>
+          <TextInput
+              style={[styles.input, { borderColor: colors.outlineVariant }]}
+              placeholder="Write something here..."
+              value={text}
+              onChangeText={text => setText(text)}
+              onSubmitEditing={sendMessage}
+              blurOnSubmit={false}
+          />
+          {text.trim() ? (
+              <IconButton
+                  icon="paper-plane"
+                  onPress={sendMessage}
+                  onPressOut={stopRecognition}
+                  iconColor={colors.onPrimary}
+                  containerColor={colors.primary}
+                  style={{ marginHorizontal: 5, paddingRight: 3 }}
+              />
+          ) : (
+              <IconButton
+                  icon="microphone"
+                  onPressIn={startRecognition}
+                  onPressOut={stopRecognition}
+                  iconColor={colors.onPrimary}
+                  containerColor={isRecording ? colors.inversePrimary : colors.primary}
+                  style={{ marginHorizontal: 5 }}
+              />
+          )}
+      </View>
   </View>
 );
 }
