@@ -73,7 +73,10 @@ export function ChatUI(/*props: ChatUiProps*/) {
           <IconButton
             icon="volume-up"
             size={16}
-            onPress={() => Speech.speak(message)}
+            onPress={() => Speech.speak(message, {
+              language: 'en-US',
+              pitch: 1,
+              rate: 1,})}
             style={styles.speakButton}
           />
         )}
@@ -89,17 +92,22 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
 
   function sendMessage() {
-    if ( chat?.id && text.trim()) {
-      updateChat({
-        conversation: [...(chat?.conversation || []), text]
-      }).then(() => {
-        chat?.conversation.push(text)
-        //setChat(chat);
-        setText('');
-        //setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
-      }).catch(error => {
-        console.error('Error updating chat:', error);
-      });
+    if (chat?.id && text.trim()) {
+      // Optimistic UI update
+      const updatedConversation = [...(chat?.conversation || []), text];
+      chat.conversation.push(text);
+      setText('');
+      // scrollViewRef.current?.scrollToEnd({ animated: true });
+  
+      // Update chat in the database
+      updateChat({ conversation: updatedConversation })
+        .then(() => {
+          // Optionally handle post-success actions
+        })
+        .catch((error) => {
+          console.error('Error updating chat:', error);
+          // Optionally revert optimistic UI update if needed
+        });
     }
   }
 
