@@ -42,5 +42,11 @@ export const styles = StyleSheet.create({
       borderWidth: 1,
       borderRadius: 20,
       paddingHorizontal: 15,
-    }
+    },
+    transcript: {
+      textAlign: 'center',
+      color: '#B0171F',
+      marginBottom: 1,
+      top: '400%',
+    },
   });

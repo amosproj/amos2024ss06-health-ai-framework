@@ -59,7 +59,22 @@
       "expo-font",
       "@react-native-firebase/app",
       "@react-native-firebase/dynamic-links",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      [
+        "@react-native-voice/voice",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "speechRecogntionPermission": "Allow $(PRODUCT_NAME) to securely recognize user speech"
+        }
+      ],
+      [
+        "expo-media-library",
+          {
+            "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+            "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+            "isAccessMediaLocationEnabled": true
+          }
+      ]
     ],
     "extra": {
       "eas": {

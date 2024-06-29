@@ -19,6 +19,8 @@ import { useGetAllChat, useUpdateChat, useGetChat, useActiveChatId} from 'src/fr
 import { Timestamp } from 'firebase/firestore';
 import {ActivityIndicator, IconButton} from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
+import Voice from '@react-native-voice/voice';
+
 
 export type ChatUiProps = {
     chatId: string;
@@ -30,7 +32,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
-  const router = useRoute<RouteProp<MainDrawerParams>>(); //TODO: delete if not necessary
+  const router = useRoute<RouteProp<MainDrawerParams>>();
 
   // ------------- Render Chat from firebase -------------
   //const { chats, status, error } = useGetAllChat();
@@ -115,28 +117,94 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   // ------------- End keyboard and scrolling -------------
 
-  return (
-    <View style={styles.container}>
-      <ScrollView style={styles.chatContainer} contentContainerStyle={styles.scrollViewContent}  ref={scrollViewRef}>
-        {renderMessages()}
-      </ScrollView>
-      <View style={[styles.inputContainer, {borderColor: colors.outlineVariant}]}>
-        <TextInput
-          style={[styles.input, {borderColor: colors.outlineVariant}]}
-          placeholder="Write something here..."
-          value={text}
-          onChangeText={text => setText(text)}
-          onSubmitEditing={sendMessage}
-          blurOnSubmit={false}
-        />
+  // ------------- Voice Recognition Setup -------------
+  const [recognized, setRecognized] = useState('');
+  const [started, setStarted] = useState('');
+  const [results, setResults] = useState<string[]>([]);
+
+  useEffect(() => {
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechRecognized = onSpeechRecognized;
+    Voice.onSpeechResults = onSpeechResults;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const onSpeechStart = (e) => {
+    setStarted('√');
+  };
+
+  const onSpeechRecognized = (e) => {
+    setRecognized('√');
+  };
+
+  const onSpeechResults = (e) => {
+    setResults(e.value);
+    setText(e.value[0]); // Set the first result to the text input
+  };
+
+  const startRecognition = async () => {
+    setRecognized('');
+    setStarted('');
+    setResults([]);
+    try {
+      await Voice.start('en-US');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const stopRecognition = async () => {
+    try {
+      await Voice.stop();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // ------------- End Voice Recognition Setup -------------
+
+  // ------------- Conditional Rendering of Voice/Send Button -------------
+  
+// ------------- Conditional Rendering of Voice/Send Button -------------
+return (
+  <View style={styles.container}>
+    <ScrollView style={styles.chatContainer} contentContainerStyle={styles.scrollViewContent} ref={scrollViewRef}>
+      {renderMessages()}
+    </ScrollView>
+    <View style={[styles.inputContainer, { borderColor: colors.outlineVariant }]}>
+      <TextInput
+        style={[styles.input, { borderColor: colors.outlineVariant }]}
+        placeholder="Write something here..."
+        value={text}
+        onChangeText={text => setText(text)}
+        onSubmitEditing={sendMessage}
+        blurOnSubmit={false}
+      />
+      {text.trim() ? (
         <IconButton
           icon="paper-plane"
           onPress={sendMessage}
           iconColor={colors.onPrimary}
           containerColor={colors.primary}
-          style={{marginHorizontal: 5, paddingRight: 3}}
+          style={{ marginHorizontal: 5, paddingRight: 3 }}
         />
-      </View>
+      ) : (
+        <IconButton
+          icon="microphone"
+          onPressIn={startRecognition}
+          onPressOut={stopRecognition}
+          iconColor={colors.onPrimary}
+          containerColor={colors.primary}
+          style={{ marginHorizontal: 5, paddingRight: 3 }}
+        />
+      )}
     </View>
-  );
+    {results.map((result, index) => (
+      <Text key={index} style={styles.transcript}> {result}</Text>
+    ))}
+  </View>
+);
 }
