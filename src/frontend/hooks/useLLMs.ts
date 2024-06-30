@@ -1,17 +1,10 @@
-import { useState, useEffect } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useGetChat } from 'src/frontend/hooks';
-import type { LLM } from 'src/frontend/types';
+import { useEffect, useState } from 'react';
 import { useFirestore, useFirestoreDocData, useUser } from 'reactfire';
 import { FirestoreCollections, currentChatIdAtom } from 'src/frontend/helpers';
-
-
-export const LLM_MODELS = [
-  { key: 'gpt-4', name: 'OpenAi' },
-  { key: 'google', name: 'Gemini' },
-  { key: 'mistral', name: 'Mistral' },
-  { key: 'claude', name: 'Claude' },
-];
+import { useGetChat } from 'src/frontend/hooks';
+import type { LLM } from 'src/frontend/types';
+import { LLM_MODELS } from './useLLMsTypes';
 
 export function useLLMs(chatId: string) {
   const { chat, status } = useGetChat(chatId);
@@ -32,7 +25,7 @@ export function useLLMs(chatId: string) {
   const toggleLLM = async (llmKey: string) => {
     const updatedLLMs = {
       ...LLMs,
-      [llmKey]: { ...LLMs[llmKey], active: !LLMs[llmKey].active },
+      [llmKey]: { ...LLMs[llmKey], active: !LLMs[llmKey].active }
     };
     setLLMs(updatedLLMs);
 
@@ -44,7 +37,8 @@ export function useLLMs(chatId: string) {
         FirestoreCollections.USERS,
         users?.uid || '',
         FirestoreCollections.CHATS,
-        chatId);
+        chatId
+      );
       await updateDoc(chatRef, { model: activeModels });
     } catch (error) {
       console.error('Error updating document: ', error);
