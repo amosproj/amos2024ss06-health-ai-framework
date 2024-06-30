@@ -5,3 +5,4 @@ export * from './useDeleteChat';
 export * from './useLLMs';
 export * from './useActiveChatId';
 export * from './useCreateChat';
+export * from './useLLMsTypes';

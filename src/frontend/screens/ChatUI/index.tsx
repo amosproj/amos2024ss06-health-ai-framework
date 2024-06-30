@@ -9,18 +9,14 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import * as Speech from 'expo-speech';
 import { signOut } from 'firebase/auth';
-import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { useCallback, useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
-import { useTheme } from 'react-native-paper';
 import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
-import { useActiveChatId, useGetAllChat, useGetChat, useUpdateChat } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
@@ -118,7 +114,6 @@ export function ChatUI(/*props: ChatUiProps*/) {
       newId.then((newId) => {
         setActiveChatId(newId || 'default');
       });
-      status = 'loading';
       renderMessages();
       // Send Message in Current Chat
     } else if (chat?.id && text.trim()) {
