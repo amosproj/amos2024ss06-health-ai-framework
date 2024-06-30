@@ -12,12 +12,11 @@ import type { ChatItemProps } from 'src/frontend/components/ChatItem'
 
 export const DropdownMenu = () => {
   // get chatID after opening app copilot help
-  const route = useRoute<RouteProp<MainDrawerParams>>();
-  const chatId = route.params?.chatId;
   const [isVisible, setIsVisible] = useState(false);
-  const { activeLLMs, toggleLLM } = useLLMs(chatId || 'default');
-
   const { activeChatId, setActiveChatId } = useActiveChatId();
+  const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');
+
+
   const { chat, status, error } = useGetChat(activeChatId);
 
   const activeLLMsCount = Object.values(activeLLMs).filter(llm => llm.active).length;

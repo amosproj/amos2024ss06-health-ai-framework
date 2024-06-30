@@ -15,7 +15,7 @@ import { useRef, useEffect } from 'react';
 
 import { styles } from './style';
 import type { Chat } from 'src/frontend/types';
-import { useGetAllChat, useUpdateChat, useGetChat, useActiveChatId} from 'src/frontend/hooks';
+import { useGetAllChat, useUpdateChat, useGetChat, useActiveChatId, useCreateChat, LLM_MODELS} from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import {ActivityIndicator, IconButton} from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
@@ -31,26 +31,26 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const router = useRoute<RouteProp<MainDrawerParams>>(); //TODO: delete if not necessary
+  const { createChat, isCreating } = useCreateChat();
 
   // ------------- Render Chat from firebase -------------
   //const { chats, status, error } = useGetAllChat();
   //const [chat, setChat] = useState<Chat | null>(null); 
   const { activeChatId, setActiveChatId } = useActiveChatId();
-  const { chat, status, error } = useGetChat(activeChatId);
-  //console.log("chatId: ", activeChatId)
+  let { chat, status, error } = useGetChat(activeChatId);
 
   useEffect(() => {
     renderMessages();
-  }, [chat?.conversation.length]);
+  }, [chat?.conversation.length, activeChatId]);
 
   const renderMessages = () => {
-    if(status === 'loading') 
+    if(status === 'loading' || isCreating)
       return ( <ActivityIndicator/> );
     //console.log("Chat: ", chat)
     if(chat === undefined) //TODO: This is Work in Progress
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text> Select a chat in the drawer to begin. </Text>
+          <Text style={{fontSize: 16}}> Write a message to begin. </Text>
         </View>
       );
 
@@ -58,7 +58,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
     return chat?.conversation.map((message, index) => (
       <View
         key={chat.id + (i++).toString()}
-        style={[styles.message, index % 2 === 1
+        style={[styles.message, index % 2 === 0
           ? [styles.sentMessage, { backgroundColor: colors.inversePrimary}]
           : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
         ]}
@@ -76,14 +76,21 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
 
   function sendMessage() {
-    if ( chat?.id && text.trim()) {
+    if(chat === undefined && text.trim()){
+      setText('');
+      const newChat : Chat = {title: text, model: [LLM_MODELS[0].key], conversation: [text], createdAt: Timestamp.now() };
+      const newId = createChat(newChat);
+      newId.then((newId) => {
+        setActiveChatId(newId || 'default')
+        //console.log("Created chat with newId", newId)
+      })
+      status = 'loading'
+      renderMessages();
+    } else if ( chat?.id && text.trim()) {
+      chat?.conversation.push(text)
+      setText('');
       updateChat({
-        conversation: [...(chat?.conversation || []), text]
-      }).then(() => {
-        chat?.conversation.push(text)
-        //setChat(chat);
-        setText('');
-        //setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+        conversation: chat?.conversation
       }).catch(error => {
         console.error('Error updating chat:', error);
       });
