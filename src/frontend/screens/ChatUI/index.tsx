@@ -9,21 +9,28 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import * as Speech from 'expo-speech';
 import { signOut } from 'firebase/auth';
-import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { useCallback, useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
-import { useTheme } from 'react-native-paper';
 import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
-import { useActiveChatId, useGetAllChat, useGetChat, useUpdateChat } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
+import {
+  useGetAllChat,
+  useUpdateChat,
+  useGetChat,
+  useActiveChatId,
+  useCreateChat,
+  LLM_MODELS
+} from 'src/frontend/hooks';
+import { Timestamp } from 'firebase/firestore';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { styles } from './style';
 
 export type ChatUiProps = {
@@ -31,33 +38,29 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
-  // const chatId = props.chatId;
-  // console.log("ChatId: ", chatId)
-
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
-  const router = useRoute<RouteProp<MainDrawerParams>>();
 
+  const { createChat, isCreating } = useCreateChat();
   // ------------- Render Chat from firebase -------------
-  //const { chats, status, error } = useGetAllChat();
-  //const [chat, setChat] = useState<Chat | null>(null);
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { chat, status, error } = useGetChat(activeChatId);
   const [isRecording, setIsRecording] = useState(false); // Added state for button color
   //console.log("chatId: ", activeChatId)
 
+
   useEffect(() => {
     renderMessages();
-  }, [chat?.conversation.length]);
+  }, [chat?.conversation.length, activeChatId]);
 
   const renderMessages = () => {
-    if (status === 'loading') return <ActivityIndicator />;
-    //console.log("Chat: ", chat)paper
+    if (status === 'loading' || isCreating) return <ActivityIndicator />;
+
     if (chat === undefined)
       //TODO: This is Work in Progress
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text> Select a chat in the drawer to begin. </Text>
+          <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
         </View>
       );
 
@@ -67,7 +70,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
         key={chat.id + (i++).toString()}
         style={[
           styles.message,
-          index % 2 === 1
+          index % 2 === 0
             ? [styles.sentMessage, { backgroundColor: colors.inversePrimary }]
             : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
         ]}
@@ -98,22 +101,29 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
 
   function sendMessage() {
-    if (chat?.id && text.trim()) {
-      // Optimistic UI update
-      const updatedConversation = [...(chat?.conversation || []), text];
-      chat.conversation.push(text);
+    // Create new Chat
+    if (chat === undefined && text.trim()) {
       setText('');
-      // scrollViewRef.current?.scrollToEnd({ animated: true });
-
-      // Update chat in the database
-      updateChat({ conversation: updatedConversation })
-        .then(() => {
-          // Optionally handle post-success actions
-        })
-        .catch((error) => {
-          console.error('Error updating chat:', error);
-          // Optionally revert optimistic UI update if needed
-        });
+      const newChat: Chat = {
+        title: text,
+        model: [LLM_MODELS[0].key],
+        conversation: [text],
+        createdAt: Timestamp.now()
+      };
+      const newId = createChat(newChat);
+      newId.then((newId) => {
+        setActiveChatId(newId || 'default');
+      });
+      renderMessages();
+      // Send Message in Current Chat
+    } else if (chat?.id && text.trim()) {
+      chat?.conversation.push(text);
+      setText('');
+      updateChat({
+        conversation: chat?.conversation
+      }).catch((error) => {
+        console.error('Error updating chat:', error);
+      });
     }
   }
 

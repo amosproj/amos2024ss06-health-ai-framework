@@ -11,9 +11,11 @@ import { signOut } from 'firebase/auth';
 import { useTheme } from 'react-native-paper';
 import { useAuth, useUser } from 'reactfire';
 import { ChatItem } from 'src/frontend/components';
-import { useGetAllChat } from 'src/frontend/hooks';
+import { useGetAllChat, useCreateChat, useActiveChatId, LLM_MODELS } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { Chat } from 'src/frontend/types';
+import { Timestamp } from 'firebase/firestore';
+import { Screens } from 'src/frontend/helpers';
 
 /**
  * NOTE: needs to be called DrawerMenu because Drawer is already defined in react-native-paper
@@ -30,6 +32,18 @@ export function DrawerMenu() {
     //navigation.navigate('Profile');
     console.log('TODO: implement Profile Screen');
   };
+
+  const { navigate } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
+  const { createChat } = useCreateChat();
+  const { activeChatId, setActiveChatId } = useActiveChatId();
+  const createNewChat = () => {
+    // Implement create new chat functionality
+    //const newChat : Chat = {title: 'New Chat', model: [LLM_MODELS[0].key], conversation: [], createdAt: Timestamp.now() };
+    //createChat(newChat);
+    setActiveChatId('default');
+    navigate('Main', { screen: Screens.Chat, params: { chatId: 'default' } }); // only used to close drawer
+  };
+
   const handleLogout = async () => {
     //TODO: fix errors
     try {
@@ -68,7 +82,7 @@ export function DrawerMenu() {
       const sortedChats = [...filteredChats].sort((a, b) => {
         const dateA = a.createdAt;
         const dateB = b.createdAt;
-        return dateA.toMillis() - dateB.toMillis();
+        return dateB.toMillis() - dateA.toMillis();
       });
       setSortedChats(sortedChats);
     }
@@ -92,6 +106,19 @@ export function DrawerMenu() {
   return (
     <View style={Style.drawerContainer}>
       <Drawer.Section showDivider={false}>
+        <Button
+          icon='pencil-alt'
+          mode='outlined'
+          onPress={createNewChat}
+          textColor='black'
+          contentStyle={{
+            justifyContent: 'flex-start'
+          }}
+          style={[Style.searchbar, { marginBottom: 16, borderColor: 'black', borderWidth: 1 }]}
+          labelStyle={{ fontSize: 16, paddingLeft: 8 }}
+        >
+          Create New Chat
+        </Button>
         <Searchbar
           placeholder='Search chat history'
           onChangeText={setSearchQuery}

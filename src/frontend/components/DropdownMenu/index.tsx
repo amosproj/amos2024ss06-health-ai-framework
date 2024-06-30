@@ -9,14 +9,13 @@ import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
 import { Style } from './style';
 
+
 export const DropdownMenu = () => {
   // get chatID after opening app copilot help
-  const route = useRoute<RouteProp<MainDrawerParams>>();
-  const chatId = route.params?.chatId;
   const [isVisible, setIsVisible] = useState(false);
-  const { activeLLMs, toggleLLM } = useLLMs(chatId || 'default');
-
   const { activeChatId, setActiveChatId } = useActiveChatId();
+  const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');
+
   const { chat, status, error } = useGetChat(activeChatId);
 
   const activeLLMsCount = Object.values(activeLLMs).filter((llm) => llm.active).length;
