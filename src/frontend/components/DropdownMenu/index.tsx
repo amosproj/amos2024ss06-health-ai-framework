@@ -32,7 +32,6 @@ export const DropdownMenu = () => {
   const isButtonDisabled = chat === undefined || activeLLMsCount === 0;
 
   return (
-      
       <Menu
         visible={isVisible}
         onDismiss={() => setIsVisible(false)}

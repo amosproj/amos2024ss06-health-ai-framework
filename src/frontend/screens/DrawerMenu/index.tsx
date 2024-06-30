@@ -114,10 +114,10 @@ export function DrawerMenu() {
           contentStyle={{
             justifyContent: 'flex-start'
           }}
-          style={[Style.searchbar, { marginBottom: 16, borderColor: 'black', borderWidth: 1 }]}
+          style={[Style.searchbar, { marginBottom: 16,  borderColor: 'black', borderWidth: 1}]}
           labelStyle={{ fontSize: 16, paddingLeft: 8  }}
         >
-              Create New Chat 
+              Create New Chat
         </Button>
         <Searchbar
           placeholder='Search chat history'

@@ -25,17 +25,11 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
-  // const chatId = props.chatId;
-  // console.log("ChatId: ", chatId)
-
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
-  const router = useRoute<RouteProp<MainDrawerParams>>(); //TODO: delete if not necessary
   const { createChat, isCreating } = useCreateChat();
 
   // ------------- Render Chat from firebase -------------
-  //const { chats, status, error } = useGetAllChat();
-  //const [chat, setChat] = useState<Chat | null>(null); 
   const { activeChatId, setActiveChatId } = useActiveChatId();
   let { chat, status, error } = useGetChat(activeChatId);
 
@@ -46,7 +40,6 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const renderMessages = () => {
     if(status === 'loading' || isCreating)
       return ( <ActivityIndicator/> );
-    //console.log("Chat: ", chat)
     if(chat === undefined) //TODO: This is Work in Progress
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -76,16 +69,17 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
 
   function sendMessage() {
+    // Create new Chat
     if(chat === undefined && text.trim()){
       setText('');
       const newChat : Chat = {title: text, model: [LLM_MODELS[0].key], conversation: [text], createdAt: Timestamp.now() };
       const newId = createChat(newChat);
       newId.then((newId) => {
         setActiveChatId(newId || 'default')
-        //console.log("Created chat with newId", newId)
       })
       status = 'loading'
       renderMessages();
+    // Send Message in Current Chat
     } else if ( chat?.id && text.trim()) {
       chat?.conversation.push(text)
       setText('');
