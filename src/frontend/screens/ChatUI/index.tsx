@@ -15,13 +15,20 @@ import { useRef, useEffect } from 'react';
 
 import { styles } from './style';
 import type { Chat } from 'src/frontend/types';
-import { useGetAllChat, useUpdateChat, useGetChat, useActiveChatId, useCreateChat, LLM_MODELS} from 'src/frontend/hooks';
+import {
+  useGetAllChat,
+  useUpdateChat,
+  useGetChat,
+  useActiveChatId,
+  useCreateChat,
+  LLM_MODELS
+} from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
-import {ActivityIndicator, IconButton} from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 
 export type ChatUiProps = {
-    chatId: string;
+  chatId: string;
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
@@ -38,12 +45,12 @@ export function ChatUI(/*props: ChatUiProps*/) {
   }, [chat?.conversation.length, activeChatId]);
 
   const renderMessages = () => {
-    if(status === 'loading' || isCreating)
-      return ( <ActivityIndicator/> );
-    if(chat === undefined) //TODO: This is Work in Progress
+    if (status === 'loading' || isCreating) return <ActivityIndicator />;
+    if (chat === undefined)
+      //TODO: This is Work in Progress
       return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 16}}> Write a message to begin. </Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
         </View>
       );
 
@@ -51,9 +58,11 @@ export function ChatUI(/*props: ChatUiProps*/) {
     return chat?.conversation.map((message, index) => (
       <View
         key={chat.id + (i++).toString()}
-        style={[styles.message, index % 2 === 0
-          ? [styles.sentMessage, { backgroundColor: colors.inversePrimary}]
-          : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
+        style={[
+          styles.message,
+          index % 2 === 0
+            ? [styles.sentMessage, { backgroundColor: colors.inversePrimary }]
+            : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
         ]}
       >
         <Text>{message}</Text>
@@ -62,7 +71,6 @@ export function ChatUI(/*props: ChatUiProps*/) {
   };
   // ------------- End render Chat from firebase -------------
 
-
   // ------------- Sending new message to firebase -------------
 
   const [text, setText] = useState('');
@@ -70,22 +78,27 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   function sendMessage() {
     // Create new Chat
-    if(chat === undefined && text.trim()){
+    if (chat === undefined && text.trim()) {
       setText('');
-      const newChat : Chat = {title: text, model: [LLM_MODELS[0].key], conversation: [text], createdAt: Timestamp.now() };
+      const newChat: Chat = {
+        title: text,
+        model: [LLM_MODELS[0].key],
+        conversation: [text],
+        createdAt: Timestamp.now()
+      };
       const newId = createChat(newChat);
       newId.then((newId) => {
-        setActiveChatId(newId || 'default')
-      })
-      status = 'loading'
+        setActiveChatId(newId || 'default');
+      });
+      status = 'loading';
       renderMessages();
-    // Send Message in Current Chat
-    } else if ( chat?.id && text.trim()) {
-      chat?.conversation.push(text)
+      // Send Message in Current Chat
+    } else if (chat?.id && text.trim()) {
+      chat?.conversation.push(text);
       setText('');
       updateChat({
         conversation: chat?.conversation
-      }).catch(error => {
+      }).catch((error) => {
         console.error('Error updating chat:', error);
       });
     }
@@ -118,24 +131,28 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.chatContainer} contentContainerStyle={styles.scrollViewContent}  ref={scrollViewRef}>
+      <ScrollView
+        style={styles.chatContainer}
+        contentContainerStyle={styles.scrollViewContent}
+        ref={scrollViewRef}
+      >
         {renderMessages()}
       </ScrollView>
-      <View style={[styles.inputContainer, {borderColor: colors.outlineVariant}]}>
+      <View style={[styles.inputContainer, { borderColor: colors.outlineVariant }]}>
         <TextInput
-          style={[styles.input, {borderColor: colors.outlineVariant}]}
-          placeholder="Write something here..."
+          style={[styles.input, { borderColor: colors.outlineVariant }]}
+          placeholder='Write something here...'
           value={text}
-          onChangeText={text => setText(text)}
+          onChangeText={(text) => setText(text)}
           onSubmitEditing={sendMessage}
           blurOnSubmit={false}
         />
         <IconButton
-          icon="paper-plane"
+          icon='paper-plane'
           onPress={sendMessage}
           iconColor={colors.onPrimary}
           containerColor={colors.primary}
-          style={{marginHorizontal: 5, paddingRight: 3}}
+          style={{ marginHorizontal: 5, paddingRight: 3 }}
         />
       </View>
     </View>

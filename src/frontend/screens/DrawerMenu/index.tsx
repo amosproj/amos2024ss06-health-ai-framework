@@ -40,8 +40,8 @@ export function DrawerMenu() {
     // Implement create new chat functionality
     //const newChat : Chat = {title: 'New Chat', model: [LLM_MODELS[0].key], conversation: [], createdAt: Timestamp.now() };
     //createChat(newChat);
-    setActiveChatId('default')
-    navigate('Main', { screen: Screens.Chat, params: { chatId: 'default' } }) // only used to close drawer
+    setActiveChatId('default');
+    navigate('Main', { screen: Screens.Chat, params: { chatId: 'default' } }); // only used to close drawer
   };
 
   const handleLogout = async () => {
@@ -107,26 +107,26 @@ export function DrawerMenu() {
     <View style={Style.drawerContainer}>
       <Drawer.Section showDivider={false}>
         <Button
-          icon="pencil-alt"
-          mode="outlined"
+          icon='pencil-alt'
+          mode='outlined'
           onPress={createNewChat}
           textColor='black'
           contentStyle={{
             justifyContent: 'flex-start'
           }}
-          style={[Style.searchbar, { marginBottom: 16,  borderColor: 'black', borderWidth: 1}]}
-          labelStyle={{ fontSize: 16, paddingLeft: 8  }}
+          style={[Style.searchbar, { marginBottom: 16, borderColor: 'black', borderWidth: 1 }]}
+          labelStyle={{ fontSize: 16, paddingLeft: 8 }}
         >
-              Create New Chat
+          Create New Chat
         </Button>
         <Searchbar
           placeholder='Search chat history'
           onChangeText={setSearchQuery}
           value={searchText}
-          style={[Style.searchbar, {backgroundColor: colors.secondaryContainer}]}
+          style={[Style.searchbar, { backgroundColor: colors.secondaryContainer }]}
         />
         {/* custom padding because doesn't work with Drawer.Section props*/}
-        <View style={{ height: 10 }}/>
+        <View style={{ height: 10 }} />
       </Drawer.Section>
       <Drawer.Section title='Recent Chats' showDivider={false} style={{ flex: 1 }}>
         <ScrollView style={{ flexGrow: 1 }}>

@@ -5,12 +5,11 @@ import type { LLM } from 'src/frontend/types';
 import { useFirestore, useFirestoreDocData, useUser } from 'reactfire';
 import { FirestoreCollections, currentChatIdAtom } from 'src/frontend/helpers';
 
-
 export const LLM_MODELS = [
   { key: 'gpt-4', name: 'OpenAi' },
   { key: 'google', name: 'Gemini' },
   { key: 'mistral', name: 'Mistral' },
-  { key: 'claude', name: 'Claude' },
+  { key: 'claude', name: 'Claude' }
 ];
 
 export function useLLMs(chatId: string) {
@@ -32,7 +31,7 @@ export function useLLMs(chatId: string) {
   const toggleLLM = async (llmKey: string) => {
     const updatedLLMs = {
       ...LLMs,
-      [llmKey]: { ...LLMs[llmKey], active: !LLMs[llmKey].active },
+      [llmKey]: { ...LLMs[llmKey], active: !LLMs[llmKey].active }
     };
     setLLMs(updatedLLMs);
 
@@ -44,7 +43,8 @@ export function useLLMs(chatId: string) {
         FirestoreCollections.USERS,
         users?.uid || '',
         FirestoreCollections.CHATS,
-        chatId);
+        chatId
+      );
       await updateDoc(chatRef, { model: activeModels });
     } catch (error) {
       console.error('Error updating document: ', error);

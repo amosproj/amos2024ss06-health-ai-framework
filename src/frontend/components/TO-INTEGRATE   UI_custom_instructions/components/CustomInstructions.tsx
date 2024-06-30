@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button, Card, Title, Paragraph, Provider as PaperProvider } from 'react-native-paper';
-
-
+import {
+  Text,
+  TextInput,
+  Button,
+  Card,
+  Title,
+  Paragraph,
+  Provider as PaperProvider
+} from 'react-native-paper';
 
 type UserProfile = {
   name: string;
-  styleInstructions: string; 
+  styleInstructions: string;
   personalInstructions: string;
 };
 
@@ -21,11 +27,11 @@ const PersonalInfoForm = () => {
     const data = {
       name,
       styleInstructions,
-      personalInstructions,
+      personalInstructions
     };
 
     if (currentProfile) {
-      const updatedProfiles = profiles.map(profile =>
+      const updatedProfiles = profiles.map((profile) =>
         profile === currentProfile ? data : profile
       );
       setProfiles(updatedProfiles);
@@ -47,16 +53,15 @@ const PersonalInfoForm = () => {
   };
 
   const handleDelete = (profile: UserProfile) => {
-    const updatedProfiles = profiles.filter(p => p !== profile);
+    const updatedProfiles = profiles.filter((p) => p !== profile);
     setProfiles(updatedProfiles);
-    if(currentProfile === profile) {
+    if (currentProfile === profile) {
       setName('');
       setStyleInstructions('');
       setPersonalInstructions('');
       setCurrentProfile(null);
     }
-  }
-
+  };
 
   return (
     <PaperProvider>
@@ -66,49 +71,61 @@ const PersonalInfoForm = () => {
             <Card.Content>
               <Title>Personal Information</Title>
               <TextInput
-                label="Name"
+                label='Name'
                 value={name}
-                onChangeText={text => setName(text)}
+                onChangeText={(text) => setName(text)}
                 style={styles.input}
               />
-              <Text variant ="titleSmall">Style Instructions: How would you like the bot to respond?</Text>
+              <Text variant='titleSmall'>
+                Style Instructions: How would you like the bot to respond?
+              </Text>
               <TextInput
                 //label=""
-                placeholder="Example: The style should be formal and detailed"
+                placeholder='Example: The style should be formal and detailed'
                 value={styleInstructions}
-                onChangeText={text => setStyleInstructions(text)}
+                onChangeText={(text) => setStyleInstructions(text)}
                 style={styles.input}
                 numberOfLines={4}
                 maxLength={250}
                 multiline={true}
               />
-              <Text variant="titleSmall">Personalized Instructions: What do you want the bot to know about you?</Text>
+              <Text variant='titleSmall'>
+                Personalized Instructions: What do you want the bot to know about you?
+              </Text>
               <TextInput
                 //label=""
                 placeholder="Example: I'm a content creator who teaches people about the newest AI tools."
                 value={personalInstructions}
-                onChangeText={text => setPersonalInstructions(text)}
+                onChangeText={(text) => setPersonalInstructions(text)}
                 style={styles.input}
                 numberOfLines={4}
                 maxLength={250}
                 multiline={true}
               />
-              <Button mode="contained" onPress={handleSave} style={styles.button}>
+              <Button mode='contained' onPress={handleSave} style={styles.button}>
                 {currentProfile ? 'Update' : 'Save'}
               </Button>
             </Card.Content>
           </Card>
 
-            <Card style={styles.card}>
+          <Card style={styles.card}>
             <Card.Content>
               <Title>Saved Profiles</Title>
               {profiles.map((profile, index) => (
                 <View key={index} style={styles.profile}>
                   <Paragraph>Name: {profile.name}</Paragraph>
-                  <Button mode="outlined" onPress={() => handleEdit(profile)} style={styles.profileButton}>
+                  <Button
+                    mode='outlined'
+                    onPress={() => handleEdit(profile)}
+                    style={styles.profileButton}
+                  >
                     Edit
                   </Button>
-                  <Button mode="contained" onPress={() => handleDelete(profile)} style={styles.profileButton}>
+                  <Button
+                    mode='contained'
+                    onPress={() => handleDelete(profile)}
+                    style={styles.profileButton}
+                  >
                     Delete
                   </Button>
                 </View>
@@ -125,30 +142,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f5f5f5'
   },
   card: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   input: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   button: {
-    marginTop: 16,
+    marginTop: 16
   },
   textInput: {
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: 'top'
   },
   profile: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 10
   },
   profileButton: {
-    marginLeft: 10,
-  },
+    marginLeft: 10
+  }
 });
 
 export default PersonalInfoForm;

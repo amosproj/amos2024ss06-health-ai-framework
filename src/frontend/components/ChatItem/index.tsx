@@ -41,8 +41,8 @@ export function ChatItem(props: ChatItemProps) {
           <Button
             textColor='black'
             onPress={() => {
-              setActiveChatId(id)
-              navigate('Main', { screen: Screens.Chat, params: { chatId: id } })
+              setActiveChatId(id);
+              navigate('Main', { screen: Screens.Chat, params: { chatId: id } });
             }}
             onLongPress={() => setMenuVisible(true)}
             style={{}}
