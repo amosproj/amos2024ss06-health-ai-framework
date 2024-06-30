@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Keyboard, View } from 'react-native';
 import { Button, Menu, Text } from 'react-native-paper';
 import { Screens } from 'src/frontend/helpers';
-import { useDeleteChat, useGetChat, useActiveChatId } from 'src/frontend/hooks';
+import { useActiveChatId, useDeleteChat, useGetChat } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 
 export type ChatItemProps = {

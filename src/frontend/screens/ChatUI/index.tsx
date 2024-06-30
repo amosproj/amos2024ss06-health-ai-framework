@@ -1,19 +1,28 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import Voice, {
+  type SpeechResultsEvent,
+  type SpeechStartEvent,
+  type SpeechRecognizedEvent
+} from '@react-native-voice/voice';
 import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
+import * as Speech from 'expo-speech';
 import { signOut } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
+import { useCallback, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { ScrollView, Text, TextInput, View } from 'react-native';
+import { Keyboard } from 'react-native';
+import { Vibration } from 'react-native';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
+import { useActiveChatId, useGetAllChat, useGetChat, useUpdateChat } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
-import { useState, useCallback } from 'react';
-import { View, Text, TextInput, ScrollView } from 'react-native';
-import { Keyboard } from 'react-native';
-import { useRef, useEffect } from 'react';
-
-import { styles } from './style';
 import type { Chat } from 'src/frontend/types';
 import {
   useGetAllChat,
@@ -26,6 +35,7 @@ import {
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
+import { styles } from './style';
 
 export type ChatUiProps = {
   chatId: string;
@@ -34,11 +44,14 @@ export type ChatUiProps = {
 export function ChatUI(/*props: ChatUiProps*/) {
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
-  const { createChat, isCreating } = useCreateChat();
 
+  const { createChat, isCreating } = useCreateChat();
   // ------------- Render Chat from firebase -------------
   const { activeChatId, setActiveChatId } = useActiveChatId();
-  let { chat, status, error } = useGetChat(activeChatId);
+  const { chat, status, error } = useGetChat(activeChatId);
+  const [isRecording, setIsRecording] = useState(false); // Added state for button color
+  //console.log("chatId: ", activeChatId)
+
 
   useEffect(() => {
     renderMessages();
@@ -46,6 +59,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   const renderMessages = () => {
     if (status === 'loading' || isCreating) return <ActivityIndicator />;
+
     if (chat === undefined)
       //TODO: This is Work in Progress
       return (
@@ -65,6 +79,20 @@ export function ChatUI(/*props: ChatUiProps*/) {
             : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
         ]}
       >
+        {index % 2 !== 1 && (
+          <IconButton
+            icon='volume-up'
+            size={16}
+            onPress={() =>
+              Speech.speak(message, {
+                language: 'en-US',
+                pitch: 1,
+                rate: 1
+              })
+            }
+            style={styles.speakButton}
+          />
+        )}
         <Text>{message}</Text>
       </View>
     ));
@@ -129,6 +157,64 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   // ------------- End keyboard and scrolling -------------
 
+  // ------------- Voice Recognition Setup -------------
+  const [recognized, setRecognized] = useState('');
+  const [started, setStarted] = useState('');
+  const [results, setResults] = useState<string[]>([]);
+
+  useEffect(() => {
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechRecognized = onSpeechRecognized;
+    Voice.onSpeechResults = onSpeechResults;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const onSpeechStart = (e: SpeechStartEvent) => {
+    setStarted('√');
+  };
+
+  const onSpeechRecognized = (e: SpeechRecognizedEvent) => {
+    setRecognized('√');
+  };
+
+  const onSpeechResults = (e: SpeechResultsEvent) => {
+    setResults(e.value ?? []);
+    setText(e.value?.[0] ?? '');
+  };
+
+  const startRecognition = async () => {
+    setIsRecording(true); // Set recording state to true
+    Vibration.vibrate(50); // Vibrate for 50 milliseconds on press
+
+    setRecognized('');
+    setStarted('');
+    setResults([]);
+    try {
+      await Voice.start('en-US');
+    } catch (e) {
+      console.error(e);
+      setIsRecording(false); // Reset recording state on error
+    }
+  };
+
+  const stopRecognition = async () => {
+    try {
+      await Voice.stop();
+    } catch (e) {
+      console.error(e);
+    }
+    Vibration.vibrate(50); // Vibrate for 50 milliseconds on release
+    setIsRecording(false); // Reset recording state
+  };
+
+  // ------------- End Voice Recognition Setup -------------
+  // ------------- Conditional Rendering of Voice/Send Button -------------
+
+  // ------------- Conditional Rendering of Voice/Send Button -------------
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -147,13 +233,25 @@ export function ChatUI(/*props: ChatUiProps*/) {
           onSubmitEditing={sendMessage}
           blurOnSubmit={false}
         />
-        <IconButton
-          icon='paper-plane'
-          onPress={sendMessage}
-          iconColor={colors.onPrimary}
-          containerColor={colors.primary}
-          style={{ marginHorizontal: 5, paddingRight: 3 }}
-        />
+        {text.trim() ? (
+          <IconButton
+            icon='paper-plane'
+            onPress={sendMessage}
+            onPressOut={stopRecognition}
+            iconColor={colors.onPrimary}
+            containerColor={colors.primary}
+            style={{ marginHorizontal: 5, paddingRight: 3 }}
+          />
+        ) : (
+          <IconButton
+            icon='microphone'
+            onPressIn={startRecognition}
+            onPressOut={stopRecognition}
+            iconColor={colors.onPrimary}
+            containerColor={isRecording ? colors.inversePrimary : colors.primary}
+            style={{ marginHorizontal: 5 }}
+          />
+        )}
       </View>
     </View>
   );

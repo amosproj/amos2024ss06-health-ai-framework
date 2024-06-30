@@ -1,15 +1,15 @@
-import React from 'react';
+import PersonalInfoForm from '@/components/CustomInstructions';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import React from 'react';
 import {
-  View,
-  Text,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  ScrollView
+  View
 } from 'react-native';
-import PersonalInfoForm from '@/components/CustomInstructions';
 
 const Drawer = createDrawerNavigator();
 

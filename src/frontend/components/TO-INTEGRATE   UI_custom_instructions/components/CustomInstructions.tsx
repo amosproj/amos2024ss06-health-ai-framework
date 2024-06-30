@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import {
-  Text,
-  TextInput,
   Button,
   Card,
-  Title,
+  Provider as PaperProvider,
   Paragraph,
-  Provider as PaperProvider
+  Text,
+  TextInput,
+  Title
 } from 'react-native-paper';
 
 type UserProfile = {

@@ -16,6 +16,8 @@ export const styles = StyleSheet.create({
     paddingBottom: 8
   },
   message: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
@@ -28,7 +30,10 @@ export const styles = StyleSheet.create({
   receivedMessage: {
     alignSelf: 'flex-start'
   },
-
+  speakButton: {
+    alignSelf: 'flex-start',
+    marginLeft: -10
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
