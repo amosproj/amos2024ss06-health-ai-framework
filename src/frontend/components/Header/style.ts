@@ -9,5 +9,12 @@ export const Style = StyleSheet.create({
     padding: 8,
     minHeight: 64,
     backgroundColor: '#fff'
+  },
+  viewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  actionButton: {
+    marginVertical: -4
   }
 });

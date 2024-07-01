@@ -18,11 +18,13 @@ export const styles = StyleSheet.create({
   message: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
+    justifyContent: 'space-between',
+    padding: 10,
     borderRadius: 10,
     marginBottom: 10,
     maxWidth: '80%',
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
+    flexShrink: 1
   },
   sentMessage: {
     alignSelf: 'flex-end'
@@ -31,8 +33,8 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-start'
   },
   speakButton: {
-    alignSelf: 'flex-start',
-    marginLeft: -10
+    marginLeft: 2,
+    marginRight: -2
   },
   inputContainer: {
     flexDirection: 'row',
@@ -47,5 +49,15 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 15
+  },
+  centerMessage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  messageText: {
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    marginRight: 2
   }
 });
