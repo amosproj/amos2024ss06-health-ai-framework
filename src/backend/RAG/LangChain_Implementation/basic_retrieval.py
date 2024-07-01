@@ -89,7 +89,7 @@ all_doc_ids = chroma_db.from_documents(documents=document_chunks, embedding=Open
 chroma_db.add_documents(documents=document_chunks)
 
 # ridiculous linting rules - thanks:
-query_text1 = 'what did the executive at the Kellogs ad firm say? '
+query_text1 = 'Can Blueberries Help with Diabetes and Repairing DNA?'
 query_text2 = 'What can we conclude from this response?'
 query_text = query_text1 + query_text2
 
@@ -103,6 +103,8 @@ for result, score in results:
     metadata = result.metadata
     metadata_str = ', '.join([f'{key}: {value}' for key, value in metadata.items()])
     relevant_info += f'Content: {doc_content}\nMetadata: {metadata_str}\n\n'
+
+print('Relevant information is:', relevant_info)
 
 modified_prompt = {'text': f'{query_text}\n\nHere is some relevant information:\n{relevant_info}'}
 
