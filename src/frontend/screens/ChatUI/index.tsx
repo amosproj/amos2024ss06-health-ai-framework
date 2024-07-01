@@ -1,4 +1,3 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Voice, {
   type SpeechResultsEvent,
   type SpeechStartEvent,
@@ -8,30 +7,29 @@ import { type RouteProp, useNavigation, useRoute } from '@react-navigation/nativ
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import * as Speech from 'expo-speech';
-import { signOut } from 'firebase/auth';
 import React from 'react';
 import { useCallback, useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
-import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
-import type { Chat } from 'src/frontend/types';
+import type { Chat, conversationMessage } from 'src/frontend/types';
 import {
-  useGetAllChat,
   useUpdateChat,
   useGetChat,
   useActiveChatId,
   useCreateChat,
-  LLM_MODELS
+  LLM_MODELS,
+  useLLMs
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 import { styles } from './style';
+import { ChatBubble } from 'src/frontend/components';
 
 export type ChatUiProps = {
   chatId: string;
@@ -48,10 +46,13 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const [isRecording, setIsRecording] = useState(false); // Added state for button color
   //console.log("chatId: ", activeChatId)
 
+  const { activeLLMs: LLMs, toggleLLM} = useLLMs(activeChatId);
+  const [responses, setResponses] = useState<string[]>([]);
 
   useEffect(() => {
     renderMessages();
   }, [chat?.conversation.length, activeChatId]);
+
 
   const renderMessages = () => {
     if (status === 'loading' || isCreating) return <ActivityIndicator />;
@@ -66,31 +67,32 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
     let i = 0;
     return chat?.conversation.map((message, index) => (
-      <View
-        key={chat.id + (i++).toString()}
-        style={[
-          styles.message,
-          index % 2 === 0
-            ? [styles.sentMessage, { backgroundColor: colors.inversePrimary }]
-            : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
-        ]}
-      >
-        {index % 2 !== 1 && (
-          <IconButton
-            icon='volume-up'
-            size={16}
-            onPress={() =>
-              Speech.speak(message, {
-                language: 'en-US',
-                pitch: 1,
-                rate: 1
-              })
-            }
-            style={styles.speakButton}
-          />
-        )}
-        <Text>{message}</Text>
-      </View>
+      ChatBubble(message, (chat.id + (i++).toString()), colors)
+      // <View
+      //   key={}
+      //   style={[
+      //     styles.message,
+      //     index % 2 === 0
+      //       ? [styles.sentMessage, { backgroundColor: colors.inversePrimary }]
+      //       : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
+      //   ]}
+      // >
+      //   {index % 2 !== 1 && (
+      //     <IconButton
+      //       icon='volume-up'
+      //       size={16}
+      //       onPress={() =>
+      //         Speech.speak(message.text = {
+      //           language: 'en-US',
+      //           pitch: 1,
+      //           rate: 1
+      //         })
+      //       }
+      //       style={styles.speakButton}
+      //     />
+      //   )}
+      //   <Text>{message.text}</Text>
+      // </View>
     ));
   };
   // ------------- End render Chat from firebase -------------
@@ -100,14 +102,20 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const [text, setText] = useState('');
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
 
+  const fetchResponses = (message: string) =>{
+    //return a map of responses?
+    return LLMs.map
+}
+
   function sendMessage() {
     // Create new Chat
     if (chat === undefined && text.trim()) {
       setText('');
+      const msg : conversationMessage = {user: text};
       const newChat: Chat = {
         title: text,
         model: [LLM_MODELS[0].key],
-        conversation: [text],
+        conversation: [msg],
         createdAt: Timestamp.now()
       };
       const newId = createChat(newChat);
@@ -117,7 +125,8 @@ export function ChatUI(/*props: ChatUiProps*/) {
       renderMessages();
       // Send Message in Current Chat
     } else if (chat?.id && text.trim()) {
-      chat?.conversation.push(text);
+      const msg : conversationMessage = {user: text};
+      chat?.conversation.push(msg);
       setText('');
       updateChat({
         conversation: chat?.conversation
@@ -251,3 +260,4 @@ export function ChatUI(/*props: ChatUiProps*/) {
     </View>
   );
 }
+
