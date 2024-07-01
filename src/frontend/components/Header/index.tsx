@@ -1,31 +1,30 @@
 import type { DrawerHeaderProps } from '@react-navigation/drawer';
 import { DrawerActions, type RouteProp, useRoute } from '@react-navigation/native';
+import * as Clipboard from 'expo-clipboard';
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+import * as Sharing from 'expo-sharing';
 import React from 'react';
 import { Alert, Pressable, View } from 'react-native';
+import RNFetchBlob from 'react-native-blob-util';
+import RNFS from 'react-native-fs';
 import { IconButton, Surface, Text, useTheme } from 'react-native-paper';
 import { useActiveChatId, useGetChat, useLLMs } from 'src/frontend/hooks';
 import { AilixirLogo } from 'src/frontend/icons';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
+import { styles } from 'src/frontend/screens/ChatUI/style';
 import { DropdownMenu } from '../DropdownMenu';
 import { Style } from './style';
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
-import * as Sharing from 'expo-sharing';
-import RNFetchBlob from 'react-native-blob-util';
-import RNFS from 'react-native-fs';
-import * as Clipboard from 'expo-clipboard';
-import { styles } from 'src/frontend/screens/ChatUI/style';
-
 
 export function Header(props: DrawerHeaderProps) {
   const { colors } = useTheme();
   const { navigation } = props;
-  
+
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');
   const { chat, status, error } = useGetChat(activeChatId);
 
-  // Saving to download and clipboard 
+  // Saving to download and clipboard
   const handleAction = async () => {
     try {
       if (!chat || !chat.conversation || chat.conversation.length === 0) {
@@ -44,11 +43,15 @@ export function Header(props: DrawerHeaderProps) {
         timeZoneName: 'short'
       }).format(createdAtDate);
 
-      const metadata = `Title: ${chat.title}\nCreated: ${formattedCreatedAt}\nModels: ${chat.model.toString()}\n\n`;
+      const metadata = `Title: ${
+        chat.title
+      }\nCreated: ${formattedCreatedAt}\nModels: ${chat.model.toString()}\n\n`;
 
-      const formattedChatContent = chat.conversation.map((line, index) => {
-        return index % 2 === 0 ? `Q: '${line}'` : `A: '${line}'\n`;
-      }).join('\n');  
+      const formattedChatContent = chat.conversation
+        .map((line, index) => {
+          return index % 2 === 0 ? `Q: '${line}'` : `A: '${line}'\n`;
+        })
+        .join('\n');
 
       const now = new Date();
       const year = now.getFullYear();
@@ -68,8 +71,10 @@ export function Header(props: DrawerHeaderProps) {
       await Clipboard.setStringAsync(contentToSave);
       // Save to file
       await RNFS.writeFile(path, contentToSave, 'utf8');
-      Alert.alert('Chat Saved', `Chat saved to Downloads folder as ${fileName} and also to clipboard.`);
-
+      Alert.alert(
+        'Chat Saved',
+        `Chat saved to Downloads folder as ${fileName} and also to clipboard.`
+      );
     } catch (error) {
       console.error('Error:', error);
       Alert.alert('Error', 'Failed to perform action.');
@@ -89,13 +94,8 @@ export function Header(props: DrawerHeaderProps) {
       </View>
       <View style={{ flexDirection: 'row' }}>
         <DropdownMenu />
-        <Pressable 
-        onPress={handleAction} 
-        style={Style.actionButton}>
-          <IconButton 
-          icon='save' 
-          size={24} 
-          iconColor={colors.primary}/>
+        <Pressable onPress={handleAction} style={Style.actionButton}>
+          <IconButton icon='save' size={24} iconColor={colors.primary} />
         </Pressable>
       </View>
     </Surface>

@@ -15,6 +15,6 @@ export const Style = StyleSheet.create({
     alignItems: 'center'
   },
   actionButton: {
-    marginVertical: -4,
+    marginVertical: -4
   }
 });

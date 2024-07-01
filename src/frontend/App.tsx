@@ -1,6 +1,7 @@
 import { useFonts } from 'expo-font';
 import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
 import { useCallback, useEffect } from 'react';
+import { LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -9,12 +10,11 @@ import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import { ActiveChatProvider, FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
 import { AppRoutes } from './routes';
-import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
   'Require cycle:',
   '`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.',
-  '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.',
+  '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.'
 ]);
 
 export function App() {

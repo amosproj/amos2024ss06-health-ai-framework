@@ -9,28 +9,28 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import * as Speech from 'expo-speech';
 import { signOut } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { useCallback, useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
+import {
+  LLM_MODELS,
+  useActiveChatId,
+  useCreateChat,
+  useGetAllChat,
+  useGetChat,
+  useUpdateChat
+} from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
-import {
-  useGetAllChat,
-  useUpdateChat,
-  useGetChat,
-  useActiveChatId,
-  useCreateChat,
-  LLM_MODELS
-} from 'src/frontend/hooks';
-import { Timestamp } from 'firebase/firestore';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
-import { useTheme } from 'react-native-paper';
 import { styles } from './style';
 
 export type ChatUiProps = {
@@ -44,7 +44,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { createChat, isCreating } = useCreateChat();
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { chat, status, error } = useGetChat(activeChatId);
-  const [ isRecording, setIsRecording ] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   const [text, setText] = useState('');
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
@@ -84,11 +84,12 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   const renderMessages = () => {
     if (status === 'loading' || isCreating) return <ActivityIndicator />;
-    if (chat === undefined) return (
-      <View style={styles.centerMessage}>
-        <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
-      </View>
-    );
+    if (chat === undefined)
+      return (
+        <View style={styles.centerMessage}>
+          <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
+        </View>
+      );
     return chat.conversation.map((message, index) => (
       <View
         key={index.toString()}
@@ -121,7 +122,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
         title: text,
         model: [LLM_MODELS[0].key],
         conversation: [text],
-        createdAt: Timestamp.now(),
+        createdAt: Timestamp.now()
       };
       const newId = createChat(newChat);
       newId.then((newId) => setActiveChatId(newId || 'default'));
@@ -133,7 +134,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
   };
 
   // ------------- End sending new message to firebase -------------
-  
+
   // ------------- Voice Recognition Setup -------------
 
   useEffect(() => {
