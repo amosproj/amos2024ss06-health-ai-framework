@@ -28,5 +28,15 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 15
+  },
+  centerMessage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  messageText: {
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    marginRight: 2
   }
 });

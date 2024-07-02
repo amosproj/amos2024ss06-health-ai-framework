@@ -40,85 +40,22 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const { createChat, isCreating } = useCreateChat();
-  // ------------- Render Chat from firebase -------------
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { chat, status, error } = useGetChat(activeChatId);
-  const [isRecording, setIsRecording] = useState(false); // Added state for button color
-  //console.log("chatId: ", activeChatId)
+  const [isRecording, setIsRecording] = useState(false);
+
 
   const { activeLLMs: LLMs, toggleLLM} = useLLMs(activeChatId);
   const [responses, setResponses] = useState<string[]>([]);
   //for chatbubble
   const [responseIndex, setResponseIndex] = useState(0);
 
-  useEffect(() => {
-    renderMessages();
-  }, [chat?.conversation.length, activeChatId, responseIndex]);
-
-
-  const renderMessages = () => {
-    if (status === 'loading' || isCreating) return <ActivityIndicator />;
-
-    if (chat === undefined)
-      return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
-        </View>
-      );
-
-    let i = 0;
-
-    try {
-      return chat?.conversation.map((message, index) => (
-          //ChatBubble(message, (chat.id + (i++).toString()), colors, responseIndex, setResponseIndex)
-          <ChatBubble message={message} key={(chat.id + (i++).toString())}/>
-      ));
-    } catch (error) {
-      return <ActivityIndicator/>;
-    }
-  };
-  // ------------- End render Chat from firebase -------------
-
-  // ------------- Sending new message to firebase -------------
-
   const [text, setText] = useState('');
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
 
-  const fetchResponses = (message: string) =>{
-    //return a map of responses?
-    return LLMs.map
-}
-
-  function sendMessage() {
-    // Create new Chat
-    if (chat === undefined && text.trim()) {
-      setText('');
-      const msg : conversationMessage = {user: text};
-      const newChat: Chat = {
-        title: text,
-        model: [LLM_MODELS[0].key],
-        conversation: [msg],
-        createdAt: Timestamp.now()
-      };
-      const newId = createChat(newChat);
-      newId.then((newId) => {
-        setActiveChatId(newId || 'default');
-      });
-      renderMessages();
-      // Send Message in Current Chat
-    } else if (chat?.id && text.trim()) {
-      const msg : conversationMessage = {user: text};
-      chat?.conversation.push(msg);
-      setText('');
-      updateChat({
-        conversation: chat?.conversation
-      }).catch((error) => {
-        console.error('Error updating chat:', error);
-      });
-    }
-  }
-
-  // ------------- End sending new message to firebase -------------
+  const [recognized, setRecognized] = useState('');
+  const [started, setStarted] = useState('');
+  const [results, setResults] = useState<string[]>([]);
 
   // ------------- Keyboard and scrolling -------------
 
@@ -141,12 +78,64 @@ export function ChatUI(/*props: ChatUiProps*/) {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chat?.conversation.length]);
 
+
+  useEffect(() => {
+    renderMessages();
+  }, [chat?.conversation.length, activeChatId, responseIndex]);
+
+
   // ------------- End keyboard and scrolling -------------
 
+  // ------------- Render Chat from firebase -------------
+
+  const renderMessages = () => {
+    if (status === 'loading' || isCreating) return <ActivityIndicator />;
+    if (chat === undefined)
+      return (
+        <View style={styles.centerMessage}>
+          <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
+        </View>
+      );
+
+    let i = 0;
+    try {
+      return chat?.conversation.map((message, index) => (
+          //ChatBubble(message, (chat.id + (i++).toString()), colors, responseIndex, setResponseIndex)
+          <ChatBubble message={message} key={(chat.id + (i++).toString())}/>
+      ));
+    } catch (error) {
+      return <ActivityIndicator/>;
+    }
+  };
+
+  // ------------- End render Chat from firebase -------------
+
+  // ------------- Sending new message to firebase -------------
+
+  function sendMessage() {
+    // Create new Chat
+    if (chat === undefined && text.trim()) {
+      setText('');
+      const msg : conversationMessage = {user: text};
+      const newChat: Chat = {
+        title: text,
+        model: [LLM_MODELS[0].key],
+        conversation: [msg],
+        createdAt: Timestamp.now()
+      };
+      const newId = createChat(newChat);
+      newId.then((newId) => setActiveChatId(newId || 'default'));
+    } else if (chat?.id && text.trim()) {
+      const msg : conversationMessage = {user: text};
+      chat?.conversation.push(msg);
+      setText('');
+      updateChat({ conversation: chat.conversation }).catch(console.error);
+    }
+  };
+
+  // ------------- End sending new message to firebase -------------
+
   // ------------- Voice Recognition Setup -------------
-  const [recognized, setRecognized] = useState('');
-  const [started, setStarted] = useState('');
-  const [results, setResults] = useState<string[]>([]);
 
   useEffect(() => {
     Voice.onSpeechStart = onSpeechStart;
@@ -197,9 +186,6 @@ export function ChatUI(/*props: ChatUiProps*/) {
   };
 
   // ------------- End Voice Recognition Setup -------------
-  // ------------- Conditional Rendering of Voice/Send Button -------------
-
-  // ------------- Conditional Rendering of Voice/Send Button -------------
 
   return (
     <View style={styles.container}>

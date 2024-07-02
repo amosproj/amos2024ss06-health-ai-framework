@@ -213,7 +213,7 @@ class NutritionScraper(BaseScraper):
             image_elements = content_element.find_all('img')
             image_urls = [img['src'] for img in image_elements if 'src' in img.attrs]
 
-            return title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url
+            return (title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url)
         except Exception:
             print(f'Error getting content from url: {blog_url}')
             error_msg = f'Error getting content from url: {blog_url}'
@@ -226,15 +226,31 @@ class NutritionScraper(BaseScraper):
 
     def get_documents(self, data: TypeNutritionScrappingData) -> List[Document]:
         transcript = data.get('transcript', '')
-        chunks = get_text_chunks(transcript)
+        key_points = data.get('keyPoints', '')
+        if isinstance(transcript, list):
+            transcript = ' '.join(transcript)
+
+        if isinstance(key_points, list):
+            key_points = ' '.join(key_points)
+
+        transcript_chunks = get_text_chunks(transcript)
+        key_points_chunks = get_text_chunks(key_points)
+
         metadata = {
             'author': data.get('author', ''),
             'date': data.get('date', ''),
-            'keyPoints': data.get('keyPoints', ''),
             'title': data.get('title', ''),
             'ref': data.get('ref', ''),
         }
-        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        transcript_documents = [
+            Document(page_content=chunk, metadata={**metadata, 'type': 'transcript'})
+            for chunk in transcript_chunks
+        ]
+        key_points_documents = [
+            Document(page_content=chunk, metadata={**metadata, 'type': 'keyPoints'})
+            for chunk in key_points_chunks
+        ]
+        documents = transcript_documents + key_points_documents
         return documents
 
     def _scrape(self) -> str:
@@ -249,7 +265,7 @@ class NutritionScraper(BaseScraper):
             if nutrition is None:
                 raise ValueError('Data does not exist for id: ' + str(self.element_id))
 
-            title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url = (
+            (title, date, author, content_chunks, key_take_away_chunks, image_urls, blog_url) = (
                 nutrition
             )
             info: TypeNutritionScrappingData = {

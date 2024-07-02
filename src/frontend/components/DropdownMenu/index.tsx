@@ -9,7 +9,6 @@ import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
 import { Style } from './style';
 
-
 export const DropdownMenu = () => {
   // get chatID after opening app copilot help
   const [isVisible, setIsVisible] = useState(false);

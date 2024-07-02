@@ -6,7 +6,6 @@ import { useGetChat } from 'src/frontend/hooks';
 import type { LLM } from 'src/frontend/types';
 import { LLM_MODELS } from './useLLMsTypes';
 
-
 export function useLLMs(chatId: string) {
   const { chat, status } = useGetChat(chatId);
   const { data: users } = useUser();

@@ -1,4 +1,4 @@
-import { addDoc, collection, Timestamp, updateDoc } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useFirestore, useUser } from 'reactfire';
 import { FirestoreCollections } from '../helpers';
