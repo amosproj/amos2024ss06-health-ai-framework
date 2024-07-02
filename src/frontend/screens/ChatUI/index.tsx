@@ -1,4 +1,3 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Voice, {
   type SpeechResultsEvent,
   type SpeechStartEvent,
@@ -8,30 +7,29 @@ import { type RouteProp, useNavigation, useRoute } from '@react-navigation/nativ
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import * as Speech from 'expo-speech';
-import { signOut } from 'firebase/auth';
-import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { useCallback, useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
-import { useTheme } from 'react-native-paper';
-import { useAuth } from 'reactfire';
 import { Screens } from 'src/frontend/helpers';
-import {
-  LLM_MODELS,
-  useActiveChatId,
-  useCreateChat,
-  useGetAllChat,
-  useGetChat,
-  useUpdateChat
-} from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
-import type { Chat } from 'src/frontend/types';
+import type { Chat, conversationMessage } from 'src/frontend/types';
+import {
+  useUpdateChat,
+  useGetChat,
+  useActiveChatId,
+  useCreateChat,
+  LLM_MODELS,
+  useLLMs
+} from 'src/frontend/hooks';
+import { Timestamp } from 'firebase/firestore';
+import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { styles } from './style';
+import { ChatBubble } from 'src/frontend/components';
 
 export type ChatUiProps = {
   chatId: string;
@@ -45,6 +43,11 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { chat, status, error } = useGetChat(activeChatId);
   const [isRecording, setIsRecording] = useState(false);
+
+  const { activeLLMs: LLMs, toggleLLM } = useLLMs(activeChatId);
+  const [responses, setResponses] = useState<string[]>([]);
+  //for chatbubble
+  const [responseIndex, setResponseIndex] = useState(0);
 
   const [text, setText] = useState('');
   const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
@@ -76,7 +79,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   useEffect(() => {
     renderMessages();
-  }, [chat?.conversation.length, activeChatId]);
+  }, [chat?.conversation.length, activeChatId, responseIndex]);
 
   // ------------- End keyboard and scrolling -------------
 
@@ -90,48 +93,42 @@ export function ChatUI(/*props: ChatUiProps*/) {
           <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
         </View>
       );
-    return chat.conversation.map((message, index) => (
-      <View
-        key={index.toString()}
-        style={[
-          styles.message,
-          index % 2 === 0
-            ? [styles.sentMessage, { backgroundColor: colors.inversePrimary }]
-            : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
-        ]}
-      >
-        <Text style={styles.messageText}>{message}</Text>
-        <IconButton
-          icon='volume-up'
-          size={16}
-          onPress={() => Speech.speak(message, { language: 'en-US', pitch: 1, rate: 1 })}
-          style={styles.speakButton}
-        />
-      </View>
-    ));
+
+    let i = 0;
+    try {
+      return chat?.conversation.map((message, index) => (
+        //ChatBubble(message, (chat.id + (i++).toString()), colors, responseIndex, setResponseIndex)
+        <ChatBubble message={message} key={chat.id + (i++).toString()} />
+      ));
+    } catch (error) {
+      return <ActivityIndicator />;
+    }
   };
 
   // ------------- End render Chat from firebase -------------
 
   // ------------- Sending new message to firebase -------------
 
-  const sendMessage = () => {
+  function sendMessage() {
+    // Create new Chat
     if (chat === undefined && text.trim()) {
       setText('');
-      const newChat = {
+      const msg: conversationMessage = { user: text };
+      const newChat: Chat = {
         title: text,
         model: [LLM_MODELS[0].key],
-        conversation: [text],
+        conversation: [msg],
         createdAt: Timestamp.now()
       };
       const newId = createChat(newChat);
       newId.then((newId) => setActiveChatId(newId || 'default'));
     } else if (chat?.id && text.trim()) {
-      chat.conversation.push(text);
+      const msg: conversationMessage = { user: text };
+      chat?.conversation.push(msg);
       setText('');
       updateChat({ conversation: chat.conversation }).catch(console.error);
     }
-  };
+  }
 
   // ------------- End sending new message to firebase -------------
 

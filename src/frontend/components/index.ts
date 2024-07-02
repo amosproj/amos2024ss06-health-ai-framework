@@ -7,3 +7,4 @@ export * from './ChatItem';
 export * from './DropdownMenu';
 export * from './Header';
 export * from './ActiveChatProvider';
+export * from './ChatBubble';
