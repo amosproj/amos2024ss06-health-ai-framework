@@ -29,7 +29,12 @@
       "associatedDomains": [
         "applinks:ailixir.page.link"
       ],
-      "googleServicesFile": "./google-services.plist"
+      "googleServicesFile": "./google-services.plist",
+      "permissions": [
+        "MEDIA_LIBRARY",
+        "CAMERA",
+        "PHOTO_LIBRARY"
+      ]
     },
     "android": {
       "adaptiveIcon": {
@@ -49,7 +54,11 @@
           "category":["BROWSABLE", "DEFAULT"]
         }
       ],
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",

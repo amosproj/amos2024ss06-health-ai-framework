@@ -3,10 +3,8 @@ import { DrawerActions, type RouteProp, useRoute } from '@react-navigation/nativ
 import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
-import * as Sharing from 'expo-sharing';
-import React from 'react';
-import { Alert, Pressable, View } from 'react-native';
-import RNFetchBlob from 'react-native-blob-util';
+import React, { useEffect } from 'react';
+import { Alert, Pressable, View, Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 import { IconButton, Surface, Text, useTheme } from 'react-native-paper';
 import { useActiveChatId, useGetChat, useLLMs } from 'src/frontend/hooks';
@@ -23,6 +21,19 @@ export function Header(props: DrawerHeaderProps) {
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');
   const { chat, status, error } = useGetChat(activeChatId);
+
+  useEffect(() => {
+    const requestPermissions = async () => {
+      if (Platform.OS === 'android') {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permission Denied', 'Media library permissions are required.');
+        }
+      }
+    };
+
+    requestPermissions();
+  }, []);
 
   // Saving to download and clipboard
   const handleAction = async () => {
