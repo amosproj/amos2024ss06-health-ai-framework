@@ -44,8 +44,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const { chat, status, error } = useGetChat(activeChatId);
   const [isRecording, setIsRecording] = useState(false);
 
-
-  const { activeLLMs: LLMs, toggleLLM} = useLLMs(activeChatId);
+  const { activeLLMs: LLMs, toggleLLM } = useLLMs(activeChatId);
   const [responses, setResponses] = useState<string[]>([]);
   //for chatbubble
   const [responseIndex, setResponseIndex] = useState(0);
@@ -78,11 +77,9 @@ export function ChatUI(/*props: ChatUiProps*/) {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chat?.conversation.length]);
 
-
   useEffect(() => {
     renderMessages();
   }, [chat?.conversation.length, activeChatId, responseIndex]);
-
 
   // ------------- End keyboard and scrolling -------------
 
@@ -100,11 +97,11 @@ export function ChatUI(/*props: ChatUiProps*/) {
     let i = 0;
     try {
       return chat?.conversation.map((message, index) => (
-          //ChatBubble(message, (chat.id + (i++).toString()), colors, responseIndex, setResponseIndex)
-          <ChatBubble message={message} key={(chat.id + (i++).toString())}/>
+        //ChatBubble(message, (chat.id + (i++).toString()), colors, responseIndex, setResponseIndex)
+        <ChatBubble message={message} key={chat.id + (i++).toString()} />
       ));
     } catch (error) {
-      return <ActivityIndicator/>;
+      return <ActivityIndicator />;
     }
   };
 
@@ -116,7 +113,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
     // Create new Chat
     if (chat === undefined && text.trim()) {
       setText('');
-      const msg : conversationMessage = {user: text};
+      const msg: conversationMessage = { user: text };
       const newChat: Chat = {
         title: text,
         model: [LLM_MODELS[0].key],
@@ -126,12 +123,12 @@ export function ChatUI(/*props: ChatUiProps*/) {
       const newId = createChat(newChat);
       newId.then((newId) => setActiveChatId(newId || 'default'));
     } else if (chat?.id && text.trim()) {
-      const msg : conversationMessage = {user: text};
+      const msg: conversationMessage = { user: text };
       chat?.conversation.push(msg);
       setText('');
       updateChat({ conversation: chat.conversation }).catch(console.error);
     }
-  };
+  }
 
   // ------------- End sending new message to firebase -------------
 
@@ -228,4 +225,3 @@ export function ChatUI(/*props: ChatUiProps*/) {
     </View>
   );
 }
-

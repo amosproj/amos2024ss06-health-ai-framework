@@ -1,4 +1,4 @@
-import type {conversationMessage } from 'src/frontend/types';
+import type { conversationMessage } from 'src/frontend/types';
 import { ActivityIndicator, IconButton, Button, useTheme } from 'react-native-paper';
 import { Style } from './style';
 import { ScrollView, Text, TextInput, View } from 'react-native';
@@ -10,15 +10,15 @@ type ChatBubbleProps = {
   message: conversationMessage;
 };
 
-export function ChatBubble ({message} : ChatBubbleProps) {
+export function ChatBubble({ message }: ChatBubbleProps) {
   const { colors } = useTheme();
 
   //----------------Define states etc-----------------
   const isUser = 'user' in message;
   const responses = !isUser ? Object.entries(message) : [];
 
-  if(!isUser && responses.length === 0) {
-    return <ActivityIndicator/>;
+  if (!isUser && responses.length === 0) {
+    return <ActivityIndicator />;
   }
   const [llm, setLLM] = useState(responses.length > 0 ? responses[0][0] : 'error');
   const response = llm === 'error' ? 'error' : message[llm];
@@ -26,27 +26,27 @@ export function ChatBubble ({message} : ChatBubbleProps) {
   //---------------Functions for buttons----------------
   const handleNextResponse = () => {
     const curIndex = responses.findIndex(([key, value]) => key === llm);
-    if(curIndex === -1) {
-      console.log("Chatbubble: handlePreviousResponse: Error: llm not found in responses")
-      return <ActivityIndicator/>
+    if (curIndex === -1) {
+      console.log('Chatbubble: handlePreviousResponse: Error: llm not found in responses');
+      return <ActivityIndicator />;
     }
     const nextIndex = (curIndex + 1) % responses.length;
     setLLM(responses[nextIndex][0]);
-  }
+  };
 
   const handlePreviousResponse = () => {
     const curIndex = responses.findIndex(([key, value]) => key === llm);
-    if(curIndex === -1) {
-      console.log("Chatbubble: handlePreviousResponse: Error: llm not found in responses")
-      return <ActivityIndicator/>
+    if (curIndex === -1) {
+      console.log('Chatbubble: handlePreviousResponse: Error: llm not found in responses');
+      return <ActivityIndicator />;
     }
     const prevIndex = (curIndex - 1 + responses.length) % responses.length;
-    setLLM(responses[prevIndex][0])
-  }
+    setLLM(responses[prevIndex][0]);
+  };
 
   //---------------Render Chat Bubble----------------
 
-  if(isUser) {
+  if (isUser) {
     return userBubble();
   }
   // LLM --> Display Side by side chat bubbles
@@ -58,7 +58,7 @@ export function ChatBubble ({message} : ChatBubbleProps) {
   //---------------Subcomponents----------------
   function userBubble() {
     const text = message.user;
-    return(
+    return (
       <View
         //key={key}
         style={[
@@ -74,17 +74,17 @@ export function ChatBubble ({message} : ChatBubbleProps) {
 
   function llmSelector() {
     return (
-    <View style = {Style.llmSelector}>
-      <IconButton
-        icon = "chevron-left"
-        size={12}
-        onPress={handlePreviousResponse}
-        disabled={responses.length <= 1}
-        style={Style.chevronButtonLeft}
-      />
+      <View style={Style.llmSelector}>
+        <IconButton
+          icon='chevron-left'
+          size={12}
+          onPress={handlePreviousResponse}
+          disabled={responses.length <= 1}
+          style={Style.chevronButtonLeft}
+        />
         <Text style={Style.llmName}>{llm}</Text>
-      <IconButton
-          icon = "chevron-right"
+        <IconButton
+          icon='chevron-right'
           size={12}
           onPress={handleNextResponse}
           disabled={responses.length <= 1}
@@ -94,13 +94,12 @@ export function ChatBubble ({message} : ChatBubbleProps) {
           icon='volume-up'
           size={16}
           onPress={() => {
-              Speech.speak(response ? response : '', {language: 'en-US', pitch: 1, rate: 1})
-            }
-          }
+            Speech.speak(response ? response : '', { language: 'en-US', pitch: 1, rate: 1 });
+          }}
           style={Style.speakButton}
         />
-    </View>
-    )
+      </View>
+    );
   }
 
   function messageContent() {
@@ -108,12 +107,11 @@ export function ChatBubble ({message} : ChatBubbleProps) {
       <View style={Style.messageContent}>
         <Text style={Style.textView}>{response}</Text>
       </View>
-    )
+    );
   }
 
-
-  function llmBubble(){
-    return(
+  function llmBubble() {
+    return (
       <View
         //key={key}
         style={[
@@ -130,4 +128,3 @@ export function ChatBubble ({message} : ChatBubbleProps) {
     );
   }
 }
-
