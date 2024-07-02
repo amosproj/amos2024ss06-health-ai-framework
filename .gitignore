@@ -80,3 +80,5 @@ yarn-debug.*
 # Google Service Files
 google-services.json
 google-services.plist
+
+venv
