@@ -226,19 +226,31 @@ class NutritionScraper(BaseScraper):
 
     def get_documents(self, data: TypeNutritionScrappingData) -> List[Document]:
         transcript = data.get('transcript', '')
-
+        key_points = data.get('keyPoints', '')
         if isinstance(transcript, list):
             transcript = ' '.join(transcript)
 
-        chunks = get_text_chunks(transcript)
+        if isinstance(key_points, list):
+            key_points = ' '.join(key_points)
+
+        transcript_chunks = get_text_chunks(transcript)
+        key_points_chunks = get_text_chunks(key_points)
+
         metadata = {
             'author': data.get('author', ''),
             'date': data.get('date', ''),
-            'keyPoints': data.get('keyPoints', ''),
             'title': data.get('title', ''),
             'ref': data.get('ref', ''),
         }
-        documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
+        transcript_documents = [
+            Document(page_content=chunk, metadata={**metadata, 'type': 'transcript'})
+            for chunk in transcript_chunks
+        ]
+        key_points_documents = [
+            Document(page_content=chunk, metadata={**metadata, 'type': 'keyPoints'})
+            for chunk in key_points_chunks
+        ]
+        documents = transcript_documents + key_points_documents
         return documents
 
     def _scrape(self) -> str:
