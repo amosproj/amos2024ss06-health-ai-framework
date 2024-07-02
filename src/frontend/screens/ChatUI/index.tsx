@@ -48,17 +48,18 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   const { activeLLMs: LLMs, toggleLLM} = useLLMs(activeChatId);
   const [responses, setResponses] = useState<string[]>([]);
+  //for chatbubble
+  const [responseIndex, setResponseIndex] = useState(0);
 
   useEffect(() => {
     renderMessages();
-  }, [chat?.conversation.length, activeChatId]);
+  }, [chat?.conversation.length, activeChatId, responseIndex]);
 
 
   const renderMessages = () => {
     if (status === 'loading' || isCreating) return <ActivityIndicator />;
 
     if (chat === undefined)
-      //TODO: This is Work in Progress
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ fontSize: 16 }}> Write a message to begin. </Text>
@@ -66,34 +67,15 @@ export function ChatUI(/*props: ChatUiProps*/) {
       );
 
     let i = 0;
-    return chat?.conversation.map((message, index) => (
-      ChatBubble(message, (chat.id + (i++).toString()), colors)
-      // <View
-      //   key={}
-      //   style={[
-      //     styles.message,
-      //     index % 2 === 0
-      //       ? [styles.sentMessage, { backgroundColor: colors.inversePrimary }]
-      //       : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
-      //   ]}
-      // >
-      //   {index % 2 !== 1 && (
-      //     <IconButton
-      //       icon='volume-up'
-      //       size={16}
-      //       onPress={() =>
-      //         Speech.speak(message.text = {
-      //           language: 'en-US',
-      //           pitch: 1,
-      //           rate: 1
-      //         })
-      //       }
-      //       style={styles.speakButton}
-      //     />
-      //   )}
-      //   <Text>{message.text}</Text>
-      // </View>
-    ));
+
+    try {
+      return chat?.conversation.map((message, index) => (
+          //ChatBubble(message, (chat.id + (i++).toString()), colors, responseIndex, setResponseIndex)
+          <ChatBubble message={message} key={(chat.id + (i++).toString())}/>
+      ));
+    } catch (error) {
+      return <ActivityIndicator/>;
+    }
   };
   // ------------- End render Chat from firebase -------------
 

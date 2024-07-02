@@ -1,27 +1,106 @@
 import type {conversationMessage } from 'src/frontend/types';
-import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
+import { ActivityIndicator, IconButton, Button, useTheme } from 'react-native-paper';
 import { Style } from './style';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import type { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import React, { useState } from 'react';
+import * as Speech from 'expo-speech';
 
-export function ChatBubble (message: conversationMessage, key: string, colors: MD3Colors) {
-  //const { colors } = useTheme();
+type ChatBubbleProps = {
+  message: conversationMessage;
+};
 
+export function ChatBubble ({message} : ChatBubbleProps) {
+  const { colors } = useTheme();
 
-  const isUser = 'user' in message;
   const [responseIndex, setResponseIndex] = useState(0);
-  
+  const isUser = 'user' in message;
   const responses = !isUser ? Object.entries(message) : [];
   const[llm, response] = !isUser ? responses[responseIndex] : [null, null];
-  // console.log("Chatbubble: numberOfKeys: ", numberOfKeys)
-
 
   const handleNextResponse = () => {
-    setResponseIndex((prevIndex)=> (prevIndex + 1) % Object.entries(message).length);
+    const nextIndex = (responseIndex + 1) % Object.entries(message).length;
+    setResponseIndex(nextIndex);
   }
+
   const handlePreviousResponse = () => {
-    setResponseIndex((prevIndex)=> (prevIndex -1 + responses.length ) % Object.entries(message).length);
+    const prevIndex = (responseIndex -1 + responses.length ) % Object.entries(message).length;
+    setResponseIndex(prevIndex);
+  }
+
+
+  function userBubble() {
+    const text = message.user;
+    return(
+      <View
+        //key={key}
+        style={[
+          Style.chatBubble,
+          [Style.sentMessage],
+          [{ backgroundColor: colors.inversePrimary }]
+        ]}
+      >
+        <Text>{text}</Text>
+      </View>
+    );
+  }
+
+  function llmSelector() {
+    return (
+    <View style = {Style.llmSelector}>
+      <IconButton
+        icon = "chevron-left"
+        size={12}
+        onPress={handlePreviousResponse}
+        disabled={responses.length <= 1}
+        style={Style.chevronButtonLeft}
+      />
+        <Text style={Style.llmName}>{llm}</Text>
+      <IconButton
+          icon = "chevron-right"
+          size={12}
+          onPress={handleNextResponse}
+          disabled={responses.length <= 1}
+          style={Style.chevronButtonRight}
+        />
+        <IconButton
+          icon='volume-up'
+          size={16}
+          onPress={() => {
+              Speech.speak(response ? response : '', {language: 'en-US', pitch: 1, rate: 1})
+            }
+          }
+          style={Style.speakButton}
+        />
+    </View>
+    )
+  }
+
+  function messageContent() {
+    return (
+      <View style={Style.messageContent}>
+        <Text style={Style.textView}>{response}</Text>
+      </View>
+    )
+  }
+
+
+  function llmBubble(){
+    return(
+      <View
+        //key={key}
+        style={[
+          Style.chatBubble,
+          [Style.receivedMessage],
+          [{ backgroundColor: colors.surfaceVariant }]
+        ]}
+      >
+        <View style={Style.messageWrapper}>
+          {llmSelector()}
+          {messageContent()}
+        </View>
+      </View>
+    );
   }
 
   if(isUser) {
@@ -32,69 +111,7 @@ export function ChatBubble (message: conversationMessage, key: string, colors: M
   else {
     return llmBubble();
   }
-  //       style={[
-    //     styles.message,
-    //     index % 2 === 0
-    //       ? [styles.sentMessage, { backgroundColor: colors.inversePrimary }]
-    //       : [styles.receivedMessage, { backgroundColor: colors.surfaceVariant }]
-    //   ]}
-    /*<ScrollView horizontal style = {Style.container}>
-          {Object.entries(message).map(([llm,response], index) => (
-            <View key ={key + (i++).toString()} style = {[Style.chatContainer, {backgroundColor: colors.surface}]}>
-              <Text style = {Style.input}>{response}</Text>
-              </View>
-          ))}
-      </ScrollView>
-*/
 
-
-  
-  
-  function llmBubble(){
-    
-    let i = 0;
-    return(
-      <View
-        key={key}
-        style={[
-          Style.message,
-          [Style.receivedMessage],
-          [{ backgroundColor: colors.surfaceVariant }]
-        ]}
-      >
-        <IconButton
-            icon = "chevron-left"
-            onPress={handlePreviousResponse}
-            disabled={responses.length <= 1}
-          />
-        <Text style={Style.llmName}>{llm}</Text>
-        <IconButton
-            icon = "chevron-right"
-            onPress={handleNextResponse}
-            disabled={responses.length <= 1}
-          />
-        <View key ={key + (i++).toString()}>
-          <Text>{response}</Text>
-        </View>
-      </View>
-    );
-  }
-
-  function userBubble() {
-    const text = message.user;
-    return(
-      <View
-        key={key}
-        style={[
-          Style.message,
-          [Style.sentMessage],
-          [{ backgroundColor: colors.inversePrimary }]
-        ]}
-      >
-        <Text>{text}</Text>
-      </View>
-    );
-  }
 
 
   // return user chat bubble
