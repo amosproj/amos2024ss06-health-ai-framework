@@ -3,10 +3,8 @@ import { DrawerActions, type RouteProp, useRoute } from '@react-navigation/nativ
 import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
-import * as Sharing from 'expo-sharing';
-import React from 'react';
+import React , { useEffect } from 'react';
 import { Alert, Pressable, View } from 'react-native';
-import RNFetchBlob from 'react-native-blob-util';
 import RNFS from 'react-native-fs';
 import { IconButton, Surface, Text, useTheme } from 'react-native-paper';
 import { useActiveChatId, useGetChat, useLLMs } from 'src/frontend/hooks';
