@@ -22,6 +22,10 @@ export function Header(props: DrawerHeaderProps) {
   const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');
   const { chat, status, error } = useGetChat(activeChatId);
 
+  // Determine if the button should be disabled
+  const isButtonDisabled = chat === undefined;
+
+
   useEffect(() => {
     const requestPermissions = async () => {
       if (Platform.OS === 'android') {
@@ -54,15 +58,17 @@ export function Header(props: DrawerHeaderProps) {
         timeZoneName: 'short'
       }).format(createdAtDate);
 
-      const metadata = `Title: ${
+      const metadata = `title: ${
         chat.title
-      }\nCreated: ${formattedCreatedAt}\nModels: ${chat.model.toString()}\n\n`;
+      }\ncreated: ${formattedCreatedAt}\nmodels: ${chat.model.toString()}\n\n\n`;
 
       const formattedChatContent = chat.conversation
-        .map((line, index) => {
-          return index % 2 === 0 ? `Q: '${line}'` : `A: '${line}'\n`;
-        })
-        .join('\n');
+      .map((line) => {
+        return Object.entries(line)
+          .map(([key, value]) => `${key}: '${value}'`)
+          .join('\n');
+      })
+      .join('\n\n');
 
       const now = new Date();
       const year = now.getFullYear();
@@ -105,8 +111,8 @@ export function Header(props: DrawerHeaderProps) {
       </View>
       <View style={{ flexDirection: 'row' }}>
         <DropdownMenu />
-        <Pressable onPress={handleAction} style={Style.actionButton}>
-          <IconButton icon='save' size={24} iconColor={colors.primary} />
+        <Pressable onPress={handleAction} style={Style.actionButton} disabled={isButtonDisabled} >
+          <IconButton icon='save' size={24} iconColor={colors.primary} disabled={isButtonDisabled}  />
         </Pressable>
       </View>
     </Surface>
