@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 from dotenv import load_dotenv
 
@@ -171,16 +172,30 @@ class Retriever:
         return response
     
 ### Test:
-retriever = Retriever()
-test_query = "How many corners does a heptagon have?"
+#retriever = Retriever()
+#test_query = "How many corners does a heptagon have?"
 
 #
 #retriever.which_llm()
 #retriever.choose_llm('gemini')
 #retriever.which_llm()
 
-complex_query = "What should I eat for lunch if have diabetes?"
+#complex_query = "What should I eat for lunch if have diabetes?"
 #retriever.manik_retrieval(complex_query)
-retriever.simple_response(test_query)
+#retriever.simple_response(test_query)
 
 
+
+
+def main():
+    input_string = sys.argv[1]
+    retriever = Retriever()
+    output_string = retriever.simple_response(input_string)
+    print(output_string)
+
+# def process_input(input_string):
+#     # Here you can process the input string as needed
+#     return f"Processed: {input_string}"
+
+if __name__ == "__main__":
+    main()
