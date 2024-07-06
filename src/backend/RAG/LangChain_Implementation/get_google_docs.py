@@ -9,11 +9,13 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 
+
 def extract_document_id_from_url(url):
     pattern = r'[A-Za-z0-9]*'
     matches = re.findall(pattern, url)
     document_id = max(matches, key=len)
     return document_id
+
 
 def authenticate(credentials, scopes):
     """Obtaining auth with needed apis"""
@@ -63,7 +65,9 @@ def download_file(file_id, credentials_path, file_name):
 
 
 # Example usage
-document_id = extract_document_id_from_url("https://docs.google.com/document/d/1xrfrwyRCTrxiCupiKSSFgKUxiCTXgr45gPJYybnY23w/edit")
+document_id = extract_document_id_from_url(
+    'https://docs.google.com/document/d/1xrfrwyRCTrxiCupiKSSFgKUxiCTXgr45gPJYybnY23w/edit'
+)
 credentials_json = 'credentials.json'
 
 # Define the file path in a cross-platform manner
