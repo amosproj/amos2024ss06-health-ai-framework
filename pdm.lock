@@ -5,7 +5,7 @@
 groups = ["default", "linting"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:cf1e59cb3f0a32f0e87fda54c311b265224527967ab377d2d1068fcc12f29afb"
+content_hash = "sha256:e9817e0fdb0993a89502e0c12fcb236669c8ae977bff50770e95bbb1b8d4c63d"
 
 [[package]]
 name = "aiohttp"
@@ -2065,6 +2065,16 @@ dependencies = [
 files = [
     {file = "paperscraper-0.2.12-py3-none-any.whl", hash = "sha256:19eb0096c97d3959add77db588ae67dce69216f2a74cc5a24cfd437407e01630"},
     {file = "paperscraper-0.2.12.tar.gz", hash = "sha256:8bb4f568c5e1556c830de80bf0db9413f86866e27dd8f80fae56e2eb2d4b7b9c"},
+]
+
+[[package]]
+name = "pathlib"
+version = "1.0.1"
+summary = "Object-oriented filesystem paths"
+groups = ["default"]
+files = [
+    {file = "pathlib-1.0.1-py3-none-any.whl", hash = "sha256:f35f95ab8b0f59e6d354090350b44a80a80635d22efdedfa84c7ad1cf0a74147"},
+    {file = "pathlib-1.0.1.tar.gz", hash = "sha256:6940718dfc3eff4258203ad5021090933e5c04707d5ca8cc9e73c94a7894ea9f"},
 ]
 
 [[package]]

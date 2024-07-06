@@ -33,6 +33,7 @@ dependencies = [
     "google-auth>=2.31.0",
     "google-auth-oauthlib>=1.2.0",
     "google-auth-httplib2>=0.2.0",
+    "pathlib>=1.0.1",
 ]
 
 [tool.pdm.dev-dependencies]
@@ -50,7 +51,7 @@ scrape-pubmed = "python -m src.backend.Scrapers.PubMed.main"
 scrape-youtube = "python -m src.backend.Scrapers.YouTube.main"
 scrape-archive = "python -m src.backend.Scrapers.Archive.main"
 scrape-nutritionfacts = "python -m src.backend.Scrapers.Nutritionfacts.main"
-google-docs = "python -m src.backend.RAG.LangChain_Implementation.getGoogleDocs"
+google-docs = "python -m src.backend.RAG.LangChain_Implementation.get_google_docs"
 
 [tool.pdm]
 distribution = false

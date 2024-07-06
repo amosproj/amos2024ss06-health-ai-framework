@@ -24,7 +24,6 @@ import {
   useCreateChat,
   LLM_MODELS,
   useLLMs,
-  useGoogleDocsContent
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
@@ -37,9 +36,6 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
-  const {content, docsError} = useGoogleDocsContent("1xrfrwyRCTrxiCupiKSSFgKUxiCTXgr45gPJYybnY23w")
-  console.log("Got google docs content: ", content);
-  console.log("docs error: ", docsError);
 
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
