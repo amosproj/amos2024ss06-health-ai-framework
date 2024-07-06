@@ -24,6 +24,7 @@ import {
   useCreateChat,
   LLM_MODELS,
   useLLMs,
+  useGetLLMResponse,
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
@@ -36,10 +37,6 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
-  //TODO: remove debug
-  // const response = getLLMResponse('gpt-4');
-  // console.log("response:", response);
-
 
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
@@ -60,6 +57,10 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const [recognized, setRecognized] = useState('');
   const [started, setStarted] = useState('');
   const [results, setResults] = useState<string[]>([]);
+
+  //const {LLMResponse, isGenerating, LLMResponseError} = useGetLLMResponse('');
+  const [isSendButtonDisabled, setSendButtonDisabled] = useState(false);
+  //const isSendButtonDisabled = false;
 
   // ------------- Keyboard and scrolling -------------
 
@@ -115,11 +116,10 @@ export function ChatUI(/*props: ChatUiProps*/) {
   // ------------- Sending new message to firebase -------------
 
   function sendMessage() {
-    let conversation = undefined;
+
     // Create new Chat
     if (chat === undefined && text.trim()) {
       const msg: conversationMessage = { user: text };
-      conversation = [msg];
       const newChat: Chat = {
         title: text,
         model: [LLM_MODELS[0].key],
@@ -129,27 +129,43 @@ export function ChatUI(/*props: ChatUiProps*/) {
       setText('');
       const newId = createChat(newChat);
       newId.then((newId) => setActiveChatId(newId || 'default'));
+      setSendButtonDisabled(true);
     // Send user message in existing chat
     } else if (chat?.id && text.trim()) {
       const msg: conversationMessage = { user: text };
       chat?.conversation.push(msg);
-      conversation = chat?.conversation;
       setText('');
       updateChat({ conversation: chat.conversation }).catch(console.error);
+      setSendButtonDisabled(true);
+      getLLMResponseAndUpdateFirestore(LLM_MODELS[0].key, chat); //TODO: just testing
     }
 
-    if(conversation !== undefined) {
-      //TODO: call for all LLMs
-      getLLMResponse(LLMs[0].name, conversation).then((response) => {
-        if(chat === undefined) {
-          console.log("Trying to save LLM response but chat is undefined")
-          return;
-        }
-        const msg: conversationMessage = { 'gpt-4': response };
-        chat?.conversation.push(msg);
-        updateChat({ conversation: chat.conversation }).catch(console.error);
-      });
-    }
+    // if(conversation !== undefined) {
+    //   //TODO: call for all LLMs
+    //   getLLMResponse(LLMs[0].name, conversation).then((response) => {
+    //     if(chat === undefined) {
+    //       console.log("Trying to save LLM response but chat is undefined")
+    //       return;
+    //     }
+    //     const msg: conversationMessage = { 'gpt-4': response };
+    //     chat?.conversation.push(msg);
+    //     updateChat({ conversation: chat.conversation }).catch(console.error);
+    //   });
+    //}
+  }
+
+  function getLLMResponseAndUpdateFirestore(model: string, chat: Chat) {
+    getLLMResponse(model, chat.conversation).then((response) => {
+      if (chat === undefined) {
+        console.log('Trying to save LLM response but chat is undefined');
+        return;
+      }
+      const msg: conversationMessage = { [model]: response };
+      chat?.conversation.push(msg);
+      updateChat({ conversation: chat.conversation }).catch(console.error);
+      setSendButtonDisabled(false);
+    });
+
   }
 
   // ------------- End sending new message to firebase -------------
@@ -231,7 +247,8 @@ export function ChatUI(/*props: ChatUiProps*/) {
             onPressOut={stopRecognition}
             iconColor={colors.onPrimary}
             containerColor={colors.primary}
-            style={{ marginHorizontal: 5, paddingRight: 3 }}
+            style={{ marginHorizontal: 5, paddingRight: 3, }}
+            disabled={isSendButtonDisabled}
           />
         ) : (
           <IconButton
@@ -241,6 +258,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
             iconColor={colors.onPrimary}
             containerColor={isRecording ? colors.inversePrimary : colors.primary}
             style={{ marginHorizontal: 5 }}
+            disabled={isSendButtonDisabled}
           />
         )}
       </View>

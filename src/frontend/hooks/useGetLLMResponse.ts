@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import type { conversationMessage } from '../types';
-import { exec } from 'node:child_process';
-import path from 'node:path';
+// import { exec } from 'node:child_process';
+// import path from 'node:path';
 
-export function useGetLLMResponse(model: string, conversation: conversationMessage) {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [LLMResponse, setLLMResponse] = useState<string | undefined>(undefined);
-  const [LLMResponseError, setError] = useState<string | undefined>(undefined);
+//THIS HOOK CAUSES RERENDER ERRORS
+export function useGetLLMResponse(model: string) {
+  //const [isGenerating, setIsGenerating] = useState(false);
+  //const [LLMResponse, setLLMResponse] = useState<string | undefined>(undefined);
+  //const [LLMResponseError, setError] = useState<string | undefined>(undefined);
+  const isGenerating = false;
+  const LLMResponse = '';
+  const LLMResponseError = '';
 
   switch(model) {
     case 'gpt-4':
@@ -22,31 +26,31 @@ export function useGetLLMResponse(model: string, conversation: conversationMessa
       //TODO:
       break;
     default:
-      setError(`Error: model ${model} does not exist.`);
+      //setError(`Error: model ${model} does not exist.`);
   }
 
   //TODO: execute python retriever script
-  const inputString = "What should I eat for lunch?";
-  const projectRoot = path.resolve(__dirname, "..", "..");
-  const retrieverFilePath = path.resolve(projectRoot, 'backend', 'RAG', 'LangChain_Implementation', 'retriever.py');
+  // const inputString = "What should I eat for lunch?";
+  // const projectRoot = path.resolve(__dirname, "..", "..");
+  // const retrieverFilePath = path.resolve(projectRoot, 'backend', 'RAG', 'LangChain_Implementation', 'retriever.py');
 
-  console.log("retriever file path", retrieverFilePath);
+  // console.log("retriever file path", retrieverFilePath);
 
-  exec(`python ${retrieverFilePath} "${inputString}"`, (error, stdout, stderr) => {
-      if (error) {
-          console.error(`Error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.error(`Stderr: ${stderr}`);
-          return;
-      }
-      console.log(`Output: ${stdout}`);
-  });
+  // exec(`python ${retrieverFilePath} "${inputString}"`, (error, stdout, stderr) => {
+  //     if (error) {
+  //         console.error(`Error: ${error.message}`);
+  //         return;
+  //     }
+  //     if (stderr) {
+  //         console.error(`Stderr: ${stderr}`);
+  //         return;
+  //     }
+  //     console.log(`Output: ${stdout}`);
+  // });
 
   //Delete this line once implemented connection to python backend
-  setIsGenerating(false);
-  setLLMResponse(`Hello I am ${model} and I cannot help you. (TODO: implement LLM backend connection)`);
+  //setIsGenerating(false);
+  //setLLMResponse(`Hello I am ${model} and I cannot help you. (TODO: implement LLM backend connection)`);
 
   return { LLMResponse, isGenerating, LLMResponseError };
 };
