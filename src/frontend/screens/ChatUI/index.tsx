@@ -23,7 +23,7 @@ import {
   useActiveChatId,
   useCreateChat,
   LLM_MODELS,
-  useLLMs
+  useLLMs,
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton, Button } from 'react-native-paper';

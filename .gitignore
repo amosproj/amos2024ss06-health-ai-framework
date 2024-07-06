@@ -82,3 +82,8 @@ google-services.json
 google-services.plist
 
 venv
+
+# google docs download
+**credentials*.json
+**token.pickle
+**google_docs_content.txt

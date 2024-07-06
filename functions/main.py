@@ -124,7 +124,8 @@ Recipe Information:
 - Title: The title of the recipe.
 - SubTitle: The subtitle of the recipe.
 - Rating: The rating of the recipe, if available.
-- Recipe Details: Detailed information about the recipe, including preparation time, cooking time, and serving size.
+- Recipe Details: Detailed information about the recipe, including preparation time,
+cooking time, and serving size.
 - Ingredients: A list of ingredients required for making recipe.
 - Steps: Step-by-step instructions to prepare the dish.
 - Nutrition Facts: Basic nutritional information about the recipe.
@@ -156,7 +157,12 @@ def get_health_ai_response(question):
 
     # Prompt Template for Health AI Agent
     health_ai_template = """
-    You are a health AI agent equipped with access to diverse sources of health data, including research articles, nutritional information, medical archives, and more. Your task is to provide informed answers to user queries based on the available data. If you cannot find relevant information, simply state that you do not have enough data to answer accurately. write your response in markdown form and also add reference url so user can know from which source you are answering the questions.
+    You are a health AI agent equipped with access to diverse sources of health data,
+    including research articles, nutritional information, medical archives, and more.
+    Your task is to provide informed answers to user queries based on the available data.
+    If you cannot find relevant information, simply state that you do not have enough data
+    to answer accurately. write your response in markdown form and also add reference url
+    so user can know from which source you are answering the questions.
 
     CONTEXT:
     {context}
