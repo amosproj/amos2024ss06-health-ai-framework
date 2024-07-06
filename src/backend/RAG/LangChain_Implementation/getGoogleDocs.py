@@ -1,40 +1,12 @@
-import os
-import io
-import json
-from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
-
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
-from google.oauth2 import service_account
+from googleapiclient.http import MediaIoBaseDownload
 from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import Flow, InstalledAppFlow
+from google_auth_oauthlib.flow import InstalledAppFlow
 import io
 import pickle
-import json
 import os
-
-# Function to get data from Google DocS
-def get_google_key():
-    return
-
-def get_google_docs_data(document_id, credentials_json):
-    # Load credentials
-    credentials = service_account.Credentials.from_service_account_file(
-        credentials_json, scopes=['https://www.googleapis.com/auth/documents.readonly']
-    )
-
-    # Build the service
-    service = build('docs', 'v1', credentials=credentials)
-
-    # Retrieve the document
-    document = service.documents().get(documentId=document_id).execute()
-    
-    # Extract the content
-    content = document.get('body').get('content')
-
-    return content
 
 def authenticate(credentials, scopes):
         """
@@ -62,71 +34,36 @@ def authenticate(credentials, scopes):
 
         return creds
 
-def create_service(client_secret_file, api_name, api_version, *scopes):
-    #print(client_secret_file, api_name, api_version, scopes, sep='-')
-    CLIENT_SECRET_FILE = client_secret_file
-    API_SERVICE_NAME = api_name
-    API_VERSION = api_version
-    SCOPES = [scope for scope in scopes[0]]
-    #print(SCOPES)
 
-    cred = None
-
-    pickle_file = f'token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
-    # print(pickle_file)
-
-    if os.path.exists(pickle_file):
-        with open(pickle_file, 'rb') as token:
-            cred = pickle.load(token)
-
-    if not cred or not cred.valid:
-        if cred and cred.expired and cred.refresh_token:
-            cred.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
-            cred = flow.run_local_server()
-
-        with open(pickle_file, 'wb') as token:
-            pickle.dump(cred, token)
-
-    try:
-        service = build(API_SERVICE_NAME, API_VERSION, credentials=cred)
-        print(API_SERVICE_NAME, 'service created successfully')
-        return service
-    except Exception as e:
-        print('Unable to connect.')
-        print(e)
-        return None
-    
 def download_file(file_id, credentials_path):
-    SCOPES = ['https://www.googleapis.com/auth/drive']
+    SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+    credentials = authenticate(credentials_path, SCOPES)
+    drive_service = build('drive', 'v3', credentials=credentials)
 
-    drive_service = build('drive', 'v3', credentials=authenticate(credentials_path, SCOPES))
+    # Export the Google Docs file as plain text
+    export_mime_type = 'text/plain'
+    request = drive_service.files().export_media(fileId=file_id, mimeType=export_mime_type)
 
-    request = drive_service.files().get_media(fileId=file_id)
-    # #fh = io.BytesIO() # this can be used to keep in memory
-    fh = io.FileIO('text.txt', 'wb') # this can be used to write to disk
+    # Create a file on disk to write the exported content
+    fh = io.FileIO('exported_file.txt', 'wb')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
-    while done is False:
+    while not done:
         status, done = downloader.next_chunk()
-        print("GDrive File Download %d%%." % int(status.progress() * 100))
+        print(f"Download {int(status.progress() * 100)}%.")
+
+    # Read the content of the exported file
+    with open('exported_file.txt', 'r', encoding='utf-8') as file:
+        content = file.read()
+
+    return content
 
 # Example usage
 document_id = '1xrfrwyRCTrxiCupiKSSFgKUxiCTXgr45gPJYybnY23w'
-
-# TODO: get path independent of OS
-#file_path = os.path.abspath("client_secret_200802221615-2p0bmujmrfbgirkaetgi9s9r087hqh47.apps.googleusercontent.com.json")
-
 credentials_json = 'src/backend/RAG/LangChain_Implementation/credentials.json'
 
-#create file to write fetched text to
-# with open("text.txt", 'w') as result:
-#     pass
-    
+#TODO: make this callable from typescript with url
 
-#document_content = get_google_docs_data(document_id, credentials_json)
 download_file(document_id, credentials_json)
-print(json.dumps(document_content, indent=2))
 
 
