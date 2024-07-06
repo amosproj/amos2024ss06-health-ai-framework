@@ -1,56 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { conversationMessage } from '../types';
-// import { exec } from 'node:child_process';
-// import path from 'node:path';
 
-//THIS HOOK CAUSES RERENDER ERRORS
-export function useGetLLMResponse(model: string) {
-  //const [isGenerating, setIsGenerating] = useState(false);
-  //const [LLMResponse, setLLMResponse] = useState<string | undefined>(undefined);
-  //const [LLMResponseError, setError] = useState<string | undefined>(undefined);
-  const isGenerating = false;
-  const LLMResponse = '';
-  const LLMResponseError = '';
+export function useGetLLMResponse(model: string, conversation: conversationMessage) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [LLMResponse, setLLMResponse] = useState<string | undefined>(undefined);
+  const [LLMResponseError, setError] = useState<string | undefined>(undefined);
 
-  switch(model) {
-    case 'gpt-4':
-      //TODO:
-      break;
-    case 'google':
-      //TODO:
-      break;
-    case 'mistral':
-      //TODO:
-      break;
-    case 'claude':
-      //TODO:
-      break;
-    default:
-      //setError(`Error: model ${model} does not exist.`);
-  }
+  const fetchLLMResponse = useCallback(async (query: string) => {
+    setIsGenerating(true);
+    try {
+      const response = await fetch('http://localhost:5000/llm-response', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query, model }), // Include model in the request
+      });
 
-  //TODO: execute python retriever script
-  // const inputString = "What should I eat for lunch?";
-  // const projectRoot = path.resolve(__dirname, "..", "..");
-  // const retrieverFilePath = path.resolve(projectRoot, 'backend', 'RAG', 'LangChain_Implementation', 'retriever.py');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-  // console.log("retriever file path", retrieverFilePath);
+      const data = await response.json();
+      setLLMResponse(data.response);
+    } catch (error) {
+      setError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [model]); // Add model as a dependency
 
-  // exec(`python ${retrieverFilePath} "${inputString}"`, (error, stdout, stderr) => {
-  //     if (error) {
-  //         console.error(`Error: ${error.message}`);
-  //         return;
-  //     }
-  //     if (stderr) {
-  //         console.error(`Stderr: ${stderr}`);
-  //         return;
-  //     }
-  //     console.log(`Output: ${stdout}`);
-  // });
-
-  //Delete this line once implemented connection to python backend
-  //setIsGenerating(false);
-  //setLLMResponse(`Hello I am ${model} and I cannot help you. (TODO: implement LLM backend connection)`);
+  useEffect(() => {
+    if (conversation) {
+      fetchLLMResponse(conversation.content);
+    }
+  }, [conversation, fetchLLMResponse]);
 
   return { LLMResponse, isGenerating, LLMResponseError };
-};
+}
