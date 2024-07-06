@@ -13,7 +13,7 @@ import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
-import { Screens } from 'src/frontend/helpers';
+import { Screens, getLLMResponse } from 'src/frontend/helpers';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat, conversationMessage } from 'src/frontend/types';
@@ -36,6 +36,11 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
+  //TODO: remove debug
+  // const response = getLLMResponse('gpt-4');
+  // console.log("response:", response);
+
+
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -110,23 +115,40 @@ export function ChatUI(/*props: ChatUiProps*/) {
   // ------------- Sending new message to firebase -------------
 
   function sendMessage() {
+    let conversation = undefined;
     // Create new Chat
     if (chat === undefined && text.trim()) {
-      setText('');
       const msg: conversationMessage = { user: text };
+      conversation = [msg];
       const newChat: Chat = {
         title: text,
         model: [LLM_MODELS[0].key],
         conversation: [msg],
         createdAt: Timestamp.now()
       };
+      setText('');
       const newId = createChat(newChat);
       newId.then((newId) => setActiveChatId(newId || 'default'));
+    // Send user message in existing chat
     } else if (chat?.id && text.trim()) {
       const msg: conversationMessage = { user: text };
       chat?.conversation.push(msg);
+      conversation = chat?.conversation;
       setText('');
       updateChat({ conversation: chat.conversation }).catch(console.error);
+    }
+
+    if(conversation !== undefined) {
+      //TODO: call for all LLMs
+      getLLMResponse(LLMs[0].name, conversation).then((response) => {
+        if(chat === undefined) {
+          console.log("Trying to save LLM response but chat is undefined")
+          return;
+        }
+        const msg: conversationMessage = { 'gpt-4': response };
+        chat?.conversation.push(msg);
+        updateChat({ conversation: chat.conversation }).catch(console.error);
+      });
     }
   }
 
