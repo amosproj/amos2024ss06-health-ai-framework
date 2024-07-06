@@ -23,7 +23,7 @@ import {
   useActiveChatId,
   useCreateChat,
   LLM_MODELS,
-  useLLMs
+  useLLMs,
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
@@ -36,6 +36,7 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
+
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
 
