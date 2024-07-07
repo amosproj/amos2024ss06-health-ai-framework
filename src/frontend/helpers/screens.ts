@@ -5,5 +5,6 @@ export enum Screens {
   SignUp = 'SignUp',
   ForgotPassword = 'ForgotPassword',
   ResetPassword = 'ResetPassword',
-  Chat = 'Chat'
+  Chat = 'Chat',
+  CustomInstructions = 'CustomInstructions'
 }

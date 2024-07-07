@@ -16,6 +16,10 @@ import { Screens } from 'src/frontend/helpers';
 import { LLM_MODELS, useActiveChatId, useCreateChat, useGetAllChat } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { Chat } from 'src/frontend/types';
+import { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+
+
 
 /**
  * NOTE: needs to be called DrawerMenu because Drawer is already defined in react-native-paper
@@ -26,11 +30,13 @@ export function DrawerMenu() {
   const { chats, status, error } = useGetAllChat();
   const { reset } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
   const { colors } = useTheme();
+  const navigationC = useNavigation<DrawerNavigationProp<MainDrawerParams>>();
 
   // ------------ Define navigation functions ------------
   const goToProfile = () => {
     //navigation.navigate('Profile');
-    console.log('TODO: implement Profile Screen');
+    
+    navigate('Main', { screen: Screens.CustomInstructions });
   };
 
   const { navigate } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
