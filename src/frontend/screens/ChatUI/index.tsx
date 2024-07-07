@@ -24,7 +24,7 @@ import {
   useCreateChat,
   LLM_MODELS,
   useLLMs,
-  useGetLLMResponse,
+  useGetLLMResponse
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
@@ -37,7 +37,6 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
-
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -85,7 +84,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   useEffect(() => {
     renderMessages();
-  }, [chat?.conversation.length, activeChatId, responseIndex]);
+  }, [chat?.conversation, activeChatId, responseIndex]);
 
   // ------------- End keyboard and scrolling -------------
 
@@ -116,7 +115,6 @@ export function ChatUI(/*props: ChatUiProps*/) {
   // ------------- Sending new message to firebase -------------
 
   function sendMessage() {
-
     // Create new Chat
     if (chat === undefined && text.trim()) {
       const msg: conversationMessage = { user: text };
@@ -127,45 +125,69 @@ export function ChatUI(/*props: ChatUiProps*/) {
         createdAt: Timestamp.now()
       };
       setText('');
-      const newId = createChat(newChat);
-      newId.then((newId) => setActiveChatId(newId || 'default'));
       setSendButtonDisabled(true);
-    // Send user message in existing chat
+      const newId = createChat(newChat);
+      newId
+        .then((newId) => setActiveChatId(newId || 'default'))
+        .then(() => {
+          getLLMResponseAndUpdateFirestore(newChat.model[0], newChat); //TODO: receive answers from multiple LLMS
+        });
+      // Send user message in existing chat
     } else if (chat?.id && text.trim()) {
       const msg: conversationMessage = { user: text };
       chat?.conversation.push(msg);
       setText('');
       updateChat({ conversation: chat.conversation }).catch(console.error);
       setSendButtonDisabled(true);
-      getLLMResponseAndUpdateFirestore(LLM_MODELS[0].key, chat); //TODO: just testing
+      getLLMResponseAndUpdateFirestore(getActiveLLMs(LLMs)[0], chat); //TODO: receive answers from multiple LLMS
     }
-
-    // if(conversation !== undefined) {
-    //   //TODO: call for all LLMs
-    //   getLLMResponse(LLMs[0].name, conversation).then((response) => {
-    //     if(chat === undefined) {
-    //       console.log("Trying to save LLM response but chat is undefined")
-    //       return;
-    //     }
-    //     const msg: conversationMessage = { 'gpt-4': response };
-    //     chat?.conversation.push(msg);
-    //     updateChat({ conversation: chat.conversation }).catch(console.error);
-    //   });
-    //}
   }
 
-  function getLLMResponseAndUpdateFirestore(model: string, chat: Chat) {
-    getLLMResponse(model, chat.conversation).then((response) => {
-      if (chat === undefined) {
-        console.log('Trying to save LLM response but chat is undefined');
-        return;
+  function getActiveLLMs(LLMs: { [key: string]: { name: string; active: boolean } }) {
+    const activeLLMList = [];
+    for (const [key, value] of Object.entries(LLMs)) {
+      if (value.active) {
+        activeLLMList.push(key);
       }
+    }
+    return activeLLMList;
+  }
+
+  function getLLMResponseAndUpdateFirestore(model: string, currentChat: Chat) {
+    // function popLatestLoadingMessage(conversation: conversationMessage[]) {
+    //   const index = conversation.map(message => 'loading' in message).lastIndexOf(true);
+    //   if (index !== -1) {
+    //     conversation.splice(index, 1);
+    //     return;
+    //   }
+    // }
+    if (currentChat === undefined) {
+      console.log('Trying to save LLM response but chat is undefined');
+      return;
+    }
+    console.log(currentChat.conversation);
+
+    //copy to avoid overwrite conflicts
+    const newChat: Chat = {
+      id: currentChat.id,
+      title: currentChat.title,
+      model: currentChat.model,
+      conversation: currentChat.conversation,
+      createdAt: currentChat.createdAt
+    };
+    // smooth chat UI displays loading bubble until LLM response is received
+    updateChat({ conversation: [...currentChat.conversation, { loading: 'loading' }] }).catch(
+      console.error
+    );
+
+    getLLMResponse(model, newChat.conversation).then((response) => {
       const msg: conversationMessage = { [model]: response };
-      chat?.conversation.push(msg);
-      updateChat({ conversation: chat.conversation }).catch(console.error);
+      //popLatestLoadingMessage(newChat.conversation)
+      newChat.conversation.push(msg);
+      console.log(newChat.conversation);
+      updateChat(newChat).catch(console.error);
       setSendButtonDisabled(false);
     });
-
   }
 
   // ------------- End sending new message to firebase -------------
@@ -247,7 +269,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
             onPressOut={stopRecognition}
             iconColor={colors.onPrimary}
             containerColor={colors.primary}
-            style={{ marginHorizontal: 5, paddingRight: 3, }}
+            style={{ marginHorizontal: 5, paddingRight: 3 }}
             disabled={isSendButtonDisabled}
           />
         ) : (

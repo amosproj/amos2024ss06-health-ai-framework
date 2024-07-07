@@ -25,7 +25,6 @@ export function Header(props: DrawerHeaderProps) {
   // Determine if the button should be disabled
   const isButtonDisabled = chat === undefined;
 
-
   useEffect(() => {
     const requestPermissions = async () => {
       if (Platform.OS === 'android') {
@@ -63,12 +62,12 @@ export function Header(props: DrawerHeaderProps) {
       }\ncreated: ${formattedCreatedAt}\nmodels: ${chat.model.toString()}\n\n\n`;
 
       const formattedChatContent = chat.conversation
-      .map((line) => {
-        return Object.entries(line)
-          .map(([key, value]) => `${key}: '${value}'`)
-          .join('\n');
-      })
-      .join('\n\n');
+        .map((line) => {
+          return Object.entries(line)
+            .map(([key, value]) => `${key}: '${value}'`)
+            .join('\n');
+        })
+        .join('\n\n');
 
       const now = new Date();
       const year = now.getFullYear();
@@ -111,8 +110,13 @@ export function Header(props: DrawerHeaderProps) {
       </View>
       <View style={{ flexDirection: 'row' }}>
         <DropdownMenu />
-        <Pressable onPress={handleAction} style={Style.actionButton} disabled={isButtonDisabled} >
-          <IconButton icon='save' size={24} iconColor={colors.primary} disabled={isButtonDisabled}  />
+        <Pressable onPress={handleAction} style={Style.actionButton} disabled={isButtonDisabled}>
+          <IconButton
+            icon='save'
+            size={24}
+            iconColor={colors.primary}
+            disabled={isButtonDisabled}
+          />
         </Pressable>
       </View>
     </Surface>

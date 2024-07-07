@@ -15,12 +15,14 @@ export function ChatBubble({ message }: ChatBubbleProps) {
 
   //----------------Define states etc-----------------
   const isUser = 'user' in message;
-  const responses = !isUser ? Object.entries(message) : [];
+  const isLoading = 'loading' in message;
+  const responses = !isUser && !isLoading ? Object.entries(message) : [];
 
-  if (!isUser && responses.length === 0) {
-    return <ActivityIndicator />;
-  }
   const [llm, setLLM] = useState(responses.length > 0 ? responses[0][0] : 'error');
+  //we need this because a message with an index can change internally due to loading messages
+  if (responses.length > 0 && responses[0][0] !== llm) {
+    setLLM(responses[0][0]);
+  }
   const response = llm === 'error' ? 'error' : message[llm];
 
   //---------------Functions for buttons----------------
@@ -45,17 +47,34 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   };
 
   //---------------Render Chat Bubble----------------
-
-  if (isUser) {
+  if (isLoading) {
+    return loadingBubble();
+  }
+  // biome-ignore lint/style/noUselessElse: stupid linting is wrong
+  else if (isUser) {
     return userBubble();
   }
   // LLM --> Display Side by side chat bubbles
-  // biome-ignore lint/style/noUselessElse: <explanation>
+  // biome-ignore lint/style/noUselessElse: stupid linting is wrong
   else {
     return llmBubble();
   }
 
   //---------------Subcomponents----------------
+  function loadingBubble() {
+    return (
+      <View
+        style={[
+          Style.chatBubble,
+          Style.receivedMessage,
+          { backgroundColor: colors.surfaceVariant }
+        ]}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   function userBubble() {
     const text = message.user;
     return (
