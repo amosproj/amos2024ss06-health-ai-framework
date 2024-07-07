@@ -3,6 +3,9 @@
 
 import type { conversationMessage } from "../types";
 
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export async function getLLMResponse(model: string, conversation: conversationMessage[]) : Promise<string>
 {
@@ -44,6 +47,7 @@ export async function getLLMResponse(model: string, conversation: conversationMe
   //     }
   //     console.log(`Output: ${stdout}`);
   // });
+  await delay(2000); //TODO: delete this once implemented python backend connection
 
   //Delete this line once implemented connection to python backend
   response = `Hello I am ${model} and I cannot help you. (TODO: implement LLM backend connection)`

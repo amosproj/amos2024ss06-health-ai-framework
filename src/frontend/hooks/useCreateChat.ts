@@ -1,4 +1,4 @@
-import { Timestamp, addDoc, collection, updateDoc } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useFirestore, useUser } from 'reactfire';
 import { FirestoreCollections } from '../helpers';
@@ -28,9 +28,10 @@ export function useCreateChat() {
         createdAt: Timestamp.now()
       });
 
+      const newChat = { ...chatData, id: docRef.id, createdAt: Timestamp.now()};
       //update chat with id that we get assigned from firestore
       await updateDoc(docRef, { id: docRef.id });
-      return docRef.id;
+      return {id: docRef.id, chat: newChat};
     } catch (error) {
       setError(error instanceof Error ? error.message : String(error));
     } finally {

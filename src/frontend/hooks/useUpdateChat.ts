@@ -7,10 +7,13 @@ import type { Chat } from '../types';
 export function useUpdateChat(chatId: string) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { data: users } = useUser();
   const firestore = useFirestore();
+
   const updateChat = async (data: Partial<Chat>) => {
     setIsUpdating(true);
+    setIsSuccess(false);
     try {
       const chatRef = doc(
         firestore,
@@ -20,11 +23,12 @@ export function useUpdateChat(chatId: string) {
         chatId
       );
       await updateDoc(chatRef, data);
+      setIsSuccess(true);
     } catch (error) {
       setError(error as string);
     } finally {
       setIsUpdating(false);
     }
   };
-  return { updateChat, isUpdating, error };
+  return { updateChat, isUpdating, error, isSuccess };
 }

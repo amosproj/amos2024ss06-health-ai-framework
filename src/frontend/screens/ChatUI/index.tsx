@@ -51,7 +51,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const [responseIndex, setResponseIndex] = useState(0);
 
   const [text, setText] = useState('');
-  const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
+  const { updateChat, isUpdating, error: updateError, isSuccess: updatedChatSuccessfully } = useUpdateChat(activeChatId || '');
 
   const [recognized, setRecognized] = useState('');
   const [started, setStarted] = useState('');
@@ -114,32 +114,51 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   // ------------- Sending new message to firebase -------------
 
-  function sendMessage() {
+  async function sendMessage() {
     // Create new Chat
     if (chat === undefined && text.trim()) {
-      const msg: conversationMessage = { user: text };
-      const newChat: Chat = {
-        title: text,
-        model: [LLM_MODELS[0].key],
-        conversation: [msg],
-        createdAt: Timestamp.now()
-      };
-      setText('');
-      setSendButtonDisabled(true);
-      const newId = createChat(newChat);
-      newId
-        .then((newId) => setActiveChatId(newId || 'default'))
-        .then(() => {
-          getLLMResponseAndUpdateFirestore(newChat.model[0], newChat); //TODO: receive answers from multiple LLMS
-        });
+      try{
+        setSendButtonDisabled(true);
+
+        const msg: conversationMessage = { user: text };
+        const newChatData: Chat = {
+          title: text,
+          model: [LLM_MODELS[0].key],
+          conversation: [msg],
+          createdAt: Timestamp.now()
+        };
+        setText('');
+
+        const result = await createChat(newChatData);
+        if(!result) throw new Error('Failed to create new chat');
+
+        const {id: newId, chat: newChat} = result;
+        setActiveChatId(newId);
+
+        await getLLMResponseAndUpdateFirestore(newChat.model[0], newChat); //TODO: receive answers from multiple LLMS
+
+      } catch (error) {
+        console.error("Error: ", error);
+      } finally {
+        setSendButtonDisabled(false);
+      }
       // Send user message in existing chat
     } else if (chat?.id && text.trim()) {
-      const msg: conversationMessage = { user: text };
-      chat?.conversation.push(msg);
-      setText('');
-      updateChat({ conversation: chat.conversation }).catch(console.error);
-      setSendButtonDisabled(true);
-      getLLMResponseAndUpdateFirestore(getActiveLLMs(LLMs)[0], chat); //TODO: receive answers from multiple LLMS
+      try {
+        setSendButtonDisabled(true);
+
+        const msg: conversationMessage = { user: text };
+        const updatedConversation = [...chat.conversation, msg];
+        await updateChat({ conversation: updatedConversation });
+        //chat?.conversation.push(msg);
+        setText('');
+
+        getLLMResponseAndUpdateFirestore(getActiveLLMs(LLMs)[0],  {...chat, conversation: updatedConversation}); //TODO: receive answers from multiple LLMS
+      } catch (error) {
+        console.error("Error updating existing chat:", error);
+      } finally {
+        setSendButtonDisabled(false);
+      }
     }
   }
 
@@ -153,41 +172,47 @@ export function ChatUI(/*props: ChatUiProps*/) {
     return activeLLMList;
   }
 
-  function getLLMResponseAndUpdateFirestore(model: string, currentChat: Chat) {
-    // function popLatestLoadingMessage(conversation: conversationMessage[]) {
-    //   const index = conversation.map(message => 'loading' in message).lastIndexOf(true);
-    //   if (index !== -1) {
-    //     conversation.splice(index, 1);
-    //     return;
-    //   }
-    // }
-    if (currentChat === undefined) {
-      console.log('Trying to save LLM response but chat is undefined');
+  async function getLLMResponseAndUpdateFirestore(model: string, currentChat: Chat) {
+    if (currentChat === undefined || !currentChat.id) {
+      console.error('Trying to save LLM response but chat is undefined or has no id.');
       return;
     }
-    console.log(currentChat.conversation);
 
-    //copy to avoid overwrite conflicts
-    const newChat: Chat = {
-      id: currentChat.id,
-      title: currentChat.title,
-      model: currentChat.model,
-      conversation: currentChat.conversation,
-      createdAt: currentChat.createdAt
+    const retryUpdate = async (updateData: Partial<Chat>, maxRetries = 5) => {
+      for (let i = 0; i < maxRetries; i++) {
+        updateChat(updateData);
+
+        while(isUpdating) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+        if (updatedChatSuccessfully) return;
+
+        if (i === maxRetries - 1) {
+          throw new Error(`Failed to update chat after ${maxRetries} attempts`);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1000));// wait 1 second before retrying
+      }
     };
-    // smooth chat UI displays loading bubble until LLM response is received
-    updateChat({ conversation: [...currentChat.conversation, { loading: 'loading' }] }).catch(
-      console.error
-    );
 
-    getLLMResponse(model, newChat.conversation).then((response) => {
+    try {
+      // smooth chat UI displays loading bubble until LLM response is received
+      await retryUpdate({
+        id: currentChat.id,
+        conversation: [...currentChat.conversation, { loading: 'loading' }]
+      });
+
+      const response = await getLLMResponse(model, currentChat.conversation);
       const msg: conversationMessage = { [model]: response };
-      //popLatestLoadingMessage(newChat.conversation)
-      newChat.conversation.push(msg);
-      console.log(newChat.conversation);
-      updateChat(newChat).catch(console.error);
-      setSendButtonDisabled(false);
-    });
+      const updatedConversation = [...currentChat.conversation, msg];
+
+      await retryUpdate({ id: currentChat.id, conversation: updatedConversation });
+      //await updateChat({ id: currentChat.id, conversation: updatedConversation });
+
+    } catch (error) {
+      console.error("Error in getLLMResponseAndUpdateFirestore: ", error);
+    }
   }
 
   // ------------- End sending new message to firebase -------------
