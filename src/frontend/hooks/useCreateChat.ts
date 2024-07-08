@@ -28,10 +28,10 @@ export function useCreateChat() {
         createdAt: Timestamp.now()
       });
 
-      const newChat = { ...chatData, id: docRef.id, createdAt: Timestamp.now()};
+      const newChat = { ...chatData, id: docRef.id, createdAt: Timestamp.now() };
       //update chat with id that we get assigned from firestore
       await updateDoc(docRef, { id: docRef.id });
-      return {id: docRef.id, chat: newChat};
+      return { id: docRef.id, chat: newChat };
     } catch (error) {
       setError(error instanceof Error ? error.message : String(error));
     } finally {

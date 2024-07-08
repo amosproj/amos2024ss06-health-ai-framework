@@ -23,8 +23,7 @@ import {
   useActiveChatId,
   useCreateChat,
   LLM_MODELS,
-  useLLMs,
-  useGetLLMResponse
+  useLLMs
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
@@ -51,7 +50,12 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const [responseIndex, setResponseIndex] = useState(0);
 
   const [text, setText] = useState('');
-  const { updateChat, isUpdating, error: updateError, isSuccess: updatedChatSuccessfully } = useUpdateChat(activeChatId || '');
+  const {
+    updateChat,
+    isUpdating,
+    error: updateError,
+    isSuccess: updatedChatSuccessfully
+  } = useUpdateChat(activeChatId || '');
 
   const [recognized, setRecognized] = useState('');
   const [started, setStarted] = useState('');
@@ -117,7 +121,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
   async function sendMessage() {
     // Create new Chat
     if (chat === undefined && text.trim()) {
-      try{
+      try {
         setSendButtonDisabled(true);
 
         const msg: conversationMessage = { user: text };
@@ -130,15 +134,14 @@ export function ChatUI(/*props: ChatUiProps*/) {
         setText('');
 
         const result = await createChat(newChatData);
-        if(!result) throw new Error('Failed to create new chat');
+        if (!result) throw new Error('Failed to create new chat');
 
-        const {id: newId, chat: newChat} = result;
+        const { id: newId, chat: newChat } = result;
         setActiveChatId(newId);
 
         await getLLMResponseAndUpdateFirestore(newChat.model[0], newChat); //TODO: receive answers from multiple LLMS
-
       } catch (error) {
-        console.error("Error: ", error);
+        console.error('Error: ', error);
       } finally {
         setSendButtonDisabled(false);
       }
@@ -153,9 +156,12 @@ export function ChatUI(/*props: ChatUiProps*/) {
         //chat?.conversation.push(msg);
         setText('');
 
-        getLLMResponseAndUpdateFirestore(getActiveLLMs(LLMs)[0],  {...chat, conversation: updatedConversation}); //TODO: receive answers from multiple LLMS
+        getLLMResponseAndUpdateFirestore(getActiveLLMs(LLMs)[0], {
+          ...chat,
+          conversation: updatedConversation
+        }); //TODO: receive answers from multiple LLMS
       } catch (error) {
-        console.error("Error updating existing chat:", error);
+        console.error('Error updating existing chat:', error);
       } finally {
         setSendButtonDisabled(false);
       }
@@ -178,12 +184,13 @@ export function ChatUI(/*props: ChatUiProps*/) {
       return;
     }
 
+    // Retry updating chat in case of failure TODO: currently doesnt work
     const retryUpdate = async (updateData: Partial<Chat>, maxRetries = 5) => {
       for (let i = 0; i < maxRetries; i++) {
         updateChat(updateData);
 
-        while(isUpdating) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+        while (isUpdating) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
 
         if (updatedChatSuccessfully) return;
@@ -192,7 +199,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
           throw new Error(`Failed to update chat after ${maxRetries} attempts`);
         }
 
-        await new Promise(resolve => setTimeout(resolve, 1000));// wait 1 second before retrying
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // wait 1 second before retrying
       }
     };
 
@@ -209,9 +216,8 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
       await retryUpdate({ id: currentChat.id, conversation: updatedConversation });
       //await updateChat({ id: currentChat.id, conversation: updatedConversation });
-
     } catch (error) {
-      console.error("Error in getLLMResponseAndUpdateFirestore: ", error);
+      console.error('Error in getLLMResponseAndUpdateFirestore: ', error);
     }
   }
 
