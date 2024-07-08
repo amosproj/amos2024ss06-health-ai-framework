@@ -13,7 +13,7 @@ import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
-import { Screens } from 'src/frontend/helpers';
+import { Screens, getLLMResponse } from 'src/frontend/helpers';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat, conversationMessage } from 'src/frontend/types';
@@ -23,7 +23,7 @@ import {
   useActiveChatId,
   useCreateChat,
   LLM_MODELS,
-  useLLMs,
+  useLLMs
 } from 'src/frontend/hooks';
 import { Timestamp } from 'firebase/firestore';
 import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
@@ -36,7 +36,6 @@ export type ChatUiProps = {
 };
 
 export function ChatUI(/*props: ChatUiProps*/) {
-
   const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -51,11 +50,20 @@ export function ChatUI(/*props: ChatUiProps*/) {
   const [responseIndex, setResponseIndex] = useState(0);
 
   const [text, setText] = useState('');
-  const { updateChat, isUpdating, error: updateError } = useUpdateChat(chat?.id || '');
+  const {
+    updateChat,
+    isUpdating,
+    error: updateError,
+    isSuccess: updatedChatSuccessfully
+  } = useUpdateChat(activeChatId || '');
 
   const [recognized, setRecognized] = useState('');
   const [started, setStarted] = useState('');
   const [results, setResults] = useState<string[]>([]);
+
+  //const {LLMResponse, isGenerating, LLMResponseError} = useGetLLMResponse('');
+  const [isSendButtonDisabled, setSendButtonDisabled] = useState(false);
+  //const isSendButtonDisabled = false;
 
   // ------------- Keyboard and scrolling -------------
 
@@ -80,7 +88,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   useEffect(() => {
     renderMessages();
-  }, [chat?.conversation.length, activeChatId, responseIndex]);
+  }, [chat?.conversation, activeChatId, responseIndex]);
 
   // ------------- End keyboard and scrolling -------------
 
@@ -110,24 +118,106 @@ export function ChatUI(/*props: ChatUiProps*/) {
 
   // ------------- Sending new message to firebase -------------
 
-  function sendMessage() {
+  async function sendMessage() {
     // Create new Chat
     if (chat === undefined && text.trim()) {
-      setText('');
-      const msg: conversationMessage = { user: text };
-      const newChat: Chat = {
-        title: text,
-        model: [LLM_MODELS[0].key],
-        conversation: [msg],
-        createdAt: Timestamp.now()
-      };
-      const newId = createChat(newChat);
-      newId.then((newId) => setActiveChatId(newId || 'default'));
+      try {
+        setSendButtonDisabled(true);
+
+        const msg: conversationMessage = { user: text };
+        const newChatData: Chat = {
+          title: text,
+          model: [LLM_MODELS[0].key],
+          conversation: [msg],
+          createdAt: Timestamp.now()
+        };
+        setText('');
+
+        const result = await createChat(newChatData);
+        if (!result) throw new Error('Failed to create new chat');
+
+        const { id: newId, chat: newChat } = result;
+        setActiveChatId(newId);
+
+        await getLLMResponseAndUpdateFirestore(newChat.model[0], newChat); //TODO: receive answers from multiple LLMS
+      } catch (error) {
+        console.error('Error: ', error);
+      } finally {
+        setSendButtonDisabled(false);
+      }
+      // Send user message in existing chat
     } else if (chat?.id && text.trim()) {
-      const msg: conversationMessage = { user: text };
-      chat?.conversation.push(msg);
-      setText('');
-      updateChat({ conversation: chat.conversation }).catch(console.error);
+      try {
+        setSendButtonDisabled(true);
+
+        const msg: conversationMessage = { user: text };
+        const updatedConversation = [...chat.conversation, msg];
+        await updateChat({ conversation: updatedConversation });
+        //chat?.conversation.push(msg);
+        setText('');
+
+        getLLMResponseAndUpdateFirestore(getActiveLLMs(LLMs)[0], {
+          ...chat,
+          conversation: updatedConversation
+        }); //TODO: receive answers from multiple LLMS
+      } catch (error) {
+        console.error('Error updating existing chat:', error);
+      } finally {
+        setSendButtonDisabled(false);
+      }
+    }
+  }
+
+  function getActiveLLMs(LLMs: { [key: string]: { name: string; active: boolean } }) {
+    const activeLLMList = [];
+    for (const [key, value] of Object.entries(LLMs)) {
+      if (value.active) {
+        activeLLMList.push(key);
+      }
+    }
+    return activeLLMList;
+  }
+
+  async function getLLMResponseAndUpdateFirestore(model: string, currentChat: Chat) {
+    if (currentChat === undefined || !currentChat.id) {
+      console.error('Trying to save LLM response but chat is undefined or has no id.');
+      return;
+    }
+
+    // Retry updating chat in case of failure TODO: currently doesnt work
+    const retryUpdate = async (updateData: Partial<Chat>, maxRetries = 5) => {
+      for (let i = 0; i < maxRetries; i++) {
+        updateChat(updateData);
+
+        while (isUpdating) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+
+        if (updatedChatSuccessfully) return;
+
+        if (i === maxRetries - 1) {
+          throw new Error(`Failed to update chat after ${maxRetries} attempts`);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // wait 1 second before retrying
+      }
+    };
+
+    try {
+      // smooth chat UI displays loading bubble until LLM response is received
+      await retryUpdate({
+        id: currentChat.id,
+        conversation: [...currentChat.conversation, { loading: 'loading' }]
+      });
+
+      const response = await getLLMResponse(model, currentChat.conversation);
+      const msg: conversationMessage = { [model]: response };
+      const updatedConversation = [...currentChat.conversation, msg];
+
+      await retryUpdate({ id: currentChat.id, conversation: updatedConversation });
+      //await updateChat({ id: currentChat.id, conversation: updatedConversation });
+    } catch (error) {
+      console.error('Error in getLLMResponseAndUpdateFirestore: ', error);
     }
   }
 
@@ -211,6 +301,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
             iconColor={colors.onPrimary}
             containerColor={colors.primary}
             style={{ marginHorizontal: 5, paddingRight: 3 }}
+            disabled={isSendButtonDisabled}
           />
         ) : (
           <IconButton
@@ -220,6 +311,7 @@ export function ChatUI(/*props: ChatUiProps*/) {
             iconColor={colors.onPrimary}
             containerColor={isRecording ? colors.inversePrimary : colors.primary}
             style={{ marginHorizontal: 5 }}
+            disabled={isSendButtonDisabled}
           />
         )}
       </View>

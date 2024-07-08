@@ -72,4 +72,4 @@ if updated:
     write_env(ENV_FILE_PATH, actual_env)
 
 # Load .env file using python-dotenv
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv('.env'))
