@@ -6,6 +6,7 @@ import { ActivityIndicator, Button, Drawer, IconButton, Searchbar, Text } from '
 import { Style } from './style';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { signOut } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
@@ -15,11 +16,8 @@ import { ChatItem } from 'src/frontend/components';
 import { Screens } from 'src/frontend/helpers';
 import { LLM_MODELS, useActiveChatId, useCreateChat, useGetAllChat } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
+import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
-import { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-
-
 
 /**
  * NOTE: needs to be called DrawerMenu because Drawer is already defined in react-native-paper
@@ -35,7 +33,7 @@ export function DrawerMenu() {
   // ------------ Define navigation functions ------------
   const goToProfile = () => {
     //navigation.navigate('Profile');
-    
+
     navigate('Main', { screen: Screens.CustomInstructions });
   };
 

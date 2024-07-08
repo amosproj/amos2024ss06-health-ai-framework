@@ -21,3 +21,11 @@ export type User = {
   email: string;
   chats: Chat[];
 };
+
+export type UserProfile = {
+  // Uniquely identify profiles by id
+  id: string;
+  name: string;
+  styleInstructions: string;
+  personalInstructions: string;
+};

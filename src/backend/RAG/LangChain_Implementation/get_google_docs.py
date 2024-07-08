@@ -66,7 +66,6 @@ def download_file(file_id, credentials_path, file_name):
 
 # Example usage
 document_id = extract_document_id_from_url(
-
     'https://docs.google.com/document/d/1GtLyBqhk-cu8CSo4A15WTgGDbMbL4B9LLjdvBoU3234/edit'
 )
 # print("Document id: ", document_id)

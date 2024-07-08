@@ -1,10 +1,10 @@
-import type { conversationMessage } from 'src/frontend/types';
-import { ActivityIndicator, IconButton, Button, useTheme } from 'react-native-paper';
-import { Style } from './style';
-import { ScrollView, Text, TextInput, View } from 'react-native';
-import type { MD3Colors } from 'react-native-paper/lib/typescript/types';
-import React, { useState } from 'react';
 import * as Speech from 'expo-speech';
+import React, { useState } from 'react';
+import { ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Button, IconButton, useTheme } from 'react-native-paper';
+import type { MD3Colors } from 'react-native-paper/lib/typescript/types';
+import type { conversationMessage } from 'src/frontend/types';
+import { Style } from './style';
 
 type ChatBubbleProps = {
   message: conversationMessage;

@@ -1,25 +1,14 @@
 // src/frontend/screens/CustomInstructions.tsx
 import React from 'react';
-import { View, Text, StyleSheet  } from 'react-native';
-import  PersonalInfoForm  from '../../components/PersonalInfoForm';
+import { StyleSheet, Text, View } from 'react-native';
+import { PersonalInfoForm } from '../../components/PersonalInfoForm';
+import { Style } from './style';
 
 export function CustomInstructions() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Custom Instructions</Text>
-        <PersonalInfoForm />
-      </View>
-    );
-  }
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-    },
-    title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 16,
-    },
-  });
+  return (
+    <View style={Style.container}>
+      <Text style={Style.title}>Custom Instructions</Text>
+      <PersonalInfoForm />
+    </View>
+  );
+}

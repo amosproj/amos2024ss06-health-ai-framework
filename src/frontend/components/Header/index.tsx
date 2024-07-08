@@ -4,7 +4,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useEffect } from 'react';
-import { Alert, Pressable, View, Platform } from 'react-native';
+import { Alert, Platform, Pressable, View } from 'react-native';
 import RNFS from 'react-native-fs';
 import { IconButton, Surface, Text, useTheme } from 'react-native-paper';
 import { useActiveChatId, useGetChat, useLLMs } from 'src/frontend/hooks';
