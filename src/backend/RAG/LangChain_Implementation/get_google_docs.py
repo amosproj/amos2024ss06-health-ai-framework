@@ -11,7 +11,7 @@ from googleapiclient.http import MediaIoBaseDownload
 
 
 def extract_document_id_from_url(url):
-    pattern = r'[A-Za-z0-9]*'
+    pattern = r'/d/([a-zA-Z0-9-_]+)'
     matches = re.findall(pattern, url)
     document_id = max(matches, key=len)
     return document_id
@@ -66,8 +66,10 @@ def download_file(file_id, credentials_path, file_name):
 
 # Example usage
 document_id = extract_document_id_from_url(
-    'https://docs.google.com/document/d/1xrfrwyRCTrxiCupiKSSFgKUxiCTXgr45gPJYybnY23w/edit'
+
+    'https://docs.google.com/document/d/1GtLyBqhk-cu8CSo4A15WTgGDbMbL4B9LLjdvBoU3234/edit'
 )
+# print("Document id: ", document_id)
 credentials_json = 'credentials.json'
 
 # Define the file path in a cross-platform manner
@@ -75,6 +77,8 @@ file_name = Path('data') / 'google_docs_content.txt'
 file_name.parent.mkdir(parents=True, exist_ok=True)
 
 # TODO: make this callable from typescript with url
-
-content = download_file(document_id, credentials_json, file_name)
-print(content)
+try:
+    content = download_file(document_id, credentials_json, file_name)
+    print(content)
+except Exception as e:
+    print(f'An error occurred: {e}')
