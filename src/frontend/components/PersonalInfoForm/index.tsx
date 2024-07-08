@@ -9,12 +9,9 @@ import {
   TextInput,
   Title
 } from 'react-native-paper';
-
-type UserProfile = {
-  name: string;
-  styleInstructions: string;
-  personalInstructions: string;
-};
+import uuid from 'react-native-uuid';
+import type { UserProfile } from 'src/frontend/types';
+import { Style } from './style';
 
 const PersonalInfoForm = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
@@ -25,6 +22,7 @@ const PersonalInfoForm = () => {
 
   const handleSave = () => {
     const data = {
+      id: uuid.v4() as string,
       name,
       styleInstructions,
       personalInstructions
@@ -32,7 +30,7 @@ const PersonalInfoForm = () => {
 
     if (currentProfile) {
       const updatedProfiles = profiles.map((profile) =>
-        profile === currentProfile ? data : profile
+        profile.id === currentProfile.id ? data : profile
       );
       setProfiles(updatedProfiles);
     } else {
@@ -53,7 +51,7 @@ const PersonalInfoForm = () => {
   };
 
   const handleDelete = (profile: UserProfile) => {
-    const updatedProfiles = profiles.filter((p) => p !== profile);
+    const updatedProfiles = profiles.filter((p) => p.id !== profile.id);
     setProfiles(updatedProfiles);
     if (currentProfile === profile) {
       setName('');
@@ -65,16 +63,16 @@ const PersonalInfoForm = () => {
 
   return (
     <PaperProvider>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={Style.container}>
         <ScrollView>
-          <Card style={styles.card}>
+          <Card style={Style.card}>
             <Card.Content>
               <Title>Personal Information</Title>
               <TextInput
                 label='Name'
                 value={name}
                 onChangeText={(text) => setName(text)}
-                style={styles.input}
+                style={Style.input}
               />
               <Text variant='titleSmall'>
                 Style Instructions: How would you like the bot to respond?
@@ -84,7 +82,7 @@ const PersonalInfoForm = () => {
                 placeholder='Example: The style should be formal and detailed'
                 value={styleInstructions}
                 onChangeText={(text) => setStyleInstructions(text)}
-                style={styles.input}
+                style={Style.input}
                 numberOfLines={4}
                 maxLength={250}
                 multiline={true}
@@ -97,34 +95,34 @@ const PersonalInfoForm = () => {
                 placeholder="Example: I'm a content creator who teaches people about the newest AI tools."
                 value={personalInstructions}
                 onChangeText={(text) => setPersonalInstructions(text)}
-                style={styles.input}
+                style={Style.input}
                 numberOfLines={4}
                 maxLength={250}
                 multiline={true}
               />
-              <Button mode='contained' onPress={handleSave} style={styles.button}>
+              <Button mode='contained' onPress={handleSave} style={Style.button}>
                 {currentProfile ? 'Update' : 'Save'}
               </Button>
             </Card.Content>
           </Card>
 
-          <Card style={styles.card}>
+          <Card style={Style.card}>
             <Card.Content>
               <Title>Saved Profiles</Title>
-              {profiles.map((profile, index) => (
-                <View key={index} style={styles.profile}>
+              {profiles.map((profile) => (
+                <View key={profile.id} style={Style.profile}>
                   <Paragraph>Name: {profile.name}</Paragraph>
                   <Button
                     mode='outlined'
                     onPress={() => handleEdit(profile)}
-                    style={styles.profileButton}
+                    style={Style.profileButton}
                   >
                     Edit
                   </Button>
                   <Button
                     mode='contained'
                     onPress={() => handleDelete(profile)}
-                    style={styles.profileButton}
+                    style={Style.profileButton}
                   >
                     Delete
                   </Button>
@@ -138,34 +136,4 @@ const PersonalInfoForm = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5'
-  },
-  card: {
-    marginBottom: 16
-  },
-  input: {
-    marginBottom: 16
-  },
-  button: {
-    marginTop: 16
-  },
-  textInput: {
-    height: 100,
-    textAlignVertical: 'top'
-  },
-  profile: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10
-  },
-  profileButton: {
-    marginLeft: 10
-  }
-});
-
-export default PersonalInfoForm;
+export { PersonalInfoForm };

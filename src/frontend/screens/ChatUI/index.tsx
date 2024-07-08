@@ -7,29 +7,29 @@ import { type RouteProp, useNavigation, useRoute } from '@react-navigation/nativ
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 import * as Speech from 'expo-speech';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { useCallback, useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
+import { ActivityIndicator, Button, IconButton } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
+import { ChatBubble } from 'src/frontend/components';
 import { Screens, getLLMResponse } from 'src/frontend/helpers';
+import {
+  LLM_MODELS,
+  useActiveChatId,
+  useCreateChat,
+  useGetChat,
+  useLLMs,
+  useUpdateChat
+} from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat, conversationMessage } from 'src/frontend/types';
-import {
-  useUpdateChat,
-  useGetChat,
-  useActiveChatId,
-  useCreateChat,
-  LLM_MODELS,
-  useLLMs
-} from 'src/frontend/hooks';
-import { Timestamp } from 'firebase/firestore';
-import { ActivityIndicator, IconButton, Button } from 'react-native-paper';
-import { useTheme } from 'react-native-paper';
 import { styles } from './style';
-import { ChatBubble } from 'src/frontend/components';
 
 export type ChatUiProps = {
   chatId: string;
