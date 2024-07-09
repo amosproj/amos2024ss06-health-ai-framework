@@ -190,9 +190,8 @@ def get_health_ai_response(question):
     return response
 
 
-@https_fn.on_request()
-def on_request_example(req: https_fn.Request) -> https_fn.Response:
-    response = get_health_ai_response(
-        'What are the key points of the nutrition article on healthy eating?'
-    )
-    return https_fn.Response([response])
+@https_fn.on_call()
+def get_response(req: https_fn.CallableRequest) -> Any:
+    query = req.data.get('query', '')
+    response = get_health_ai_response(query)
+    return response
