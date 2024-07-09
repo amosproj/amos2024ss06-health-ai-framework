@@ -3,33 +3,38 @@ From: python:3.10
 Stage: spython-base
 
 %files
-. .
+    . /health-ai-framework
+
 %post
+    # update ubuntu
+    apt-get update && apt-get upgrade -y
 
-# update ubuntu
-apt-get update
-apt-get upgrade
+    # install dependencies
+    apt-get install -y ffmpeg
 
-# install dependencies
-apt-get install ffmpeg -y
-pip install pdm
+    # install PDM (Python Dependency Manager)
+    pip install pdm
 
-# set working directory
-mkdir -p health-ai-framework
-cd health-ai-framework
+    # set working directory
+    mkdir -p /health-ai-framework
+    cd /health-ai-framework
 
-# copy all required files
+    # set environment variable to indicate the code is running inside a Docker container
+    export IS_IN_DOCKER="true"
 
-# set env var
-IS_IN_DOCKER="true"
+    # install project dependencies using PDM
+    pdm install
 
-# install project dependencies using PDM
-pdm install
 %environment
-export IS_IN_DOCKER="true"
+    export IS_IN_DOCKER="true"
+
 %runscript
-cd health-ai-framework
-exec /bin/bash "$@"
+    cd /health-ai-framework
+    exec pdm run
+
 %startscript
-cd health-ai-framework
-exec /bin/bash "$@"
+    cd /health-ai-framework
+    exec pdm run
+
+# Build the image
+# sudo apptainer build health-ai-framework.sif Singularity
