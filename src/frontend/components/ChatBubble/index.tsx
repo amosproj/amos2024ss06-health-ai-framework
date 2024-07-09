@@ -19,10 +19,10 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   const responses = !isUser && !isLoading ? Object.entries(message) : [];
 
   const [llm, setLLM] = useState(responses.length > 0 ? responses[0][0] : 'error');
-  //we need this because a message with an index can change internally due to loading messages
-  if (responses.length > 0 && responses[0][0] !== llm) {
-    setLLM(responses[0][0]);
-  }
+  //we need this because a message with an index can change internally due to loading messages, this doesnt work because it overwrites the LLM everytime
+  // if (responses.length > 0 && responses[0][0] !== llm) {
+  //   setLLM(responses[0][0]);
+  // }
   const response = llm === 'error' ? 'error' : message[llm];
 
   //---------------Functions for buttons----------------
