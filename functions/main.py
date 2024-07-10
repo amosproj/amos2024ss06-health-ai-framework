@@ -1,3 +1,5 @@
+from json import dumps
+
 from firebase_admin import initialize_app
 from firebase_functions import https_fn, options
 from langchain.chains.query_constructor.base import AttributeInfo
@@ -173,12 +175,9 @@ def get_health_ai_response(question, llm):
 
 def get_response_from_llm(query, llm):
     api_key = ''
-    llm_model = None
-    if llm == 'gpt-4':
-        llm_model = ChatOpenAI(api_key=api_key, temperature=0)
-    if llm == 'gpt-3.5-turbo-instruct':
-        llm_model = ChatOpenAI(name='gpt-3.5-turbo-instruct', api_key=api_key, temperature=0)
-    if llm_model is not None:
+    models = {'gpt-4': {}, 'gpt-3.5-turbo-instruct': {'name': 'gpt-3.5-turbo-instruct'}}
+    if llm in models:
+        llm_model = ChatOpenAI(api_key=api_key, temperature=0, **models[llm])
         response = get_health_ai_response(query, llm_model)
         return response
     else:
@@ -189,19 +188,19 @@ def get_response_from_llm(query, llm):
 def get_response_url(req: https_fn.Request) -> https_fn.Response:
     query = req.get_json().get('query', '')
     llms = req.get_json().get('llms', ['gpt-4'])
-    responses = []
+    responses = {}
     for llm in llms:
         response = get_response_from_llm(query, llm)
-        responses.append(response)
-    return https_fn.Response(responses)
+        responses[llm] = response
+    return https_fn.Response(dumps(responses), mimetype='application/json')
 
 
 @https_fn.on_call()
 def get_response(req: https_fn.CallableRequest):
     query = req.data.get('query', '')
     llms = req.data.get('llms', ['gpt-4'])
-    responses = []
+    responses = {}
     for llm in llms:
         response = get_response_from_llm(query, llm)
-        responses.append(response)
-    return response
+        responses[llm] = response
+    return responses
