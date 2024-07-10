@@ -1,9 +1,5 @@
-# Welcome to Cloud Functions for Firebase for Python!
-# To get started, simply uncomment the below code or create your own.
-# Deploy with `firebase deploy`
-
 from firebase_admin import initialize_app
-from firebase_functions import https_fn
+from firebase_functions import https_fn, options
 from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.retrievers.self_query.base import SelfQueryRetriever
 from langchain_astradb import AstraDBVectorStore
@@ -16,16 +12,15 @@ initialize_app()
 
 
 # Initialize embeddings and vector store
-def initialize_vector_store(api_key, token):
-    embeddings = OpenAIEmbeddings(api_key=api_key)
-    vstore = AstraDBVectorStore(
+def initialize_vector_store(token):
+    embeddings = OpenAIEmbeddings(api_key='')
+    return AstraDBVectorStore(
         embedding=embeddings,
         collection_name='test_collection_2',
         api_endpoint='',
         token=token,
         namespace='test',
     )
-    return vstore
 
 
 # Metadata field info
@@ -140,22 +135,16 @@ Archived Document Information:
 
 
 # Create a function to get response from the chain
-def get_health_ai_response(question):
-    api_key = ''
+def get_health_ai_response(question, llm):
     token = ''
-
-    vstore = initialize_vector_store(api_key, token)
-
-    llm = ChatOpenAI(api_key=api_key, temperature=0)
+    vector_store = initialize_vector_store(token)
     retriever = SelfQueryRetriever.from_llm(
         llm=llm,
-        vectorstore=vstore,
+        vectorstore=vector_store,
         document_content_description=document_content_description,
         metadata_field_info=metadata_field_info,
         document_contents='',
     )
-
-    # Prompt Template for Health AI Agent
     health_ai_template = """
     You are a health AI agent equipped with access to diverse sources of health data,
     including research articles, nutritional information, medical archives, and more.
@@ -171,27 +160,48 @@ def get_health_ai_response(question):
 
     YOUR ANSWER:
     """
-
-    # Create a ChatPromptTemplate instance from the template
     health_ai_prompt = ChatPromptTemplate.from_template(health_ai_template)
-
-    # Integration example:
-    # In your retrieval and generation pipeline, integrate this prompt template
-    # Replace 'retriever' and 'llm' with appropriate retrieval and language models
-
     chain = (
         {'context': retriever, 'question': RunnablePassthrough()}
         | health_ai_prompt
         | llm
         | StrOutputParser()
     )
-
     response = chain.invoke(question)
     return response
 
 
+def get_response_from_llm(query, llm):
+    api_key = ''
+    llm_model = None
+    if llm == 'gpt-4':
+        llm_model = ChatOpenAI(api_key=api_key, temperature=0)
+    if llm == 'gpt-3.5-turbo-instruct':
+        llm_model = ChatOpenAI(name='gpt-3.5-turbo-instruct', api_key=api_key, temperature=0)
+    if llm_model is not None:
+        response = get_health_ai_response(query, llm_model)
+        return response
+    else:
+        return 'Model Not Found'
+
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins=['*'], cors_methods=['get', 'post']))
+def get_response_url(req: https_fn.Request) -> https_fn.Response:
+    query = req.get_json().get('query', '')
+    llms = req.get_json().get('llms', ['gpt-4'])
+    responses = []
+    for llm in llms:
+        response = get_response_from_llm(query, llm)
+        responses.append(response)
+    return https_fn.Response(responses)
+
+
 @https_fn.on_call()
-def get_response(req: https_fn.CallableRequest) -> Any:
+def get_response(req: https_fn.CallableRequest):
     query = req.data.get('query', '')
-    response = get_health_ai_response(query)
+    llms = req.data.get('llms', ['gpt-4'])
+    responses = []
+    for llm in llms:
+        response = get_response_from_llm(query, llm)
+        responses.append(response)
     return response
