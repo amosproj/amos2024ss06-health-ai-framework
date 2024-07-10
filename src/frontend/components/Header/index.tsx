@@ -1,26 +1,21 @@
 import type { DrawerHeaderProps } from '@react-navigation/drawer';
-import { DrawerActions, type RouteProp, useRoute } from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
-import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useEffect } from 'react';
 import { Alert, Platform, Pressable, View } from 'react-native';
 import RNFS from 'react-native-fs';
 import { IconButton, Surface, Text, useTheme } from 'react-native-paper';
-import { useActiveChatId, useGetChat, useLLMs } from 'src/frontend/hooks';
+import { useActiveChatId, useGetChat } from 'src/frontend/hooks';
 import { AilixirLogo } from 'src/frontend/icons';
-import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
-import { styles } from 'src/frontend/screens/ChatUI/style';
 import { DropdownMenu } from '../DropdownMenu';
 import { Style } from './style';
 
 export function Header(props: DrawerHeaderProps) {
   const { colors } = useTheme();
   const { navigation } = props;
-
-  const { activeChatId, setActiveChatId } = useActiveChatId();
-  const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');
-  const { chat, status, error } = useGetChat(activeChatId);
+  const { activeChatId } = useActiveChatId();
+  const { chat } = useGetChat(activeChatId);
 
   // Determine if the button should be disabled
   const isButtonDisabled = chat === undefined;
