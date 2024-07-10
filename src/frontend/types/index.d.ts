@@ -1,4 +1,4 @@
-import type { Timestamp } from 'firebase/firestore';
+import type { FieldValue, Timestamp } from 'firebase/firestore';
 
 export type LLM = {
   name: string;
@@ -12,7 +12,8 @@ export type Chat = {
   title: string;
   createdAt: Timestamp;
   model: string[];
-  conversation: conversationMessage[];
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  conversation: any;
 };
 
 export type User = {
