@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
-import { type FirebaseOptions, getApps, initializeApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
 import { initializeAuth as getAuth, getReactNativePersistence as store } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getFunctions } from 'firebase/functions';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useEffect, useMemo } from 'react';
 import { AuthProvider, FirebaseAppProvider, FirestoreProvider, FunctionsProvider } from 'reactfire';
 
 type FirebaseProviderProps = {
