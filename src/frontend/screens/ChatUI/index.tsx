@@ -1,26 +1,19 @@
-import Voice, {
-  type SpeechResultsEvent,
-  type SpeechStartEvent,
-  type SpeechRecognizedEvent
-} from '@react-native-voice/voice';
 import type { FirebaseError } from 'firebase/app';
-import { FieldValue, arrayUnion } from 'firebase/firestore';
+import { arrayUnion } from 'firebase/firestore';
 import React from 'react';
 import { useState } from 'react';
 import { useEffect, useRef } from 'react';
-import { ScrollView, TextInput, View } from 'react-native';
-import { Keyboard } from 'react-native';
-import { Vibration } from 'react-native';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { ScrollView, View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
-import { ChatKeyboard, RenderChat, VoiceButton } from 'src/frontend/components';
+import { RenderChat, ChatKeyboard, VoiceButton } from 'src/frontend/components';
 import {
-  LLM_MODELS,
   useActiveChatId,
   useCreateChat,
   useGetChat,
   useGetResponse,
-  useUpdateChat
+  useUpdateChat,
+  LLM_MODELS
 } from 'src/frontend/hooks';
 import { styles } from './style';
 
@@ -33,87 +26,83 @@ export function ChatUI() {
   const scrollViewRef = useRef<ScrollView>(null);
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { chat } = useGetChat(activeChatId);
-  // const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
-  // const [recognized, setRecognized] = useState('');
-  // const [started, setStarted] = useState('');
-  // const [results, setResults] = useState<string[]>([]);
   const [isSendButtonDisabled, setSendButtonDisabled] = useState(false);
   const getResponse = useGetResponse();
   const { updateChat } = useUpdateChat(activeChatId);
   const { createChat } = useCreateChat();
-  const [isChatTitleUpdated, setIsChatTitleUpdated] = useState(false);
   const [waitingForAnswerOnNewChat, setWaitingForAnswerOnNewChat] = useState<{
     waiting: boolean;
     query: string;
-  }>({ waiting: false, query: '' });
+    newChatId: string;
+  }>({ waiting: false, query: '', newChatId: 'default' });
 
   // ------------- Keyboard scrolls down when sending a message -------------
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chat?.conversation.length]);
 
-  // ------------- Voice Recognition Setup -------------
-  // useEffect(() => {
-  //   Voice.onSpeechStart = onSpeechStart;
-  //   Voice.onSpeechRecognized = onSpeechRecognized;
-  //   Voice.onSpeechResults = onSpeechResults;
+  //---------------- Sending messages and managing Firestore ----------------
 
-  //   return () => {
-  //     Voice.destroy().then(Voice.removeAllListeners);
-  //   };
-  // }, []);
+  // This function is called when the user sends a prompt
+  async function sendMessage() {
+    setSendButtonDisabled(true);
+    const query = text.trim();
+    setText('');
 
-  // const onSpeechStart = (e: SpeechStartEvent) => {
-  //   setStarted('√');
-  // };
+    // If chat is 'default' (empty), create a new chat when prompt is sent
+    // Otherwise just update chat with LLM answer
 
-  // const onSpeechRecognized = (e: SpeechRecognizedEvent) => {
-  //   setRecognized('√');
-  // };
+    // Create new chat
+    if (activeChatId === 'default') {
+      const newId = await createNewChat(query);
+      if (newId !== undefined && newId !== '') {
+        // once all chat variables are updated, get the LLM answer in async effect @fetchLLMAnswer
+        setWaitingForAnswerOnNewChat({ waiting: true, query: query, newChatId: newId });
+      }
 
-  // const onSpeechResults = (e: SpeechResultsEvent) => {
-  //   setResults(e.value ?? []);
-  //   setText(e.value?.[0] ?? '');
-  // };
+      // Update existing chat
+    } else {
+      try {
+        await updateChat({ conversation: arrayUnion({ type: 'USER', message: query }) });
+        await getLLMAnswer(query);
+      } catch (error) {
+        console.error('Error in sendMessage:', error);
+      } finally {
+        setSendButtonDisabled(false);
+      }
+    }
+  }
 
-  // const startRecognition = async () => {
-  //   setIsRecording(true); // Set recording state to true
-  //   Vibration.vibrate(50); // Vibrate for 50 milliseconds on press
+  // ---- We want to query the LLM with the chat prompt when a new chat is created ----
+  // Need to wait for @chat and @activeChatId to be updated
+  // @WaitingForAnswerOnNewChat flag is set in sendMessage() when a new chat is created
+  useEffect(() => {
+    const fetchLLMAnswer = async () => {
+      // this condition is probably not totally correct
+      if (
+        waitingForAnswerOnNewChat.waiting &&
+        activeChatId !== 'default' &&
+        activeChatId === waitingForAnswerOnNewChat.newChatId
+      ) {
+        try {
+          await getLLMAnswer(waitingForAnswerOnNewChat.query);
+        } catch (error) {
+          console.error('Error getting LLM answer:', error);
+        } finally {
+          // once the LLM answer is retrieved, set the flag to false
+          setWaitingForAnswerOnNewChat({
+            waiting: false,
+            query: '',
+            newChatId: waitingForAnswerOnNewChat.newChatId
+          });
+        }
+      }
+    };
+    fetchLLMAnswer();
+  }, [waitingForAnswerOnNewChat.waiting, activeChatId]);
 
-  //   setRecognized('');
-  //   setStarted('');
-  //   setResults([]);
-  //   try {
-  //     await Voice.start('en-US');
-  //   } catch (e) {
-  //     console.error(e);
-  //     setIsRecording(false); // Reset recording state on error
-  //   }
-  // };
-
-  // const stopRecognition = async () => {
-  //   try {
-  //     await Voice.stop();
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  //   Vibration.vibrate(50); // Vibrate for 50 milliseconds on release
-  //   setIsRecording(false); // Reset recording state
-  // };
-
-  // useEffect(() => {
-  //   const create = async () => {
-  //     const result = await createChat({
-  //       title: 'NewChat',
-  //       model: ['gpt-4'],
-  //       conversation: []
-  //     });
-  //     const id = result?.id;
-  //     setActiveChatId(id || '');
-  //   };
-  //   if (activeChatId === 'default') create();
-  // }, [activeChatId]);
+  // Create new chat and update props of this component
   const createNewChat = async (queryText: string) => {
     const title = extractTitle(queryText);
     const userPrompt = { type: 'USER', message: queryText }; // correct firestore format
@@ -131,82 +120,40 @@ export function ChatUI() {
     } catch (error) {
       console.error(error);
     }
+    return '';
   };
 
-  useEffect(() => {
-    const fetchLLMAnswer = async () => {
-      if (waitingForAnswerOnNewChat.waiting && activeChatId !== 'default') {
-        try {
-          await getLLMAnswer(waitingForAnswerOnNewChat.query);
-        } catch (error) {
-          console.error('Error getting LLM answer:', error);
-          // Here you might want to show an error message to the user
-        } finally {
-          setWaitingForAnswerOnNewChat({ waiting: false, query: '' });
-        }
-      }
-    };
-    fetchLLMAnswer();
-  }, [waitingForAnswerOnNewChat.waiting, activeChatId, waitingForAnswerOnNewChat.query]);
-
-  function extractTitle(queryText: string) {
-    //TODO: maybe use a more sophisticated method to extract the title later
-    const arr = queryText.split(' ');
-    let title = '';
-    for (let i = 0; i < arr.length && i < 3; i++) {
-      title += `${arr[i]} `;
-    }
-    return title;
-  }
-
   async function getLLMAnswer(queryText: string) {
-    // Create a map
-
+    // default response
     let response: { [key: string]: string } = { 'gpt-4': 'Could not retrieve answer from LLM' };
+
+    // get Response from LLM
     try {
-      console.log('getting LLM answer for query: ', queryText);
       const { data } = await getResponse({ query: queryText, llms: ['gpt-4'] });
       response = data as { [key: string]: string };
-      console.log('Response', data);
     } catch (error) {
       console.error(error as FirebaseError);
     }
 
+    // Update chat with LLM response
     try {
       await updateChat({ conversation: arrayUnion({ type: 'AI', message: response }) });
     } catch (error) {
       console.error(error as FirebaseError);
     } finally {
-      setSendButtonDisabled(false);
+      setSendButtonDisabled(false); // Once all is updated, the user is allowed to type again
     }
   }
 
-  async function sendMessage() {
-    setSendButtonDisabled(true);
-    const query = text.trim();
-    setText('');
-    try {
-      if (activeChatId === 'default') {
-        const newChatId = await createNewChat(query);
-        if (newChatId) {
-          setActiveChatId(newChatId);
-          setWaitingForAnswerOnNewChat({ waiting: true, query });
-        } else {
-          throw new Error('Failed to create new chat');
-        }
-      } else {
-        await updateChat({ conversation: arrayUnion({ type: 'USER', message: query }) });
-        await getLLMAnswer(query);
-      }
-    } catch (error) {
-      console.error('Error in sendMessage:', error);
-      // Here you might want to show an error message to the user
-    } finally {
-      setSendButtonDisabled(false);
+  function extractTitle(queryText: string) {
+    //TODO: maybe use a more sophisticated method to extract the title later
+    const arr = queryText.split(' ');
+    let title = '';
+    for (let i = 0; i < arr.length && i < 5; i++) {
+      title += `${arr[i]} `;
     }
+    return title;
   }
-
-  // ------------- End Voice Recognition Setup -------------
 
   return (
     <View style={styles.container}>
@@ -220,35 +167,6 @@ export function ChatUI() {
       </ScrollView>
       <View style={[styles.inputContainer, { borderColor: colors.outlineVariant }]}>
         <ChatKeyboard text={text} setText={setText} onSend={sendMessage} />
-        {/* <TextInput
-          style={[styles.input, { borderColor: colors.outlineVariant }]}
-          placeholder='Write something here...'
-          value={text}
-          onChangeText={(text) => setText(text)}
-          onSubmitEditing={sendMessage}
-          blurOnSubmit={false}
-        /> */}
-        {/* {text.trim() ? (
-          <IconButton
-            icon='paper-plane'
-            onPress={sendMessage}
-            onPressOut={stopRecognition}
-            iconColor={colors.onPrimary}
-            containerColor={colors.primary}
-            style={{ marginHorizontal: 5, paddingRight: 3 }}
-            disabled={isSendButtonDisabled}
-          />
-        ) : (
-          <IconButton
-            icon='microphone'
-            onPressIn={startRecognition}
-            onPressOut={stopRecognition}
-            iconColor={colors.onPrimary}
-            containerColor={isRecording ? colors.inversePrimary : colors.primary}
-            style={{ marginHorizontal: 5 }}
-            disabled={isSendButtonDisabled}
-          />
-        )} */}
         <VoiceButton
           text={text}
           setText={setText}

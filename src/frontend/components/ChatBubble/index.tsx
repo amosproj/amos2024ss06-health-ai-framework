@@ -5,6 +5,7 @@ import { ActivityIndicator, Button, IconButton, useTheme } from 'react-native-pa
 import type { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import type { conversationMessage } from 'src/frontend/types';
 import { Style } from './style';
+import Markdown from 'react-native-markdown-display';
 
 type ChatBubbleProps = {
   message: conversationMessage;
@@ -63,7 +64,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           [{ backgroundColor: colors.inversePrimary }]
         ]}
       >
-        <Text>{text}</Text>
+        <Markdown>{text}</Markdown>
       </View>
     );
   }
@@ -114,7 +115,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
         <View style={Style.messageWrapper}>
           {llmSelector(response)}
           <View style={Style.messageContent}>
-            <Text style={Style.textView}>{response}</Text>
+            <Markdown>{response}</Markdown>
           </View>
         </View>
       </View>
