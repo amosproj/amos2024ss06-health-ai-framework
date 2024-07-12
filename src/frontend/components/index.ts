@@ -9,3 +9,5 @@ export * from './Header';
 export * from './ActiveChatProvider';
 export * from './ChatBubble';
 export * from './RenderChat';
+export * from './ChatKeyboard';
+export * from './VoiceButton';

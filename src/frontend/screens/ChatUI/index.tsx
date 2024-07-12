@@ -13,17 +13,16 @@ import { Keyboard } from 'react-native';
 import { Vibration } from 'react-native';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
-import { RenderChat } from 'src/frontend/components';
+import { ChatKeyboard, RenderChat, VoiceButton } from 'src/frontend/components';
 import {
+  LLM_MODELS,
   useActiveChatId,
   useCreateChat,
   useGetChat,
   useGetResponse,
-  useUpdateChat,
-  LLM_MODELS
+  useUpdateChat
 } from 'src/frontend/hooks';
 import { styles } from './style';
-import { ChatKeyboard } from 'src/frontend/components/ChatKeyboard';
 
 export type ChatUiProps = {
   chatId: string;
@@ -34,17 +33,20 @@ export function ChatUI() {
   const scrollViewRef = useRef<ScrollView>(null);
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { chat } = useGetChat(activeChatId);
-  const [isRecording, setIsRecording] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
   const [text, setText] = useState('');
-  const [recognized, setRecognized] = useState('');
-  const [started, setStarted] = useState('');
-  const [results, setResults] = useState<string[]>([]);
+  // const [recognized, setRecognized] = useState('');
+  // const [started, setStarted] = useState('');
+  // const [results, setResults] = useState<string[]>([]);
   const [isSendButtonDisabled, setSendButtonDisabled] = useState(false);
   const getResponse = useGetResponse();
   const { updateChat } = useUpdateChat(activeChatId);
   const { createChat } = useCreateChat();
   const [isChatTitleUpdated, setIsChatTitleUpdated] = useState(false);
-  const [waitingForAnswerOnNewChat, setWaitingForAnswerOnNewChat] = useState<{waiting: boolean, query: string}>({waiting: false, query: ''});
+  const [waitingForAnswerOnNewChat, setWaitingForAnswerOnNewChat] = useState<{
+    waiting: boolean;
+    query: string;
+  }>({ waiting: false, query: '' });
 
   // ------------- Keyboard scrolls down when sending a message -------------
   useEffect(() => {
@@ -52,53 +54,53 @@ export function ChatUI() {
   }, [chat?.conversation.length]);
 
   // ------------- Voice Recognition Setup -------------
-  useEffect(() => {
-    Voice.onSpeechStart = onSpeechStart;
-    Voice.onSpeechRecognized = onSpeechRecognized;
-    Voice.onSpeechResults = onSpeechResults;
+  // useEffect(() => {
+  //   Voice.onSpeechStart = onSpeechStart;
+  //   Voice.onSpeechRecognized = onSpeechRecognized;
+  //   Voice.onSpeechResults = onSpeechResults;
 
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
+  //   return () => {
+  //     Voice.destroy().then(Voice.removeAllListeners);
+  //   };
+  // }, []);
 
-  const onSpeechStart = (e: SpeechStartEvent) => {
-    setStarted('√');
-  };
+  // const onSpeechStart = (e: SpeechStartEvent) => {
+  //   setStarted('√');
+  // };
 
-  const onSpeechRecognized = (e: SpeechRecognizedEvent) => {
-    setRecognized('√');
-  };
+  // const onSpeechRecognized = (e: SpeechRecognizedEvent) => {
+  //   setRecognized('√');
+  // };
 
-  const onSpeechResults = (e: SpeechResultsEvent) => {
-    setResults(e.value ?? []);
-    setText(e.value?.[0] ?? '');
-  };
+  // const onSpeechResults = (e: SpeechResultsEvent) => {
+  //   setResults(e.value ?? []);
+  //   setText(e.value?.[0] ?? '');
+  // };
 
-  const startRecognition = async () => {
-    setIsRecording(true); // Set recording state to true
-    Vibration.vibrate(50); // Vibrate for 50 milliseconds on press
+  // const startRecognition = async () => {
+  //   setIsRecording(true); // Set recording state to true
+  //   Vibration.vibrate(50); // Vibrate for 50 milliseconds on press
 
-    setRecognized('');
-    setStarted('');
-    setResults([]);
-    try {
-      await Voice.start('en-US');
-    } catch (e) {
-      console.error(e);
-      setIsRecording(false); // Reset recording state on error
-    }
-  };
+  //   setRecognized('');
+  //   setStarted('');
+  //   setResults([]);
+  //   try {
+  //     await Voice.start('en-US');
+  //   } catch (e) {
+  //     console.error(e);
+  //     setIsRecording(false); // Reset recording state on error
+  //   }
+  // };
 
-  const stopRecognition = async () => {
-    try {
-      await Voice.stop();
-    } catch (e) {
-      console.error(e);
-    }
-    Vibration.vibrate(50); // Vibrate for 50 milliseconds on release
-    setIsRecording(false); // Reset recording state
-  };
+  // const stopRecognition = async () => {
+  //   try {
+  //     await Voice.stop();
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  //   Vibration.vibrate(50); // Vibrate for 50 milliseconds on release
+  //   setIsRecording(false); // Reset recording state
+  // };
 
   // useEffect(() => {
   //   const create = async () => {
@@ -113,7 +115,7 @@ export function ChatUI() {
   //   if (activeChatId === 'default') create();
   // }, [activeChatId]);
   const createNewChat = async (queryText: string) => {
-    const title = extractTitle(queryText)
+    const title = extractTitle(queryText);
     const userPrompt = { type: 'USER', message: queryText }; // correct firestore format
     try {
       const result = await createChat({
@@ -129,7 +131,7 @@ export function ChatUI() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchLLMAnswer = async () => {
@@ -137,22 +139,21 @@ export function ChatUI() {
         try {
           await getLLMAnswer(waitingForAnswerOnNewChat.query);
         } catch (error) {
-          console.error("Error getting LLM answer:", error);
+          console.error('Error getting LLM answer:', error);
           // Here you might want to show an error message to the user
         } finally {
-          setWaitingForAnswerOnNewChat({waiting: false, query: ''});
+          setWaitingForAnswerOnNewChat({ waiting: false, query: '' });
         }
       }
     };
     fetchLLMAnswer();
   }, [waitingForAnswerOnNewChat.waiting, activeChatId, waitingForAnswerOnNewChat.query]);
 
-
-  function extractTitle(queryText:string) {
+  function extractTitle(queryText: string) {
     //TODO: maybe use a more sophisticated method to extract the title later
     const arr = queryText.split(' ');
     let title = '';
-    for(let i = 0; i < arr.length && i < 3; i++){
+    for (let i = 0; i < arr.length && i < 3; i++) {
       title += `${arr[i]} `;
     }
     return title;
@@ -161,12 +162,12 @@ export function ChatUI() {
   async function getLLMAnswer(queryText: string) {
     // Create a map
 
-    let response: { [key: string]: string } = {'gpt-4': "Could not retrieve answer from LLM"}
+    let response: { [key: string]: string } = { 'gpt-4': 'Could not retrieve answer from LLM' };
     try {
-      console.log('getting LLM answer for query: ', queryText)
+      console.log('getting LLM answer for query: ', queryText);
       const { data } = await getResponse({ query: queryText, llms: ['gpt-4'] });
-      response = data as {[key: string]: string };
-      console.log("Response", data)
+      response = data as { [key: string]: string };
+      console.log('Response', data);
     } catch (error) {
       console.error(error as FirebaseError);
     }
@@ -189,16 +190,16 @@ export function ChatUI() {
         const newChatId = await createNewChat(query);
         if (newChatId) {
           setActiveChatId(newChatId);
-          setWaitingForAnswerOnNewChat({waiting: true, query});
+          setWaitingForAnswerOnNewChat({ waiting: true, query });
         } else {
-          throw new Error("Failed to create new chat");
+          throw new Error('Failed to create new chat');
         }
       } else {
         await updateChat({ conversation: arrayUnion({ type: 'USER', message: query }) });
         await getLLMAnswer(query);
       }
     } catch (error) {
-      console.error("Error in sendMessage:", error);
+      console.error('Error in sendMessage:', error);
       // Here you might want to show an error message to the user
     } finally {
       setSendButtonDisabled(false);
@@ -218,7 +219,7 @@ export function ChatUI() {
         {isSendButtonDisabled && <ActivityIndicator />}
       </ScrollView>
       <View style={[styles.inputContainer, { borderColor: colors.outlineVariant }]}>
-        <ChatKeyboard text={text} setText={setText} onSend={sendMessage}/>
+        <ChatKeyboard text={text} setText={setText} onSend={sendMessage} />
         {/* <TextInput
           style={[styles.input, { borderColor: colors.outlineVariant }]}
           placeholder='Write something here...'
@@ -227,7 +228,7 @@ export function ChatUI() {
           onSubmitEditing={sendMessage}
           blurOnSubmit={false}
         /> */}
-        {text.trim() ? (
+        {/* {text.trim() ? (
           <IconButton
             icon='paper-plane'
             onPress={sendMessage}
@@ -247,9 +248,14 @@ export function ChatUI() {
             style={{ marginHorizontal: 5 }}
             disabled={isSendButtonDisabled}
           />
-        )}
+        )} */}
+        <VoiceButton
+          text={text}
+          setText={setText}
+          onPress={sendMessage}
+          isSendButtonDisabled={isSendButtonDisabled}
+        />
       </View>
     </View>
   );
 }
-

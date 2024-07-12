@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-
 export const styles = StyleSheet.create({
   input: {
     flex: 1,
@@ -8,5 +7,5 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 15
-  },
+  }
 });

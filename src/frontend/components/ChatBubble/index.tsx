@@ -14,7 +14,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   const { colors } = useTheme();
 
   //----------------Define states etc-----------------
-  const isUser = message.type  === 'USER';
+  const isUser = message.type === 'USER';
   const AIResponses = !isUser ? Object.entries(message.message) : [];
 
   // take the key of the map as the current LLM
@@ -47,7 +47,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   }
   // biome-ignore lint/style/noUselessElse: stupid linting is wrong
   else {
-    return llmBubble();  // LLM --> Display Side by side chat bubbles
+    return llmBubble(); // LLM --> Display Side by side chat bubbles
   }
 
   //---------------Subcomponents----------------
@@ -69,7 +69,6 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   }
 
   function llmSelector(response: string) {
-
     return (
       <View style={Style.llmSelector}>
         <IconButton
@@ -99,11 +98,10 @@ export function ChatBubble({ message }: ChatBubbleProps) {
     );
   }
 
-
   function llmBubble() {
     let response = (message.message as { [key: string]: string })[llm];
     if (response === undefined) {
-      response = ''
+      response = '';
     }
     return (
       <View

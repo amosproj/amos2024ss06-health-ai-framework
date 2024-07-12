@@ -5,8 +5,8 @@ import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
 import { useUser } from 'reactfire';
 import { useActiveChatId, useGetChat } from 'src/frontend/hooks';
 import type { conversationMessage } from 'src/frontend/types';
-import { Style } from './style';
 import { ChatBubble } from '../ChatBubble';
+import { Style } from './style';
 
 export function RenderChat() {
   const { activeChatId } = useActiveChatId();
@@ -26,7 +26,10 @@ export function RenderChat() {
           if (entries.length > 0) AIResponse = entries[0][1];
         }
         return (
-          <ChatBubble key={type === 'USER' ? (message as string) + id++ : AIResponse + id++} message={item} />
+          <ChatBubble
+            key={type === 'USER' ? (message as string) + id++ : AIResponse + id++}
+            message={item}
+          />
         );
       })}
     </>

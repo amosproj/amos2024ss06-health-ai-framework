@@ -1,13 +1,13 @@
-import { styles } from './style';
-import { type ScrollView, TextInput} from 'react-native';
-import { useTheme } from 'react-native-paper';
 import { useEffect, useRef } from 'react';
+import { type ScrollView, TextInput } from 'react-native';
 import { Keyboard } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import { styles } from './style';
 
 type ChatKeyboardProps = {
-  text: string,
-  setText: (text: string) => void,
-  onSend: () => void
+  text: string;
+  setText: (text: string) => void;
+  onSend: () => void;
 };
 
 export function ChatKeyboard(props: ChatKeyboardProps) {
@@ -25,16 +25,15 @@ export function ChatKeyboard(props: ChatKeyboardProps) {
     };
   }, []);
 
-    const { colors } = useTheme();
-    return(
-        <TextInput
-        style={[styles.input, { borderColor: colors.outlineVariant }]}
-        placeholder='Write something here...'
-        value={props.text}
-        onChangeText={(text) => props.setText(text)}
-        onSubmitEditing={() => props.onSend()}
-        blurOnSubmit={false}
-        />
-    )
+  const { colors } = useTheme();
+  return (
+    <TextInput
+      style={[styles.input, { borderColor: colors.outlineVariant }]}
+      placeholder='Write something here...'
+      value={props.text}
+      onChangeText={(text) => props.setText(text)}
+      onSubmitEditing={() => props.onSend()}
+      blurOnSubmit={false}
+    />
+  );
 }
-
