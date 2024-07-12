@@ -7,8 +7,6 @@ import { useActiveChatId, useGetChat } from 'src/frontend/hooks';
 import type { conversationMessage } from 'src/frontend/types';
 import { Style } from './style';
 
-
-
 export function RenderChat() {
   const { activeChatId } = useActiveChatId();
   const { chat, status } = useGetChat(activeChatId);
@@ -19,14 +17,12 @@ export function RenderChat() {
   let id = 0;
   return (
     <>
-      {/* biome-ignore lint/suspicious/noExplicitAny: <explanation> */}
       {chat?.conversation.map((item: conversationMessage) => {
         const { type, message } = item;
-        let AIResponse = ""
-        if(type === 'AI') {
-          const entries = Object.entries(message)
-          if(entries.length > 0)
-            AIResponse = entries[0][1];
+        let AIResponse = '';
+        if (type === 'AI') {
+          const entries = Object.entries(message);
+          if (entries.length > 0) AIResponse = entries[0][1];
         }
         return (
           <View
@@ -43,7 +39,7 @@ export function RenderChat() {
                 {type === 'AI' ? 'AiLixir' : user?.displayName || 'User'}
               </Text>
             </View>
-            <Markdown>{type === 'AI' ? AIResponse : message as string}</Markdown>
+            <Markdown>{type === 'AI' ? AIResponse : (message as string)}</Markdown>
           </View>
         );
       })}

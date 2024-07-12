@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 export const Style = StyleSheet.create({
   bubble: {
@@ -8,4 +8,4 @@ export const Style = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column'
   }
-})
+});

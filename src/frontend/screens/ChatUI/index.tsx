@@ -117,7 +117,7 @@ export function ChatUI() {
         model: ['gpt-4'],
         conversation: []
       });
-      const id = result?.id
+      const id = result?.id;
       setActiveChatId(id || '');
     };
     if (activeChatId === 'default') create();
