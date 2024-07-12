@@ -2,6 +2,16 @@
 
 In this section, we'll explore how to use Firebase Functions. They're a crucial part of our system. Let's dive in! 🚀
 
+## Setting Up Environment Variables 🛠️
+
+To ensure your Firebase Functions work correctly both locally and when deployed, follow these steps to set up your environment variables:
+
+1. **Locate the `.env.template` File** - Navigate to the `functions` folder and find the `.env.template` file. This file contains the necessary environment variable keys for your project.
+2. **Create a `.env` File** - Copy the `.env.template` file and rename the copy to `.env`. This file will be used to store your actual environment variable values. 
+3. **Replace Values** - Open the `.env` file and replace the placeholder values with your actual environment variable values. This step is crucial for the proper functioning of your Firebase Functions both locally and during deployment.
+
+By following these steps, you ensure that your Firebase Functions have the necessary environment variables to operate correctly in any environment. 🌐
+
 ## Getting Started with Firebase Functions Locally 🏁
 
 To run Firebase Functions locally, follow these steps:
