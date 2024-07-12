@@ -14,69 +14,46 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   const { colors } = useTheme();
 
   //----------------Define states etc-----------------
-  const isUser = 'user' in message;
-  const isLoading = 'loading' in message;
-  const responses = !isUser && !isLoading ? Object.entries(message) : [];
+  const isUser = message.type  === 'USER';
+  const AIResponses = !isUser ? Object.entries(message.message) : [];
 
-  const [llm, setLLM] = useState(responses.length > 0 ? responses[0][0] : 'error');
-  //we need this because a message with an index can change internally due to loading messages, this doesnt work because it overwrites the LLM everytime
-  // if (responses.length > 0 && responses[0][0] !== llm) {
-  //   setLLM(responses[0][0]);
-  // }
-  const response = llm === 'error' ? 'error' : message[llm];
+  // take the key of the map as the current LLM
+  const [llm, setLLM] = useState(AIResponses.length > 0 ? AIResponses[0][0] : 'error');
 
   //---------------Functions for buttons----------------
   const handleNextResponse = () => {
-    const curIndex = responses.findIndex(([key, value]) => key === llm);
+    const curIndex = AIResponses.findIndex(([key, value]) => key === llm);
     if (curIndex === -1) {
-      console.log('Chatbubble: handlePreviousResponse: Error: llm not found in responses');
+      console.log('Chatbubble: handlePreviousResponse: Error: llm not found in AIResponses');
       return <ActivityIndicator />;
     }
-    const nextIndex = (curIndex + 1) % responses.length;
-    setLLM(responses[nextIndex][0]);
+    const nextIndex = (curIndex + 1) % AIResponses.length;
+    setLLM(AIResponses[nextIndex][0]);
   };
 
   const handlePreviousResponse = () => {
-    const curIndex = responses.findIndex(([key, value]) => key === llm);
+    const curIndex = AIResponses.findIndex(([key, value]) => key === llm);
     if (curIndex === -1) {
-      console.log('Chatbubble: handlePreviousResponse: Error: llm not found in responses');
+      console.log('Chatbubble: handlePreviousResponse: Error: llm not found in AIResponses');
       return <ActivityIndicator />;
     }
-    const prevIndex = (curIndex - 1 + responses.length) % responses.length;
-    setLLM(responses[prevIndex][0]);
+    const prevIndex = (curIndex - 1 + AIResponses.length) % AIResponses.length;
+    setLLM(AIResponses[prevIndex][0]);
   };
 
   //---------------Render Chat Bubble----------------
-  if (isLoading) {
-    return loadingBubble();
-  }
-  // biome-ignore lint/style/noUselessElse: stupid linting is wrong
-  else if (isUser) {
+  if (isUser) {
     return userBubble();
   }
-  // LLM --> Display Side by side chat bubbles
   // biome-ignore lint/style/noUselessElse: stupid linting is wrong
   else {
-    return llmBubble();
+    return llmBubble();  // LLM --> Display Side by side chat bubbles
   }
 
   //---------------Subcomponents----------------
-  function loadingBubble() {
-    return (
-      <View
-        style={[
-          Style.chatBubble,
-          Style.receivedMessage,
-          { backgroundColor: colors.surfaceVariant }
-        ]}
-      >
-        <ActivityIndicator />
-      </View>
-    );
-  }
 
   function userBubble() {
-    const text = message.user;
+    const text = message.message as string;
     return (
       <View
         //key={key}
@@ -91,14 +68,15 @@ export function ChatBubble({ message }: ChatBubbleProps) {
     );
   }
 
-  function llmSelector() {
+  function llmSelector(response: string) {
+
     return (
       <View style={Style.llmSelector}>
         <IconButton
           icon='chevron-left'
           size={12}
           onPress={handlePreviousResponse}
-          disabled={responses.length <= 1}
+          disabled={AIResponses.length <= 1}
           style={Style.chevronButtonLeft}
         />
         <Text style={Style.llmName}>{llm}</Text>
@@ -106,7 +84,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           icon='chevron-right'
           size={12}
           onPress={handleNextResponse}
-          disabled={responses.length <= 1}
+          disabled={AIResponses.length <= 1}
           style={Style.chevronButtonRight}
         />
         <IconButton
@@ -121,18 +99,14 @@ export function ChatBubble({ message }: ChatBubbleProps) {
     );
   }
 
-  function messageContent() {
-    return (
-      <View style={Style.messageContent}>
-        <Text style={Style.textView}>{response}</Text>
-      </View>
-    );
-  }
 
   function llmBubble() {
+    let response = (message.message as { [key: string]: string })[llm];
+    if (response === undefined) {
+      response = ''
+    }
     return (
       <View
-        //key={key}
         style={[
           Style.chatBubble,
           [Style.receivedMessage],
@@ -140,9 +114,25 @@ export function ChatBubble({ message }: ChatBubbleProps) {
         ]}
       >
         <View style={Style.messageWrapper}>
-          {llmSelector()}
-          {messageContent()}
+          {llmSelector(response)}
+          <View style={Style.messageContent}>
+            <Text style={Style.textView}>{response}</Text>
+          </View>
         </View>
+      </View>
+    );
+  }
+
+  function loadingBubble() {
+    return (
+      <View
+        style={[
+          Style.chatBubble,
+          Style.receivedMessage,
+          { backgroundColor: colors.surfaceVariant }
+        ]}
+      >
+        <ActivityIndicator />
       </View>
     );
   }

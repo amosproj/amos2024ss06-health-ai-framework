@@ -6,6 +6,7 @@ import { useUser } from 'reactfire';
 import { useActiveChatId, useGetChat } from 'src/frontend/hooks';
 import type { conversationMessage } from 'src/frontend/types';
 import { Style } from './style';
+import { ChatBubble } from '../ChatBubble';
 
 export function RenderChat() {
   const { activeChatId } = useActiveChatId();
@@ -25,23 +26,26 @@ export function RenderChat() {
           if (entries.length > 0) AIResponse = entries[0][1];
         }
         return (
-          <View
-            key={type === 'USER' ? (message as string) + id++ : AIResponse + id++}
-            style={[Style.bubble, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Avatar.Text
-                size={20}
-                label={type === 'AI' ? 'A' : user?.displayName?.charAt(0) || 'U'}
-                style={{ backgroundColor: colors.primary, marginRight: 4 }}
-              />
-              <Text style={{ color: colors.primary, fontWeight: 700 }}>
-                {type === 'AI' ? 'AiLixir' : user?.displayName || 'User'}
-              </Text>
-            </View>
-            <Markdown>{type === 'AI' ? AIResponse : (message as string)}</Markdown>
-          </View>
+          <ChatBubble key={type === 'USER' ? (message as string) + id++ : AIResponse + id++} message={item} />
         );
+        // return (
+        //   <View
+        //     key={type === 'USER' ? (message as string) + id++ : AIResponse + id++}
+        //     style={[Style.bubble, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}
+        //   >
+        //     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        //       <Avatar.Text
+        //         size={20}
+        //         label={type === 'AI' ? 'A' : user?.displayName?.charAt(0) || 'U'}
+        //         style={{ backgroundColor: colors.primary, marginRight: 4 }}
+        //       />
+        //       <Text style={{ color: colors.primary, fontWeight: 700 }}>
+        //         {type === 'AI' ? 'AiLixir' : user?.displayName || 'User'}
+        //       </Text>
+        //     </View>
+        //     <Markdown>{type === 'AI' ? AIResponse : (message as string)}</Markdown>
+        //   </View>
+        // );
       })}
     </>
   );
