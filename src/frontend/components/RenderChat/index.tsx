@@ -14,14 +14,19 @@ export function RenderChat() {
   const { data: user } = useUser();
 
   if (status === 'loading') return <ActivityIndicator />;
-
+  let id = 0;
   return (
     <>
       {chat?.conversation.map((item: conversationMessage) => {
         const { type, message } = item;
+        let AIResponse = '';
+        if (type === 'AI') {
+          const entries = Object.entries(message);
+          if (entries.length > 0) AIResponse = entries[0][1];
+        }
         return (
           <View
-            key={message}
+            key={type === 'USER' ? (message as string) + id++ : AIResponse + id++}
             style={[Style.bubble, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -34,7 +39,7 @@ export function RenderChat() {
                 {type === 'AI' ? 'AiLixir' : user?.displayName || 'User'}
               </Text>
             </View>
-            <Markdown>{message}</Markdown>
+            <Markdown>{type === 'AI' ? AIResponse : (message as string)}</Markdown>
           </View>
         );
       })}
