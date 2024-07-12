@@ -5,7 +5,10 @@ export type LLM = {
   active: boolean;
 };
 
-export type conversationMessage = { [key: string]: string };
+export type conversationMessage = {
+  type: 'USER' | 'AI';
+  message: string | { [key: string]: string };
+};
 
 export type Chat = {
   id?: string;

@@ -112,11 +112,12 @@ export function ChatUI() {
 
   useEffect(() => {
     const create = async () => {
-      const { id } = await createChat({
+      const result = await createChat({
         title: 'NewChat',
         model: ['gpt-4'],
         conversation: []
       });
+      const id = result?.id
       setActiveChatId(id || '');
     };
     if (activeChatId === 'default') create();
