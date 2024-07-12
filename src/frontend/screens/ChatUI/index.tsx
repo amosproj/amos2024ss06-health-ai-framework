@@ -23,6 +23,7 @@ import {
   LLM_MODELS
 } from 'src/frontend/hooks';
 import { styles } from './style';
+import { ChatKeyboard } from 'src/frontend/components/ChatKeyboard';
 
 export type ChatUiProps = {
   chatId: string;
@@ -45,20 +46,7 @@ export function ChatUI() {
   const [isChatTitleUpdated, setIsChatTitleUpdated] = useState(false);
   const [waitingForAnswerOnNewChat, setWaitingForAnswerOnNewChat] = useState<{waiting: boolean, query: string}>({waiting: false, query: ''});
 
-  // ------------- Keyboard and scrolling -------------
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    });
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    });
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
+  // ------------- Keyboard scrolls down when sending a message -------------
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chat?.conversation.length]);
@@ -230,14 +218,15 @@ export function ChatUI() {
         {isSendButtonDisabled && <ActivityIndicator />}
       </ScrollView>
       <View style={[styles.inputContainer, { borderColor: colors.outlineVariant }]}>
-        <TextInput
+        <ChatKeyboard text={text} setText={setText} onSend={sendMessage}/>
+        {/* <TextInput
           style={[styles.input, { borderColor: colors.outlineVariant }]}
           placeholder='Write something here...'
           value={text}
           onChangeText={(text) => setText(text)}
           onSubmitEditing={sendMessage}
           blurOnSubmit={false}
-        />
+        /> */}
         {text.trim() ? (
           <IconButton
             icon='paper-plane'
