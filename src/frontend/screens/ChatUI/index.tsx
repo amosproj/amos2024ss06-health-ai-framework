@@ -19,7 +19,8 @@ import {
   useCreateChat,
   useGetChat,
   useGetResponse,
-  useUpdateChat
+  useUpdateChat,
+  LLM_MODELS
 } from 'src/frontend/hooks';
 import { styles } from './style';
 
@@ -42,6 +43,7 @@ export function ChatUI() {
   const { updateChat } = useUpdateChat(activeChatId);
   const { createChat } = useCreateChat();
   const [isChatTitleUpdated, setIsChatTitleUpdated] = useState(false);
+  const [waitingForAnswerOnNewChat, setWaitingForAnswerOnNewChat] = useState<{waiting: boolean, query: string}>({waiting: false, query: ''});
 
   // ------------- Keyboard and scrolling -------------
   useEffect(() => {
@@ -110,36 +112,106 @@ export function ChatUI() {
     setIsRecording(false); // Reset recording state
   };
 
-  useEffect(() => {
-    const create = async () => {
+  // useEffect(() => {
+  //   const create = async () => {
+  //     const result = await createChat({
+  //       title: 'NewChat',
+  //       model: ['gpt-4'],
+  //       conversation: []
+  //     });
+  //     const id = result?.id;
+  //     setActiveChatId(id || '');
+  //   };
+  //   if (activeChatId === 'default') create();
+  // }, [activeChatId]);
+  const createNewChat = async (queryText: string) => {
+    const title = extractTitle(queryText)
+    const userPrompt = { type: 'USER', message: queryText }; // correct firestore format
+    try {
       const result = await createChat({
-        title: 'NewChat',
-        model: ['gpt-4'],
-        conversation: []
+        title: title,
+        model: [LLM_MODELS[0].key as string],
+        conversation: [userPrompt]
       });
+      // Make set active async and wait for reply
       const id = result?.id;
       setActiveChatId(id || '');
-    };
-    if (activeChatId === 'default') create();
-  }, [activeChatId]);
 
-  async function sendMessage() {
-    setSendButtonDisabled(true);
-    setText('');
-    try {
-      if (!isChatTitleUpdated) {
-        updateChat({ title: text });
-        setIsChatTitleUpdated(true);
-      }
+      return result?.id;
     } catch (error) {
       console.error(error);
     }
+  }
+
+  useEffect(() => {
+    const fetchLLMAnswer = async () => {
+      if (waitingForAnswerOnNewChat.waiting && activeChatId !== 'default') {
+        try {
+          await getLLMAnswer(waitingForAnswerOnNewChat.query);
+        } catch (error) {
+          console.error("Error getting LLM answer:", error);
+          // Here you might want to show an error message to the user
+        } finally {
+          setWaitingForAnswerOnNewChat({waiting: false, query: ''});
+        }
+      }
+    };
+    fetchLLMAnswer();
+  }, [waitingForAnswerOnNewChat.waiting, activeChatId, waitingForAnswerOnNewChat.query]);
+
+
+  function extractTitle(queryText:string) {
+    //TODO: maybe use a more sophisticated method to extract the title later
+    const arr = queryText.split(' ');
+    let title = '';
+    for(let i = 0; i < arr.length && i < 3; i++){
+      title += `${arr[i]} `;
+    }
+    return title;
+  }
+
+  async function getLLMAnswer(queryText: string) {
+    // Create a map
+
+    let response: { [key: string]: string } = {'gpt-4': "Could not retrieve answer from LLM"}
     try {
-      await updateChat({ conversation: arrayUnion({ type: 'USER', message: text }) });
-      const { data } = await getResponse({ query: text, llms: ['gpt-4'] });
-      await updateChat({ conversation: arrayUnion({ type: 'AI', message: data }) });
+      console.log('getting LLM answer for query: ', queryText)
+      const { data } = await getResponse({ query: queryText, llms: ['gpt-4'] });
+      response = data as {[key: string]: string };
+      console.log("Response", data)
     } catch (error) {
       console.error(error as FirebaseError);
+    }
+
+    try {
+      await updateChat({ conversation: arrayUnion({ type: 'AI', message: response }) });
+    } catch (error) {
+      console.error(error as FirebaseError);
+    } finally {
+      setSendButtonDisabled(false);
+    }
+  }
+
+  async function sendMessage() {
+    setSendButtonDisabled(true);
+    const query = text.trim();
+    setText('');
+    try {
+      if (activeChatId === 'default') {
+        const newChatId = await createNewChat(query);
+        if (newChatId) {
+          setActiveChatId(newChatId);
+          setWaitingForAnswerOnNewChat({waiting: true, query});
+        } else {
+          throw new Error("Failed to create new chat");
+        }
+      } else {
+        await updateChat({ conversation: arrayUnion({ type: 'USER', message: query }) });
+        await getLLMAnswer(query);
+      }
+    } catch (error) {
+      console.error("Error in sendMessage:", error);
+      // Here you might want to show an error message to the user
     } finally {
       setSendButtonDisabled(false);
     }
@@ -191,3 +263,4 @@ export function ChatUI() {
     </View>
   );
 }
+

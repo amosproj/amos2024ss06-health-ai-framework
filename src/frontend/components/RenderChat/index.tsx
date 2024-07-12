@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
@@ -28,24 +28,6 @@ export function RenderChat() {
         return (
           <ChatBubble key={type === 'USER' ? (message as string) + id++ : AIResponse + id++} message={item} />
         );
-        // return (
-        //   <View
-        //     key={type === 'USER' ? (message as string) + id++ : AIResponse + id++}
-        //     style={[Style.bubble, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}
-        //   >
-        //     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        //       <Avatar.Text
-        //         size={20}
-        //         label={type === 'AI' ? 'A' : user?.displayName?.charAt(0) || 'U'}
-        //         style={{ backgroundColor: colors.primary, marginRight: 4 }}
-        //       />
-        //       <Text style={{ color: colors.primary, fontWeight: 700 }}>
-        //         {type === 'AI' ? 'AiLixir' : user?.displayName || 'User'}
-        //       </Text>
-        //     </View>
-        //     <Markdown>{type === 'AI' ? AIResponse : (message as string)}</Markdown>
-        //   </View>
-        // );
       })}
     </>
   );
