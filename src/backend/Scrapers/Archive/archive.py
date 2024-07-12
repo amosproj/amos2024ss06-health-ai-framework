@@ -70,7 +70,7 @@ class ArchiveScraper(BaseScraper):
 
         This method is used for a single query with multiple keywords.
         """
-        arxiv_links = ArchiveScraper.search_arxiv_ids(' '.join(keywords), max_results)
+        arxiv_links = ArchiveScraper.search_arxiv_ids(' AND '.join(keywords), max_results)
         return [cls.extract_arxiv_id_from_url(url) for url in arxiv_links]
 
     @classmethod
