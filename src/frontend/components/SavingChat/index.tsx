@@ -30,6 +30,7 @@ export function SavingChat() {
       }
     };
 
+    // Request permissions
     requestPermissions();
   }, []);
 
@@ -42,6 +43,7 @@ export function SavingChat() {
         return;
       }
 
+      // Get chat content
       const { formattedChatContent, fileName, path } = getChatContent();
 
       // Copy to clipboard
@@ -66,28 +68,36 @@ export function SavingChat() {
     const formattedChatContent = chat.conversation
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       .map((conversation: any) => {
+        // User message
         if (conversation.type === 'USER') {
-          return `(${messageIndex++})\nUser:\n${conversation.message}\n`;
+            return `(${messageIndex++})\nUser:\n${conversation.message}\n`;
         }
+        // AI message
         if (conversation.type === 'AI') {
-          const aiResponses = LLM_MODELS.map(({ key, name }) => {
-            if (conversation.message[key]) {
-              //  && conversation.message[key] !== 'Model Not Found'
-              return `${name}:\n${conversation.message[key]}`;
-            }
-            return '';
-          })
+            // Get AI responses
+            const aiResponses = LLM_MODELS.map(({ key, name }) => {
+                if (conversation.message[key]) {
+                    //  && conversation.message[key] !== 'Model Not Found'
+                    return `${name}:\n${conversation.message[key]}`;
+                }
+                return '';
+            })
             .filter(Boolean)
             .join('\n\n');
-          return aiResponses ? `${aiResponses}\n\n` : '';
+
+            // Return AI responses
+            return aiResponses ? `${aiResponses}\n\n` : '';
         }
         return '';
       })
       .join('\n');
 
+    // Get metadata
     const metadata = getMetadata();
+    // Combine metadata and chat content
     const fullContent = `${metadata}\n${formattedChatContent}`;
 
+    // Create file name and path
     const now = new Date();
     const fileName = `chat_${now.toISOString().replace(/[:T.]/g, '-').slice(0, -5)}.txt`;
     const path = `${RNFS.DownloadDirectoryPath}/${fileName}`;
