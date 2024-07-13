@@ -1,7 +1,7 @@
-import { Style } from './style';
-import { IconButton } from 'react-native-paper';
 import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
+import { IconButton } from 'react-native-paper';
+import { Style } from './style';
 
 export function SpeakButton(props: { response: string }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -34,17 +34,17 @@ export function SpeakButton(props: { response: string }) {
         pitch: 1,
         rate: 1,
         onDone: () => setIsSpeaking(false),
-        onError: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false)
       });
     }
   };
 
   return (
     <IconButton
-      icon= {!isSpeaking ? 'volume-up' : 'volume-mute'}
+      icon={!isSpeaking ? 'volume-up' : 'volume-mute'}
       size={16}
       onPress={handleSpeech}
       style={Style.speakButton}
     />
-  )
+  );
 }

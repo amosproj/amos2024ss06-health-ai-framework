@@ -4,8 +4,8 @@ import Markdown from 'react-native-markdown-display';
 import { ActivityIndicator, Button, IconButton, useTheme } from 'react-native-paper';
 import type { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import type { conversationMessage } from 'src/frontend/types';
-import { Style } from './style';
 import { SpeakButton } from '../SpeakButton';
+import { Style } from './style';
 
 type ChatBubbleProps = {
   message: conversationMessage;
@@ -19,8 +19,10 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   const AIResponses = !isUser ? Object.entries(message.message) : [];
 
   // set default LLM to first LLM that has a response
-  const [llm, setLLM] = useState( AIResponses.length > 0 ?
-    AIResponses.find(([key, value]) => value !== 'Model Not Found')?.[0] || AIResponses[0][0] : 'error'
+  const [llm, setLLM] = useState(
+    AIResponses.length > 0
+      ? AIResponses.find(([key, value]) => value !== 'Model Not Found')?.[0] || AIResponses[0][0]
+      : 'error'
   );
 
   //---------------Functions for buttons----------------
@@ -43,8 +45,6 @@ export function ChatBubble({ message }: ChatBubbleProps) {
     const prevIndex = (curIndex - 1 + AIResponses.length) % AIResponses.length;
     setLLM(AIResponses[prevIndex][0]);
   };
-
-
 
   //---------------Render Chat Bubble----------------
   if (isUser) {
@@ -91,7 +91,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           disabled={AIResponses.length <= 1}
           style={Style.chevronButtonRight}
         />
-        <SpeakButton response={response}/>
+        <SpeakButton response={response} />
       </View>
     );
   }

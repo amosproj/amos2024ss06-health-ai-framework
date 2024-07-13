@@ -153,27 +153,31 @@ export function ChatUI() {
   }
 
   // ------------- Helper functions -------------
-  function initResponses(){
-    const response: { [key: string]: string } = Object.keys(activeLLMs).reduce((acc, key) => {
-      if (activeLLMs[key].active) {
-        acc[key] = 'Could not retrieve answer from LLM';
-      }
-      return acc;
-    }, {} as { [key: string]: string });
-    if(Object.keys(response).length === 0) response['gpt-4'] = 'Could not retrieve answer from LLM';
+  function initResponses() {
+    const response: { [key: string]: string } = Object.keys(activeLLMs).reduce(
+      (acc, key) => {
+        if (activeLLMs[key].active) {
+          acc[key] = 'Could not retrieve answer from LLM';
+        }
+        return acc;
+      },
+      {} as { [key: string]: string }
+    );
+    if (Object.keys(response).length === 0)
+      response['gpt-4'] = 'Could not retrieve answer from LLM';
     return response;
   }
 
   // returns currently selected LLMs and 'gpt-4' if no LLM is selected
   function extractActiveLLMNames() {
     const llms: string[] = [];
-    for(const llm of Object.keys(activeLLMs)) {
-      if(activeLLMs[llm].active) {
+    for (const llm of Object.keys(activeLLMs)) {
+      if (activeLLMs[llm].active) {
         llms.push(llm);
       }
     }
 
-    if(llms.length === 0) llms.push('gpt-4');
+    if (llms.length === 0) llms.push('gpt-4');
     return llms;
   }
 
