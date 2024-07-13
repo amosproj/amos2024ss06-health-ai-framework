@@ -11,6 +11,13 @@ import { ActiveChatProvider, FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
 import { AppRoutes } from './routes';
 
+// Suppress warnings
+LogBox.ignoreLogs([
+  'Require cycle:',
+  '`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.',
+  '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.'
+]);
+
 export function App() {
   // load fonts and other assets here
   const [isFontLoaded] = useFonts({

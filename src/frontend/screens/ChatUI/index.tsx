@@ -144,7 +144,6 @@ export function ChatUI() {
     try {
       //get active LLMS in correct format
       const llms = extractActiveLLMNames();
-      console.log('getResponse for llms:', llms);
       const { data } = await getResponse({ query: queryText, llms: llms });
       response = data as { [key: string]: string };
     } catch (error) {

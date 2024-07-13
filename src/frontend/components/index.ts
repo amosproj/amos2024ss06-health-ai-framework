@@ -12,3 +12,4 @@ export * from './RenderChat';
 export * from './ChatKeyboard';
 export * from './VoiceButton';
 export * from './SpeakButton';
+export * from './SavingChat';
