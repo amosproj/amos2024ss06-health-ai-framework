@@ -21,14 +21,10 @@ export const DropdownMenu = () => {
   const activeLLMsNames = Object.values(activeLLMs)
     .filter((llm) => llm.active)
     .map((llm) => llm.name);
-  let buttonLabel = activeLLMsCount === 1 ? activeLLMsNames[0] : `${activeLLMsCount} LLMs`;
 
-  // If no chatId is selected, set button label to "SELECT"
-  if (chat === undefined) {
-    buttonLabel = '';
-  }
+  const buttonLabel = activeLLMsCount === 1 ? activeLLMsNames[0] : `${activeLLMsCount} LLMs`;
 
-  // Determine if the button should be disabled
+  // Determine if the button should be disabledHello
   const isButtonDisabled = chat === undefined || activeLLMsCount === 0;
 
   return (

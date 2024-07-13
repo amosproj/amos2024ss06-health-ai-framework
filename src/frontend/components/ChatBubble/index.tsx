@@ -18,8 +18,10 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   const isUser = message.type === 'USER';
   const AIResponses = !isUser ? Object.entries(message.message) : [];
 
-  // take the key of the map as the current LLM
-  const [llm, setLLM] = useState(AIResponses.length > 0 ? AIResponses[0][0] : 'error');
+  // set default LLM to first LLM that has a response
+  const [llm, setLLM] = useState( AIResponses.length > 0 ?
+    AIResponses.find(([key, value]) => value !== 'Model Not Found')?.[0] || AIResponses[0][0] : 'error'
+  );
 
   //---------------Functions for buttons----------------
   const handleNextResponse = () => {
@@ -41,6 +43,8 @@ export function ChatBubble({ message }: ChatBubbleProps) {
     const prevIndex = (curIndex - 1 + AIResponses.length) % AIResponses.length;
     setLLM(AIResponses[prevIndex][0]);
   };
+
+
 
   //---------------Render Chat Bubble----------------
   if (isUser) {

@@ -13,6 +13,7 @@ import {
   useCreateChat,
   useGetChat,
   useGetResponse,
+  useLLMs,
   useUpdateChat
 } from 'src/frontend/hooks';
 import { styles } from './style';
@@ -31,6 +32,7 @@ export function ChatUI() {
   const getResponse = useGetResponse(); // LLM firebase function
   const { updateChat } = useUpdateChat(activeChatId); // update chat in firestore
   const { createChat } = useCreateChat();
+  const { activeLLMs } = useLLMs(activeChatId || 'default');
   // Flag to wait for LLM answer when a new chat is created
   const [waitingForAnswerOnNewChat, setWaitingForAnswerOnNewChat] = useState<{
     waiting: boolean;
@@ -126,11 +128,15 @@ export function ChatUI() {
 
   async function getLLMAnswer(queryText: string) {
     // default response
-    let response: { [key: string]: string } = { 'gpt-4': 'Could not retrieve answer from LLM' };
+
+    let response: { [key: string]: string } = initResponses();
 
     // get Response from LLM
     try {
-      const { data } = await getResponse({ query: queryText, llms: ['gpt-4'] });
+      //get active LLMS in correct format
+      const llms = extractActiveLLMNames();
+      console.log('getResponse for llms:', llms);
+      const { data } = await getResponse({ query: queryText, llms: llms });
       response = data as { [key: string]: string };
     } catch (error) {
       console.error(error as FirebaseError);
@@ -146,6 +152,31 @@ export function ChatUI() {
     }
   }
 
+  // ------------- Helper functions -------------
+  function initResponses(){
+    const response: { [key: string]: string } = Object.keys(activeLLMs).reduce((acc, key) => {
+      if (activeLLMs[key].active) {
+        acc[key] = 'Could not retrieve answer from LLM';
+      }
+      return acc;
+    }, {} as { [key: string]: string });
+    if(Object.keys(response).length === 0) response['gpt-4'] = 'Could not retrieve answer from LLM';
+    return response;
+  }
+
+  // returns currently selected LLMs and 'gpt-4' if no LLM is selected
+  function extractActiveLLMNames() {
+    const llms: string[] = [];
+    for(const llm of Object.keys(activeLLMs)) {
+      if(activeLLMs[llm].active) {
+        llms.push(llm);
+      }
+    }
+
+    if(llms.length === 0) llms.push('gpt-4');
+    return llms;
+  }
+
   function extractTitle(queryText: string) {
     //TODO: maybe use a more sophisticated method to extract the title later
     const arr = queryText.split(' ');
@@ -155,6 +186,7 @@ export function ChatUI() {
     }
     return title;
   }
+  // ------------- Render -------------
 
   return (
     <View style={styles.container}>
