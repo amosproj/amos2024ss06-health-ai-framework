@@ -11,3 +11,4 @@ export * from './ChatBubble';
 export * from './RenderChat';
 export * from './ChatKeyboard';
 export * from './VoiceButton';
+export * from './SpeakButton';

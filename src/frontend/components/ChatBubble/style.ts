@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
 export const Style = StyleSheet.create({
   chevronButtonLeft: {
@@ -52,10 +51,6 @@ export const Style = StyleSheet.create({
   },
   receivedMessage: {
     alignSelf: 'flex-start'
-  },
-  speakButton: {
-    alignSelf: 'center',
-    margin: 0
   },
   chatBubble: {
     flexDirection: 'row',

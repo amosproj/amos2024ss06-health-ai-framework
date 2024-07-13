@@ -1,4 +1,3 @@
-import * as Speech from 'expo-speech';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
@@ -6,6 +5,7 @@ import { ActivityIndicator, Button, IconButton, useTheme } from 'react-native-pa
 import type { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import type { conversationMessage } from 'src/frontend/types';
 import { Style } from './style';
+import { SpeakButton } from '../SpeakButton';
 
 type ChatBubbleProps = {
   message: conversationMessage;
@@ -91,14 +91,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           disabled={AIResponses.length <= 1}
           style={Style.chevronButtonRight}
         />
-        <IconButton
-          icon='volume-up'
-          size={16}
-          onPress={() => {
-            Speech.speak(response ? response : '', { language: 'en-US', pitch: 1, rate: 1 });
-          }}
-          style={Style.speakButton}
-        />
+        <SpeakButton response={response}/>
       </View>
     );
   }
