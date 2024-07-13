@@ -9,6 +9,13 @@ import { Vibration } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 
+/**
+ * This file contains the VoiceButton component which is used to record voice messages.
+ *
+ * The user should be able to hold the button to record a voice message and release the button to stop recording.
+ * The recorded message should be converted to text and displayed in the chat input field.
+ */
+
 type VoiceButtonProps = {
   text: string;
   setText: (text: string) => void;

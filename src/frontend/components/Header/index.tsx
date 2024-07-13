@@ -6,10 +6,20 @@ import React, { useEffect } from 'react';
 import { Alert, Platform, Pressable, View } from 'react-native';
 import RNFS from 'react-native-fs';
 import { IconButton, Surface, Text, useTheme } from 'react-native-paper';
-import { useActiveChatId, useGetChat } from 'src/frontend/hooks';
+import { LLM_MODELS, useActiveChatId, useGetChat } from 'src/frontend/hooks';
 import { AilixirLogo } from 'src/frontend/icons';
 import { DropdownMenu } from '../DropdownMenu';
 import { Style } from './style';
+
+/**
+ * This file holds the code for rendering the header of the Chat UI.
+ *
+ * It contains the logic for ...
+ * - Opening the Drawer
+ * - Selecting the LLM model
+ * - Saving the chat to the device and clipboard.
+ */
+
 
 export function Header(props: DrawerHeaderProps) {
   const { colors } = useTheme();
@@ -20,9 +30,11 @@ export function Header(props: DrawerHeaderProps) {
   // Determine if the button should be disabled
   const isButtonDisabled = chat === undefined;
 
+  // Request media library permissions
   useEffect(() => {
     const requestPermissions = async () => {
       if (Platform.OS === 'android') {
+        // Request media library permissions
         const { status } = await MediaLibrary.requestPermissionsAsync();
         if (status !== 'granted') {
           Alert.alert('Permission Denied', 'Media library permissions are required.');
@@ -34,14 +46,36 @@ export function Header(props: DrawerHeaderProps) {
   }, []);
 
   // Saving to download and clipboard
-  const handleAction = async () => {
+  const handleSaving = async () => {
     try {
+      // Check if chat is available
       if (!chat || !chat.conversation || chat.conversation.length === 0) {
         Alert.alert('No Chat Available', 'There is no chat content available.');
         return;
       }
 
-      const createdAtDate = new Date(chat.createdAt.toDate());
+      const { formattedChatContent, fileName, path } = getChatContent();
+
+      // Copy to clipboard
+      await Clipboard.setStringAsync(formattedChatContent);
+      // Save to file
+      await RNFS.writeFile(path, formattedChatContent, 'utf8');
+      
+      // Inform user
+      Alert.alert(
+        'Chat Saved',
+        `Chat saved to Downloads folder as ${fileName} and also copied to clipboard.`
+      );
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'Failed to perform action.');
+    }
+  };
+
+  // Create metadata for the chat
+  function getMetadata() {
+    const createdAtDate = new Date(chat.createdAt.toDate());
+    // Format created at date
       const formattedCreatedAt = new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
         month: 'long',
@@ -52,45 +86,44 @@ export function Header(props: DrawerHeaderProps) {
         timeZoneName: 'short'
       }).format(createdAtDate);
 
-      const metadata = `title: ${
-        chat.title
-      }\ncreated: ${formattedCreatedAt}\nmodels: ${chat.model.toString()}\n\n\n`;
+      // Create metadata
+      const metadata = `Title: ${chat.title}\nCreated: ${formattedCreatedAt}\n\n\n`;
+      return metadata;
+  }
 
-      const formattedChatContent = chat.conversation
-        .map((line) => {
-          return Object.entries(line)
-            .map(([key, value]) => `${key}: '${value}'`)
-            .join('\n');
-        })
-        .join('\n\n');
+  // Get chat content
+  function getChatContent() {
+    const formattedChatContent = chat.conversation
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    .map((message: any) => {
+      if (message.type === 'USER') {
+        return `User: ${message.message}\n`;
+      }
+      if (message.type === 'AI') {
+        const aiResponses = LLM_MODELS
+          .map(({ key, name }) => {
+            if (message[key] && message[key] !== "Model Not Found") {
+              return `${name}:\n${message[key]}`;
+            }
+            return null;
+          })
+          .filter(Boolean)
+          .join('\n\n');
+        return aiResponses ? `${aiResponses}\n\n` : '';
+      }
+      return '';
+    })
+    .join('\n');
 
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
+    const metadata = getMetadata();
+    const fullContent = `${metadata}\n${formattedChatContent}`;
 
-      const fileName = `chat_${year}-${month}-${day}_${hours}-${minutes}-${seconds}.txt`;
+    const now = new Date();
+    const fileName = `chat_${now.toISOString().replace(/[:T.]/g, '-').slice(0, -5)}.txt`;
+    const path = `${RNFS.DownloadDirectoryPath}/${fileName}`;
 
-      const path = `${RNFS.DownloadDirectoryPath}/${fileName}`;
-
-      const contentToSave = metadata + formattedChatContent;
-
-      // Copy to clipboard
-      await Clipboard.setStringAsync(contentToSave);
-      // Save to file
-      await RNFS.writeFile(path, contentToSave, 'utf8');
-      Alert.alert(
-        'Chat Saved',
-        `Chat saved to Downloads folder as ${fileName} and also to clipboard.`
-      );
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'Failed to perform action.');
-    }
-  };
+    return { formattedChatContent: fullContent, fileName, path };
+  }
 
   return (
     <Surface style={Style.container} elevation={1}>
@@ -105,7 +138,7 @@ export function Header(props: DrawerHeaderProps) {
       </View>
       <View style={{ flexDirection: 'row' }}>
         <DropdownMenu />
-        <Pressable onPress={handleAction} style={Style.actionButton} disabled={isButtonDisabled}>
+        <Pressable onPress={handleSaving} style={Style.actionButton} disabled={isButtonDisabled}>
           <IconButton
             icon='save'
             size={24}

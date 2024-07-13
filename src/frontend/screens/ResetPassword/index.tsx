@@ -15,6 +15,12 @@ import type { AuthStackParams } from 'src/frontend/routes/AuthRoutes';
 import * as Yup from 'yup';
 import { Style } from './style';
 
+/**
+ * This file renders the Reset Password screen.
+ *
+ * This screen allows the user to reset their password after clicking on the link in the password reset email.
+ */
+
 type ResetPasswordFormData = {
   password: string;
   confirmPassword: string;

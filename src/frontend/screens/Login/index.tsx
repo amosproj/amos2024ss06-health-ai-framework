@@ -13,6 +13,12 @@ import type { AppRoutesParams } from 'src/frontend/routes';
 import * as Yup from 'yup';
 import { Style } from './style';
 
+/**
+ * This file renders the Login screen.
+ *
+ * This screen allows the user to input their email and password to log in.
+ */
+
 type LoginFormData = {
   email: string;
   password: string;

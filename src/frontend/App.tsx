@@ -11,12 +11,6 @@ import { ActiveChatProvider, FirebaseProvider, UpdateApp } from './components';
 import { Fonts, LightTheme } from './helpers';
 import { AppRoutes } from './routes';
 
-LogBox.ignoreLogs([
-  'Require cycle:',
-  '`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.',
-  '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.'
-]);
-
 export function App() {
   // load fonts and other assets here
   const [isFontLoaded] = useFonts({
@@ -36,12 +30,14 @@ export function App() {
     prepare();
   }, []);
 
+  // hide splash screen after fonts are loaded
   const onLayoutRootView = useCallback(async () => {
     if (isFontLoaded) await hideAsync();
   }, [isFontLoaded]);
 
   if (!isFontLoaded) return null;
 
+  // Display the app
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>

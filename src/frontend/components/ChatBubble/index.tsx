@@ -7,6 +7,15 @@ import type { conversationMessage } from 'src/frontend/types';
 import { SpeakButton } from '../SpeakButton';
 import { Style } from './style';
 
+/**
+ * This file renders a chat bubble in the chat UI.
+ *
+ * Depending on whether the message is from the user or the AI,
+ * the chat bubble will be styled differently.
+ */
+
+
+
 type ChatBubbleProps = {
   message: conversationMessage;
 };

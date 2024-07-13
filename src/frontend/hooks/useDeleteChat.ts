@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { useFirestore, useUser } from 'reactfire';
 import { FirestoreCollections } from '../helpers';
 
+/**
+ * This hook is used to delete a chat from firestore.
+ */
+
 export function useDeleteChat(chatId: string) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
