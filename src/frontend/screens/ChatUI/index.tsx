@@ -23,14 +23,15 @@ export type ChatUiProps = {
 
 export function ChatUI() {
   const { colors } = useTheme();
-  const scrollViewRef = useRef<ScrollView>(null);
-  const { activeChatId, setActiveChatId } = useActiveChatId();
-  const { chat } = useGetChat(activeChatId);
-  const [text, setText] = useState('');
+  const scrollViewRef = useRef<ScrollView>(null); // Scrolling down chat when message is sent
+  const { activeChatId, setActiveChatId } = useActiveChatId(); // chat id of current chat
+  const { chat } = useGetChat(activeChatId); // current displayed chat
+  const [text, setText] = useState(''); //text in the input field
   const [isSendButtonDisabled, setSendButtonDisabled] = useState(false);
-  const getResponse = useGetResponse();
-  const { updateChat } = useUpdateChat(activeChatId);
+  const getResponse = useGetResponse(); // LLM firebase function
+  const { updateChat } = useUpdateChat(activeChatId); // update chat in firestore
   const { createChat } = useCreateChat();
+  // Flag to wait for LLM answer when a new chat is created
   const [waitingForAnswerOnNewChat, setWaitingForAnswerOnNewChat] = useState<{
     waiting: boolean;
     query: string;
