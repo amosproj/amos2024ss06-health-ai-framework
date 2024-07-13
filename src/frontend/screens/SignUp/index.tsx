@@ -13,6 +13,12 @@ import type { AppRoutesParams } from 'src/frontend/routes';
 import * as Yup from 'yup';
 import { Style } from './style';
 
+/**
+ * This file renders the Sign Up screen.
+ *
+ * This screen allows the user to input their name, email, and password to create an account.
+ */
+
 type SignUpFormData = {
   name: string;
   email: string;

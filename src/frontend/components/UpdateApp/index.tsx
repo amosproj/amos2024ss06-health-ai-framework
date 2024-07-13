@@ -3,6 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Button, Dialog, Text, useTheme } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 
+/**
+ * This file renders a dialog to prompt the user to update the app.
+ */
+
 export function UpdateApp() {
   const theme = useTheme();
   const [isOpen, setIsOpen] = useState(false);

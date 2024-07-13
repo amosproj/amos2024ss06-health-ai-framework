@@ -8,6 +8,12 @@ import type { conversationMessage } from 'src/frontend/types';
 import { ChatBubble } from '../ChatBubble';
 import { Style } from './style';
 
+/**
+ * This file handles rendering all the different chat bubbles from a saved chat in firestore
+ *
+ * There is case distinction between AI and user messages because the storage format is different
+ */
+
 export function RenderChat() {
   const { activeChatId } = useActiveChatId();
   const { chat, status } = useGetChat(activeChatId);

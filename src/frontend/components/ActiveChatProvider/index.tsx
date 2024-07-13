@@ -7,6 +7,10 @@ import React, {
   type SetStateAction
 } from 'react';
 
+/**
+ * This file is a context provider for the active chat id.
+ */
+
 // Define the shape of the context value
 interface ChatContextValue {
   activeChatId: string;

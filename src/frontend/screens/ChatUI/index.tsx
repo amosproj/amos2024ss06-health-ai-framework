@@ -18,6 +18,15 @@ import {
 } from 'src/frontend/hooks';
 import { styles } from './style';
 
+/**
+ * This file renders the chat UI in the main screen.
+ *
+ * Current Active Chat is given by @activeChatId and retrieved from the firestore DB
+ * If a user sends a message, the chat is updated with the new message
+ * and we need to get an LLM response for every selected LLM in the dropdown
+ * Contains Error handling for LLM response retrieval
+ */
+
 export type ChatUiProps = {
   chatId: string;
 };
@@ -135,7 +144,6 @@ export function ChatUI() {
     try {
       //get active LLMS in correct format
       const llms = extractActiveLLMNames();
-      console.log('getResponse for llms:', llms);
       const { data } = await getResponse({ query: queryText, llms: llms });
       response = data as { [key: string]: string };
     } catch (error) {
@@ -153,6 +161,7 @@ export function ChatUI() {
   }
 
   // ------------- Helper functions -------------
+  // get default responses for all active LLMs if response retrieval fails
   function initResponses() {
     const response: { [key: string]: string } = Object.keys(activeLLMs).reduce(
       (acc, key) => {
@@ -168,7 +177,7 @@ export function ChatUI() {
     return response;
   }
 
-  // returns currently selected LLMs and 'gpt-4' if no LLM is selected
+  // returns currently active selected LLMs in dropdown and 'gpt-4' if no LLM is selected
   function extractActiveLLMNames() {
     const llms: string[] = [];
     for (const llm of Object.keys(activeLLMs)) {
@@ -181,6 +190,7 @@ export function ChatUI() {
     return llms;
   }
 
+  // Extract title to be displayed for a chat in the drawer menu
   function extractTitle(queryText: string) {
     //TODO: maybe use a more sophisticated method to extract the title later
     const arr = queryText.split(' ');

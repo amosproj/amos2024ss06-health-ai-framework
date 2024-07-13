@@ -6,6 +6,10 @@ import {
   HelperText
 } from 'react-native-paper';
 
+/**
+ * This file renders a text input field.
+ */
+
 type TextInputProps = BaseTextInputProps & {
   fieldName: string; // The name of the field
   submitOnEnter?: boolean; // Whether to submit the form when Enter is pressed

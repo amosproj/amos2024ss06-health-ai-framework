@@ -7,6 +7,10 @@ import { getFunctions } from 'firebase/functions';
 import { type ReactNode, useEffect, useMemo } from 'react';
 import { AuthProvider, FirebaseAppProvider, FirestoreProvider, FunctionsProvider } from 'reactfire';
 
+/**
+ * This file provides global variables for using firebase hooks
+ */
+
 type FirebaseProviderProps = {
   children: ReactNode;
 };

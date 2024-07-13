@@ -4,6 +4,12 @@ import { useFirestore, useUser } from 'reactfire';
 import { FirestoreCollections } from '../helpers';
 import type { Chat } from '../types';
 
+/**
+ * This hook is used to update a chat in firestore.
+ *
+ * E.g. with updated conversations with an LLM
+ */
+
 export function useUpdateChat(chatId: string) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -20,6 +20,12 @@ import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
 
 /**
+ * This file renders the DrawerMenu which can be opened from the ChatUI screen.
+ *
+ * User can switch between chats, delete chats and create new chats
+ */
+
+/**
  * NOTE: needs to be called DrawerMenu because Drawer is already defined in react-native-paper
  */
 export function DrawerMenu() {
@@ -38,12 +44,8 @@ export function DrawerMenu() {
   };
 
   const { navigate } = useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
-  const { createChat } = useCreateChat();
-  const { activeChatId, setActiveChatId } = useActiveChatId();
+  const { setActiveChatId } = useActiveChatId();
   const createNewChat = () => {
-    // Implement create new chat functionality
-    //const newChat : Chat = {title: 'New Chat', model: [LLM_MODELS[0].key], conversation: [], createdAt: Timestamp.now() };
-    //createChat(newChat);
     setActiveChatId('default');
     navigate('Main', { screen: Screens.Chat, params: { chatId: 'default' } }); // only used to close drawer
   };
@@ -161,9 +163,7 @@ interface DrawerFooterProps {
   onLogoutPress: () => void;
 }
 
-//TODO: fix that the footer doesn't get moved upwards when keyboard is opened
 const DrawerFooter: React.FC<DrawerFooterProps> = ({ userName, onProfilePress, onLogoutPress }) => {
-  const { colors } = useTheme();
   return (
     <View style={[Style.footer]}>
       <IconButton icon='user-alt' onPress={onProfilePress} />

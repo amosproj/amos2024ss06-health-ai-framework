@@ -9,8 +9,15 @@ import type { MainDrawerParams } from 'src/frontend/routes/MainRoutes';
 import type { Chat } from 'src/frontend/types';
 import { Style } from './style';
 
+/**
+ * This file renders a dropdown menu in the chat UI Header.
+ *
+ * You can select which LLM should be used for the current chat to generate answers.
+ * The Menu is based on the current active chat given by @activeChatId.
+ * Otherwise if no chat is active it will be disabled.
+ */
+
 export const DropdownMenu = () => {
-  // get chatID after opening app copilot help
   const [isVisible, setIsVisible] = useState(false);
   const { activeChatId, setActiveChatId } = useActiveChatId();
   const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');

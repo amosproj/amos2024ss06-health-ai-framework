@@ -13,6 +13,13 @@ import uuid from 'react-native-uuid';
 import type { UserProfile } from 'src/frontend/types';
 import { Style } from './style';
 
+/**
+ * This file renders a form to input personal information.
+ *
+ * This form allows the user to input their name, style instructions, and personalized instructions.
+ * These informations should be used by the bot to generate personalized responses.
+ */
+
 const PersonalInfoForm = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);

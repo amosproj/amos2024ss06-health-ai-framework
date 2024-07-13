@@ -8,6 +8,13 @@ import { Screens } from 'src/frontend/helpers';
 import { useActiveChatId, useDeleteChat, useGetChat } from 'src/frontend/hooks';
 import type { AppRoutesParams } from 'src/frontend/routes';
 
+/**
+ * This file renders a ChatItem in the Drawer
+ *
+ * When the ChatItem is pressed, the chat is opened in the main screen.
+ * When the ChatItem is long pressed, a menu is opened to delete the chat.
+ */
+
 export type ChatItemProps = {
   id: string;
   title: string;
@@ -28,8 +35,6 @@ export function ChatItem(props: ChatItemProps) {
       Keyboard.dismiss();
     }
   }, [drawerStatus]);
-
-  const handleArchive = async () => {};
 
   return (
     <View>
@@ -55,7 +60,6 @@ export function ChatItem(props: ChatItemProps) {
           </Button>
         }
       >
-        <Menu.Item leadingIcon='archive' onPress={handleArchive} title='Archive' />
         <Menu.Item leadingIcon='trash' onPress={handleDelete} title='Delete' />
       </Menu>
     </View>

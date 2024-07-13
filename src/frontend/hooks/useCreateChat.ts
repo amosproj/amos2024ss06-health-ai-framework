@@ -4,6 +4,10 @@ import { useFirestore, useUser } from 'reactfire';
 import { FirestoreCollections } from '../helpers';
 import type { Chat } from '../types';
 
+/**
+ * This hook is used to create a new chat in firestore.
+ */
+
 export function useCreateChat() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);

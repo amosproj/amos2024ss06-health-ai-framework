@@ -6,6 +6,12 @@ import { useGetChat } from 'src/frontend/hooks';
 import type { LLM } from 'src/frontend/types';
 import { LLM_MODELS } from './useLLMsTypes';
 
+/**
+ * This hook is used to get the currently active selected LLMs.
+ *
+ * This is used to toggle the LLMs for a chat in a menu
+ */
+
 export function useLLMs(chatId: string) {
   const { chat, status } = useGetChat(chatId);
   const { data: users } = useUser();

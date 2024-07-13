@@ -11,6 +11,12 @@ import type { AppRoutesParams } from 'src/frontend/routes';
 import { LogInWithGoogle } from './LogInWithGoogle';
 import { Style } from './style';
 
+/**
+ * This file renders the Landing screen.
+ *
+ * This screen allows the user to log in with Google, sign up with email, or log in with email.
+ */
+
 export function Landing() {
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ['50%'], []);

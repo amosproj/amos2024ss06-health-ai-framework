@@ -10,11 +10,14 @@ export const Style = StyleSheet.create({
     minHeight: 64,
     backgroundColor: '#fff'
   },
+  drawer: {
+    marginRight: 12
+  },
   viewContainer: {
     flexDirection: 'row',
     alignItems: 'center'
   },
-  actionButton: {
-    marginVertical: -4
+  buttons: {
+    flexDirection: 'row'
   }
 });
