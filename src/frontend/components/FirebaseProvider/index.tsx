@@ -11,7 +11,6 @@ import { AuthProvider, FirebaseAppProvider, FirestoreProvider, FunctionsProvider
  * This file provides global variables for using firebase hooks
  */
 
-
 type FirebaseProviderProps = {
   children: ReactNode;
 };

@@ -25,7 +25,6 @@ import type { Chat } from 'src/frontend/types';
  * User can switch between chats, delete chats and create new chats
  */
 
-
 /**
  * NOTE: needs to be called DrawerMenu because Drawer is already defined in react-native-paper
  */
@@ -163,7 +162,6 @@ interface DrawerFooterProps {
   onProfilePress: () => void;
   onLogoutPress: () => void;
 }
-
 
 const DrawerFooter: React.FC<DrawerFooterProps> = ({ userName, onProfilePress, onLogoutPress }) => {
   return (

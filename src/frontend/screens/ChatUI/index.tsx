@@ -27,7 +27,6 @@ import { styles } from './style';
  * Contains Error handling for LLM response retrieval
  */
 
-
 export type ChatUiProps = {
   chatId: string;
 };

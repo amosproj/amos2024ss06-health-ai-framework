@@ -15,8 +15,6 @@ import type { AppRoutesParams } from 'src/frontend/routes';
  * When the ChatItem is long pressed, a menu is opened to delete the chat.
  */
 
-
-
 export type ChatItemProps = {
   id: string;
   title: string;
@@ -37,7 +35,6 @@ export function ChatItem(props: ChatItemProps) {
       Keyboard.dismiss();
     }
   }, [drawerStatus]);
-
 
   return (
     <View>

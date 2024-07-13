@@ -14,7 +14,6 @@ import { Style } from './style';
  * There is case distinction between AI and user messages because the storage format is different
  */
 
-
 export function RenderChat() {
   const { activeChatId } = useActiveChatId();
   const { chat, status } = useGetChat(activeChatId);

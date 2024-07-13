@@ -20,7 +20,6 @@ import { Style } from './style';
  * - Saving the chat to the device and clipboard.
  */
 
-
 export function Header(props: DrawerHeaderProps) {
   const { colors } = useTheme();
   const { navigation } = props;
@@ -60,7 +59,7 @@ export function Header(props: DrawerHeaderProps) {
       await Clipboard.setStringAsync(formattedChatContent);
       // Save to file
       await RNFS.writeFile(path, formattedChatContent, 'utf8');
-      
+
       // Inform user
       Alert.alert(
         'Chat Saved',
@@ -76,44 +75,43 @@ export function Header(props: DrawerHeaderProps) {
   function getMetadata() {
     const createdAtDate = new Date(chat.createdAt.toDate());
     // Format created at date
-      const formattedCreatedAt = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        timeZoneName: 'short'
-      }).format(createdAtDate);
+    const formattedCreatedAt = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      timeZoneName: 'short'
+    }).format(createdAtDate);
 
-      // Create metadata
-      const metadata = `Title: ${chat.title}\nCreated: ${formattedCreatedAt}\n\n\n`;
-      return metadata;
+    // Create metadata
+    const metadata = `Title: ${chat.title}\nCreated: ${formattedCreatedAt}\n\n\n`;
+    return metadata;
   }
 
   // Get chat content
   function getChatContent() {
     const formattedChatContent = chat.conversation
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    .map((message: any) => {
-      if (message.type === 'USER') {
-        return `User: ${message.message}\n`;
-      }
-      if (message.type === 'AI') {
-        const aiResponses = LLM_MODELS
-          .map(({ key, name }) => {
-            if (message[key] && message[key] !== "Model Not Found") {
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      .map((message: any) => {
+        if (message.type === 'USER') {
+          return `User: ${message.message}\n`;
+        }
+        if (message.type === 'AI') {
+          const aiResponses = LLM_MODELS.map(({ key, name }) => {
+            if (message[key] && message[key] !== 'Model Not Found') {
               return `${name}:\n${message[key]}`;
             }
             return null;
           })
-          .filter(Boolean)
-          .join('\n\n');
-        return aiResponses ? `${aiResponses}\n\n` : '';
-      }
-      return '';
-    })
-    .join('\n');
+            .filter(Boolean)
+            .join('\n\n');
+          return aiResponses ? `${aiResponses}\n\n` : '';
+        }
+        return '';
+      })
+      .join('\n');
 
     const metadata = getMetadata();
     const fullContent = `${metadata}\n${formattedChatContent}`;

@@ -11,7 +11,6 @@ import { styles } from './style';
  * or when we close the component where the keyboard was used.
  */
 
-
 type ChatKeyboardProps = {
   text: string;
   setText: (text: string) => void;

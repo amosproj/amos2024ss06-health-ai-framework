@@ -19,7 +19,6 @@ import { Style } from './style';
  * This screen allows the user to input their name, email, and password to create an account.
  */
 
-
 type SignUpFormData = {
   name: string;
   email: string;

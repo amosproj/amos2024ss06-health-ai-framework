@@ -17,7 +17,6 @@ import { Style } from './style';
  * Otherwise if no chat is active it will be disabled.
  */
 
-
 export const DropdownMenu = () => {
   const [isVisible, setIsVisible] = useState(false);
   const { activeChatId, setActiveChatId } = useActiveChatId();

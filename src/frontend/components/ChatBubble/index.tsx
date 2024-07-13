@@ -14,8 +14,6 @@ import { Style } from './style';
  * the chat bubble will be styled differently.
  */
 
-
-
 type ChatBubbleProps = {
   message: conversationMessage;
 };

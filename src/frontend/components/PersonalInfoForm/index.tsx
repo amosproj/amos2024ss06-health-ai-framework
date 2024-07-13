@@ -20,7 +20,6 @@ import { Style } from './style';
  * These informations should be used by the bot to generate personalized responses.
  */
 
-
 const PersonalInfoForm = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
