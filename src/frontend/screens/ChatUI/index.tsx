@@ -6,14 +6,14 @@ import { useEffect, useRef } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
-import { RenderChat, ChatKeyboard, VoiceButton } from 'src/frontend/components';
+import { ChatKeyboard, RenderChat, VoiceButton } from 'src/frontend/components';
 import {
+  LLM_MODELS,
   useActiveChatId,
   useCreateChat,
   useGetChat,
   useGetResponse,
-  useUpdateChat,
-  LLM_MODELS
+  useUpdateChat
 } from 'src/frontend/hooks';
 import { styles } from './style';
 

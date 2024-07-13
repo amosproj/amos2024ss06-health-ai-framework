@@ -1,11 +1,11 @@
 import * as Speech from 'expo-speech';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
+import Markdown from 'react-native-markdown-display';
 import { ActivityIndicator, Button, IconButton, useTheme } from 'react-native-paper';
 import type { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import type { conversationMessage } from 'src/frontend/types';
 import { Style } from './style';
-import Markdown from 'react-native-markdown-display';
 
 type ChatBubbleProps = {
   message: conversationMessage;
