@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
 import { useUser } from 'reactfire';
 import { useActiveChatId, useGetChat } from 'src/frontend/hooks';
 import type { conversationMessage } from 'src/frontend/types';
+import { ChatBubble } from '../ChatBubble';
 import { Style } from './style';
 
 export function RenderChat() {
@@ -25,22 +26,10 @@ export function RenderChat() {
           if (entries.length > 0) AIResponse = entries[0][1];
         }
         return (
-          <View
+          <ChatBubble
             key={type === 'USER' ? (message as string) + id++ : AIResponse + id++}
-            style={[Style.bubble, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Avatar.Text
-                size={20}
-                label={type === 'AI' ? 'A' : user?.displayName?.charAt(0) || 'U'}
-                style={{ backgroundColor: colors.primary, marginRight: 4 }}
-              />
-              <Text style={{ color: colors.primary, fontWeight: 700 }}>
-                {type === 'AI' ? 'AiLixir' : user?.displayName || 'User'}
-              </Text>
-            </View>
-            <Markdown>{type === 'AI' ? AIResponse : (message as string)}</Markdown>
-          </View>
+            message={item}
+          />
         );
       })}
     </>
