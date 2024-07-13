@@ -54,12 +54,24 @@ class ArchiveScraper(BaseScraper):
     # Use this method for multiple keywords
     @classmethod
     def query_ids_per_keyword(cls, keywords, max_results=100_000) -> list[str]:
-        """Queries ArXiv for papers based on a list of keywords and returns the ids."""
+        """Queries ArXiv for papers based on a list of keywords and returns the ids.
+
+        This Method is used for multiple queries with a single keyword each.
+        """
         ids = []
         for keyword in keywords:
             arxiv_links = ArchiveScraper.search_arxiv_ids(keyword, max_results)
             ids.extend([cls.extract_arxiv_id_from_url(url) for url in arxiv_links])
         return ids
+
+    @classmethod
+    def query_ids_from_keywords(cls, keywords, max_results=100_000) -> list[str]:
+        """Queries ArXiv for papers based on a list of keywords and returns the ids.
+
+        This method is used for a single query with multiple keywords.
+        """
+        arxiv_links = ArchiveScraper.search_arxiv_ids(' AND '.join(keywords), max_results)
+        return [cls.extract_arxiv_id_from_url(url) for url in arxiv_links]
 
     @classmethod
     def search_arxiv_ids(cls, query, max_results) -> list[str]:
@@ -204,6 +216,6 @@ class ArchiveScraper(BaseScraper):
     @classmethod
     def get_all_possible_elements(cls, target) -> List[BaseScraper]:
         old_indexes = set(cls.INDEX['indexes'])
-        new_indexes = set(cls.query_ids_per_keyword(target.keywords, target.max_results))
+        new_indexes = set(cls.query_ids_from_keywords(target.keywords, target.max_results))
         new_target_elements = new_indexes - old_indexes
         return [ArchiveScraper(element_id=id) for id in new_target_elements]
