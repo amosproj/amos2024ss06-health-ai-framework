@@ -28,7 +28,6 @@ export function SpeakButton(props: { response: string }) {
     } else {
       setIsSpeaking(true);
       const readableText = extractReadableText(props.response);
-      console.log(readableText);
       Speech.speak(readableText, {
         language: 'en-US',
         pitch: 1,
