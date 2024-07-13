@@ -70,23 +70,23 @@ export function SavingChat() {
       .map((conversation: any) => {
         // User message
         if (conversation.type === 'USER') {
-            return `(${messageIndex++})\nUser:\n${conversation.message}\n`;
+          return `(${messageIndex++})\nUser:\n${conversation.message}\n`;
         }
         // AI message
         if (conversation.type === 'AI') {
-            // Get AI responses
-            const aiResponses = LLM_MODELS.map(({ key, name }) => {
-                if (conversation.message[key]) {
-                    //  && conversation.message[key] !== 'Model Not Found'
-                    return `${name}:\n${conversation.message[key]}`;
-                }
-                return '';
-            })
+          // Get AI responses
+          const aiResponses = LLM_MODELS.map(({ key, name }) => {
+            if (conversation.message[key]) {
+              //  && conversation.message[key] !== 'Model Not Found'
+              return `${name}:\n${conversation.message[key]}`;
+            }
+            return '';
+          })
             .filter(Boolean)
             .join('\n\n');
 
-            // Return AI responses
-            return aiResponses ? `${aiResponses}\n\n` : '';
+          // Return AI responses
+          return aiResponses ? `${aiResponses}\n\n` : '';
         }
         return '';
       })
