@@ -14,9 +14,17 @@ from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.YouTube import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.you_tube import TypeYouTubeScrappingData
 from src.backend.Utils.splitter import get_text_chunks
+import logging
+
+
 
 
 class YouTubeScraper(BaseScraper):
+    logging.basicConfig(level=logging.WARNING)
+    logging.getLogger('httpcore').setLevel(logging.WARNING)
+    logging.getLogger('httpx').setLevel(logging.WARNING)
+    logging.getLogger('astrapy').setLevel(logging.WARNING)
+    logging.getLogger('openai').setLevel(logging.WARNING)
     YOUTUBE_DATA_API_V3 = os.getenv('YOUTUBE_DATA_API_V3')
     YOUTUBE_BASE_URL = (
         'https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8'
@@ -92,7 +100,7 @@ class YouTubeScraper(BaseScraper):
             scrap_data['ref'] = f'https://www.youtube.com/watch?v={scrap_data["videoId"]}'
             return scrap_data
         except Exception as e:
-            print(f'Error: {e} No caption found for videoId: {self.element_id}')
+            #print(f'Error: {e} No caption found for videoId: {self.element_id}')
             error_msg = f'Error: {e} No caption found for videoId: {self.element_id}'
             write_to_log(self.element_id, self.__class__.__name__, error_msg)
             return {}
