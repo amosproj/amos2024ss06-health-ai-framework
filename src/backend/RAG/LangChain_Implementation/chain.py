@@ -23,7 +23,7 @@ Script takes in args:
 0) list of LLMs with which to retrieve e.g. ['gpt-4', 'gemini', 'mistral']
 1) input string
 2) chat history in following shape [
-    {'gpt-4': "Hello, how can I help you?"},
+    {'gpt-4': "Hello, how can I help you?"};;
     {'user': "What do prisons and plants have in common?"}
 ]
 """
@@ -51,18 +51,18 @@ def main():
               etc.]""")
 
     # Arguments
-    llm_list = sys.argv[1]
-    llm_list = list(llm_list.replace('[', '').replace(']', '').replace("'", '').split(','))
-    if not llm_list:
-        llm_list = ['gpt-4']
+    # llm_list = sys.argv[1]
+    # llm_list = list(llm_list.replace('[', '').replace(']', '').replace("'", '').split(','))
+    # if not llm_list:
+    #     llm_list = ['gpt-4']
     # print(llm_list)
-    input_string = sys.argv[2]
+    # input_string = sys.argv[2]
     # print(input_string)
-    message_history = sys.argv[3]
+    # message_history = sys.argv[3]
     # print(message_history)
-    message_history = message_history.split(';;')
+    # message_history = message_history.split(';;')
     # print(message_history)
-    message_history = [json.loads(substring.replace("'", '"')) for substring in message_history]
+    # message_history = [json.loads(substring.replace("'", '"')) for substring in message_history]
     # print(message_history)
 
     load_dotenv()
@@ -70,20 +70,21 @@ def main():
     # to be put into seperate function in order to invoke LLMs seperately
     openai_api_key = os.environ.get('OPENAI_API_KEY')
     # google_api_key = os.environ.get('GOOGLE_API_KEY')
-    # anthropic_api_key = os.environ.get('ANTHROPIC_API_KEY')
+    anthropic_api_key = os.environ.get('ANTHROPIC_API_KEY')
+    
 
-    # test_llm_list = ['gpt-4']
-    # llm_list = test_llm_list
-    # test_history = [
-    #     {'gpt-4': 'Hello, how can I help you?', 'gemini': 'Hello, how can I help you?'},
-    #     {'user': 'What do prisons and plants have in common?'},
-    #     {'gpt-4': 'They both have cell walls.', 'gemini': 'They have cell walls.'},
-    # ]
-    # message_history = test_history
+    test_llm_list = ['claude']
+    llm_list = test_llm_list
+    test_history = [
+        {'user': 'What do prisons and plants have in common?'},
+        {'claude': 'They both have cell walls.', 'gemini': 'They have cell walls.'},
+    ]
+    message_history = test_history
 
-    # test_query = 'Ah, true. Thanks. What else do they have in common?'
+    test_query = 'Ah, true. Thanks. What else do they have in common?'
+    input_string = test_query
+    
     # test_query = "How many corners does a heptagon have?"
-    # input_string = test_query
     # test_follow_up = "How does one call a polygon with two more corners?"
 
     # AstraDB Section
@@ -146,7 +147,7 @@ def main():
         elif _llm == 'gemini':
             llm = ChatGoogleGenerativeAI(model='gemini-1.5-pro-latest')
         elif _llm == 'claude':
-            llm = ChatAnthropic(model_name='claude-3-opus-20240229')
+            llm = ChatAnthropic(model='claude-3-5-sonnet-20240620')
 
         print(chat_history)
         contextualize_q_prompt = ChatPromptTemplate.from_messages(
