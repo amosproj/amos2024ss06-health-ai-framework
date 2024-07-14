@@ -1,6 +1,6 @@
-import json
 import os
 import sys
+from os import environ
 
 from dotenv import load_dotenv
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
@@ -68,10 +68,9 @@ def main():
     load_dotenv()
 
     # to be put into seperate function in order to invoke LLMs seperately
-    openai_api_key = os.environ.get('OPENAI_API_KEY')
+    os.environ.get('OPENAI_API_KEY')
     # google_api_key = os.environ.get('GOOGLE_API_KEY')
-    anthropic_api_key = os.environ.get('ANTHROPIC_API_KEY')
-    
+    os.environ.get('ANTHROPIC_API_KEY')
 
     test_llm_list = ['claude']
     llm_list = test_llm_list
@@ -83,7 +82,7 @@ def main():
 
     test_query = 'Ah, true. Thanks. What else do they have in common?'
     input_string = test_query
-    
+
     # test_query = "How many corners does a heptagon have?"
     # test_follow_up = "How does one call a polygon with two more corners?"
 
@@ -95,7 +94,7 @@ def main():
 
     # LangChain Docs: -------------------------
     vstore = AstraDBVectorStore(
-        embedding=OpenAIEmbeddings(openai_api_key=openai_api_key),
+        embedding=OpenAIEmbeddings(),
         collection_name=astra_db_collection,
         api_endpoint=astra_db_api_endpoint,
         token=astra_db_application_token,
@@ -143,10 +142,13 @@ def main():
         # print(_llm)
         chat_history = custom_history(message_history, _llm)
         if _llm == 'gpt-4':
+            environ.get('OPENAI_API_KEY')
             llm = OpenAI(temperature=0.2)
         elif _llm == 'gemini':
+            environ.get('GOOGLE_API_KEY')
             llm = ChatGoogleGenerativeAI(model='gemini-1.5-pro-latest')
         elif _llm == 'claude':
+            environ.get('ANTHROPIC_API_KEY')
             llm = ChatAnthropic(model='claude-3-5-sonnet-20240620')
 
         print(chat_history)

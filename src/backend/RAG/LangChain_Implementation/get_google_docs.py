@@ -2,7 +2,6 @@ import io
 import os
 import pickle
 import re
-from pathlib import Path
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -15,6 +14,7 @@ def extract_document_id_from_url(url):
     matches = re.findall(pattern, url)
     document_id = max(matches, key=len)
     return document_id
+
 
 def authenticate(credentials, scopes):
     """Obtaining auth with needed apis"""
@@ -61,7 +61,7 @@ def download_file(file_id, credentials_path):
 
     # Read the content of the buffer
     content = fh.read().decode('utf-8')
-    
+
     return content
 
 
