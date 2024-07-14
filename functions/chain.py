@@ -109,7 +109,9 @@ def process_llm(
 def hist_aware_answers(llm_list, input_string, message_history):
     answers = {}
     vector_store = get_vector_store()
-    init_prompt = get_inital_prompt()
+
+    get_init_answer = get_inital_prompt()
+    init_prompt = '' if get_init_answer is None else get_init_answer
 
     contextualize_q_system_prompt = """Given a chat history and the latest user question \
     which might reference context in the chat history, formulate a standalone question \
