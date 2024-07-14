@@ -1,32 +1,19 @@
-from langchain.retrievers.self_query.base import SelfQueryRetriever
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from meta import document_content_description, metadata_field_info
-from store import get_vector_store
-from langchain.retrievers.self_query.base import SelfQueryRetriever
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from meta import document_content_description, metadata_field_info
-from langchain_core.messages import AIMessage, HumanMessage
+import concurrent.futures
+from os import environ
+
+from get_google_docs import get_inital_prompt
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.retrievers.self_query.base import SelfQueryRetriever
+from langchain_anthropic import ChatAnthropic
+
+# separated files
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_anthropic import ChatAnthropic
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_core.chat_history import BaseChatMessageHistory
-from get_google_docs import get_inital_prompt
-import concurrent.futures
-from dotenv import load_dotenv
-from os import environ
-
-# separated files
-from langchain_astradb import AstraDBVectorStore
-from langchain_openai import OpenAI, OpenAIEmbeddings
+from langchain_openai import OpenAI
+from meta import document_content_description, metadata_field_info
+from store import get_vector_store
 
 # def create_health_ai_chain(llm, vector_store):
 #     retriever = SelfQueryRetriever.from_llm(
@@ -70,17 +57,25 @@ def custom_history(entire_history: list, llm_name: str):
             chat_history.extend([AIMessage(content=msg[llm_name])])
     return chat_history
 
-def process_llm(llm_name, input_string, message_history, vector_store, contextualize_q_system_prompt, health_ai_template):
+
+def process_llm(
+    llm_name,
+    input_string,
+    message_history,
+    vector_store,
+    contextualize_q_system_prompt,
+    health_ai_template,
+):
     chat_history = custom_history(message_history, llm_name)
 
     if llm_name == 'gpt-4':
-        openai_api_key = environ.get('OPENAI_API_KEY')
+        environ.get('OPENAI_API_KEY')
         llm = OpenAI(temperature=0.2)
     elif llm_name == 'gemini':
-        google_api_key = environ.get('GOOGLE_API_KEY')
+        environ.get('GOOGLE_API_KEY')
         llm = ChatGoogleGenerativeAI(model='gemini-1.5-pro-latest')
     elif llm_name == 'claude':
-        anthropic_api_key = environ.get('ANTHROPIC_API_KEY')
+        environ.get('ANTHROPIC_API_KEY')
         llm = ChatAnthropic(model='claude-3-5-sonnet-20240620')
 
     retriever = SelfQueryRetriever.from_llm(
@@ -98,16 +93,10 @@ def process_llm(llm_name, input_string, message_history, vector_store, contextua
             ('human', '{input}'),
         ]
     )
-    history_aware_retriever = create_history_aware_retriever(
-        llm, retriever, contextualize_q_prompt
-    )
+    history_aware_retriever = create_history_aware_retriever(llm, retriever, contextualize_q_prompt)
 
     qa_prompt = ChatPromptTemplate.from_messages(
-        [
-            ('system', health_ai_template),
-            MessagesPlaceholder('chat_history'),
-            ('human', '{input}'),
-        ]
+        [('system', health_ai_template), MessagesPlaceholder('chat_history'), ('human', '{input}')]
     )
 
     question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
@@ -115,6 +104,7 @@ def process_llm(llm_name, input_string, message_history, vector_store, contextua
     msg = rag_chain.invoke({'input': input_string, 'chat_history': chat_history})
 
     return llm_name, msg['answer']
+
 
 def hist_aware_answers(llm_list, input_string, message_history):
     answers = {}
@@ -126,7 +116,8 @@ def hist_aware_answers(llm_list, input_string, message_history):
     which can be understood without the chat history. Do NOT answer the question, \
     just reformulate it if needed and otherwise return it as is."""
 
-    context_str = """ You are a health AI agent equipped with access to diverse sources of health data,
+    context_str = """ You are a health AI agent equipped with
+        access to diverse sources of health data,
         including research articles, nutritional information, medical archives, and more.
         Your task is to provide informed answers to user queries based on the available data.
         If you cannot find relevant information, simply state that you do not have enough data
@@ -137,13 +128,22 @@ def hist_aware_answers(llm_list, input_string, message_history):
         {context}
         """
 
-    health_ai_template = f"{init_prompt}{context_str}"
-    
+    health_ai_template = f'{init_prompt}{context_str}'
+
     # Parallel processing
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_to_llm = {executor.submit(
-            process_llm, llm, input_string, message_history, vector_store, contextualize_q_system_prompt, health_ai_template):
-                llm for llm in llm_list}
+        future_to_llm = {
+            executor.submit(
+                process_llm,
+                llm,
+                input_string,
+                message_history,
+                vector_store,
+                contextualize_q_system_prompt,
+                health_ai_template,
+            ): llm
+            for llm in llm_list
+        }
         for future in concurrent.futures.as_completed(future_to_llm):
             llm_name, answer = future.result()
             answers[llm_name] = answer
