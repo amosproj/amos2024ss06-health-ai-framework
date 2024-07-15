@@ -4,7 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from meta import document_content_description, metadata_field_info
 from main import get_custom_instructions_callable
-print("custom instruction: " + get_custom_instructions_callable())
+
 def create_health_ai_chain(llm, vector_store):
     retriever = SelfQueryRetriever.from_llm(
         llm=llm,
@@ -14,7 +14,7 @@ def create_health_ai_chain(llm, vector_store):
         document_contents='',
     )
     custom_istructions = get_custom_instructions_callable()
-    print("custom instruction: " + get_custom_instructions_callable())
+
     health_ai_template = """
     You are a health AI agent equipped with access to diverse sources of health data,
     including research articles, nutritional information, medical archives, and more.
