@@ -21,7 +21,7 @@ def get_response_from_llm(query, llm):
     if llm == 'gpt-4' or llm == 'gpt-3.5-turbo-instruct':
         llm_model = ChatOpenAI(api_key=environ.get('OPEN_AI_API_KEY'), temperature=0, model=llm)
         response = get_health_ai_response(query, llm_model)
-    elif llm == 'gemini':
+    elif llm == 'google':
         llm_model = ChatGoogleGenerativeAI(
             model='gemini-1.5-pro-latest', google_api_key=environ.get('GOOGLE_API_KEY')
         )
