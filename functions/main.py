@@ -15,7 +15,7 @@ def get_response_url(req: https_fn.Request) -> https_fn.Response:
     return https_fn.Response(dumps(responses), mimetype='application/json')
 
 
-@https_fn.on_call()
+@https_fn.on_call(memory=options.MemoryOption.GB_32,cpu=8,timeout_sec=300)
 def get_response(req: https_fn.CallableRequest):
     query = req.data.get('query', '')
     llms = req.data.get('llms', ['gpt-4'])
