@@ -139,13 +139,13 @@ def hist_aware_answers(llm_list, input_string, message_history):
     which might reference context in the chat history, formulate a standalone question \
     which can be understood without the chat history. Do NOT answer the question, \
     just reformulate it if needed and otherwise return it as is."""
-    
+
     # add in custom user info: -----------------------------
     # custom_istructions = get_custom_instructions_callable()
     # user_info = " "
     # if custom_istructions:
-    #     user_info = f"""Here is some information about the user, including the user's name, 
-    #     their profile description and style instructions on how they want you to answer stylewise: 
+    #     user_info = f"""Here is some information about the user, including the user's name,
+    #     their profile description and style instructions on how they want you to answer stylewise:
     #     User Name: {custom_istructions['name']}
     #     Style Instrctions: {custom_istructions['styleInstructions']}
     #     Personal Info: {custom_istructions['personalInstructions']}
@@ -159,13 +159,12 @@ def hist_aware_answers(llm_list, input_string, message_history):
         to answer accurately. write your response in markdown form and also add reference url
         so user can know from which source you are answering the questions.
         """
-    
-    context_str ="""
+
+    context_str = """
         CONTEXT:
         {context}
 
         """
-
 
     health_ai_template = f'{init_prompt}{agent_str}{user_info}{context_str}'
 
