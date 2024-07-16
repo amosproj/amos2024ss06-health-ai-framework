@@ -10,14 +10,14 @@ import type { Chat } from '../types';
  * E.g. with updated conversations with an LLM
  */
 
-export function useUpdateChat(chatId: string) {
+export function useUpdateChat() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const { data: users } = useUser();
   const firestore = useFirestore();
 
-  const updateChat = async (data: Partial<Chat>) => {
+  const updateChat = async (chatId: string, data: Partial<Chat>) => {
     setIsUpdating(true);
     setIsSuccess(false);
     try {
