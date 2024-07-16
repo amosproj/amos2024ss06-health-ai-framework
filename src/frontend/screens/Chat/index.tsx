@@ -60,13 +60,17 @@ export function Chat() {
       if (!queryText) return;
       if (activeChatId === 'new') {
         const chatId = await createNewChat(text);
-        const { data } = await getResponse({ query: queryText, llms: ['gpt-4'] });
+        const { data } = await getResponse({ query: queryText, llms: ['gpt-4'], history: [] });
         await updateChat(chatId, { conversation: arrayUnion({ type: 'AI', message: data }) });
       } else {
         await updateChat(activeChatId, {
           conversation: arrayUnion({ type: 'USER', message: queryText })
         });
-        const { data } = await getResponse({ query: queryText, llms: chat?.model || ['gpt-4'] });
+        const { data } = await getResponse({
+          query: queryText,
+          llms: chat?.model || ['gpt-4'],
+          history: chat?.conversation || []
+        });
         await updateChat(activeChatId, { conversation: arrayUnion({ type: 'AI', message: data }) });
       }
     } catch (error) {
