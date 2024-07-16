@@ -1,12 +1,7 @@
-import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
-import Markdown from 'react-native-markdown-display';
-import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
-import { useUser } from 'reactfire';
-import { useActiveChatId, useGetChat } from 'src/frontend/hooks';
+import { ActivityIndicator } from 'react-native-paper';
+import { useGetChat } from 'src/frontend/hooks';
 import type { conversationMessage } from 'src/frontend/types';
 import { ChatBubble } from '../ChatBubble';
-import { Style } from './style';
 
 /**
  * This file handles rendering all the different chat bubbles from a saved chat in firestore
@@ -14,12 +9,13 @@ import { Style } from './style';
  * There is case distinction between AI and user messages because the storage format is different
  */
 
-export function RenderChat() {
-  const { activeChatId } = useActiveChatId();
-  const { chat, status } = useGetChat(activeChatId);
-  const { colors } = useTheme();
-  const { data: user } = useUser();
+type RenderChatProps = {
+  chatId: string;
+};
 
+export function RenderChat(props: RenderChatProps) {
+  const { chatId } = props;
+  const { chat, status } = useGetChat(chatId);
   if (status === 'loading') return <ActivityIndicator />;
   let id = 0;
   return (
