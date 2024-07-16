@@ -1,4 +1,4 @@
-# import concurrent.futures
+import concurrent.futures
 from os import environ
 
 from dotenv import load_dotenv
@@ -80,6 +80,54 @@ def custom_history(entire_history: list, llm_name: str):
     return chat_history
 
 
+def process_llm(
+    llm_name,
+    input_string,
+    message_history,
+    vector_store,
+    contextualize_q_system_prompt,
+    health_ai_template,
+):
+    chat_history = custom_history(message_history, llm_name)
+
+    if llm_name == 'gpt-4':
+        environ.get('OPENAI_API_KEY')
+        llm = OpenAI(temperature=0.2)
+    elif llm_name == 'gemini':
+        environ.get('GOOGLE_API_KEY')
+        llm = ChatGoogleGenerativeAI(model='gemini-1.5-pro-latest')
+    elif llm_name == 'claude':
+        environ.get('ANTHROPIC_API_KEY')
+        llm = ChatAnthropic(model='claude-3-5-sonnet-20240620')
+
+    retriever = SelfQueryRetriever.from_llm(
+        llm=llm,
+        vectorstore=vector_store,
+        document_content_description=document_content_description,
+        metadata_field_info=metadata_field_info,
+        document_contents='',
+    )
+
+    contextualize_q_prompt = ChatPromptTemplate.from_messages(
+        [
+            ('system', contextualize_q_system_prompt),
+            MessagesPlaceholder('chat_history'),
+            ('human', '{input}'),
+        ]
+    )
+    history_aware_retriever = create_history_aware_retriever(llm, retriever, contextualize_q_prompt)
+
+    qa_prompt = ChatPromptTemplate.from_messages(
+        [('system', health_ai_template), MessagesPlaceholder('chat_history'), ('human', '{input}')]
+    )
+
+    question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
+    rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+    msg = rag_chain.invoke({'input': input_string, 'chat_history': chat_history})
+
+    return llm_name, msg['answer']
+
+
 def hist_aware_answers(llm_list, input_string, message_history):
     answers = {}
     vector_store = get_vector_store()
@@ -119,53 +167,31 @@ def hist_aware_answers(llm_list, input_string, message_history):
         """
 
 
-    # health_ai_template = f'{init_prompt}{agent_str}{user_info}{context_str}'
-    health_ai_template = f'{init_prompt}{agent_str}{context_str}'
+    health_ai_template = f'{init_prompt}{agent_str}{user_info}{context_str}'
 
-    for llm_name in llm_list:
-        chat_history = custom_history(message_history, llm_name)
-
-        if llm_name == 'gpt-4':
-            environ.get('OPENAI_API_KEY')
-            llm = OpenAI(temperature=0.2)
-        elif llm_name == 'gemini':
-            environ.get('GOOGLE_API_KEY')
-            llm = ChatGoogleGenerativeAI(model='gemini-1.5-pro-latest')
-        elif llm_name == 'claude':
-            environ.get('ANTHROPIC_API_KEY')
-            llm = ChatAnthropic(model='claude-3-5-sonnet-20240620')
-
-        retriever = SelfQueryRetriever.from_llm(
-            llm=llm,
-            vectorstore=vector_store,
-            document_content_description=document_content_description,
-            metadata_field_info=metadata_field_info,
-            document_contents='',
-        )
-
-        contextualize_q_prompt = ChatPromptTemplate.from_messages(
-            [
-                ('system', contextualize_q_system_prompt),
-                MessagesPlaceholder('chat_history'),
-                ('human', '{input}'),
-            ]
-        )
-        history_aware_retriever = create_history_aware_retriever(llm, retriever, contextualize_q_prompt)
-
-        qa_prompt = ChatPromptTemplate.from_messages(
-            [('system', health_ai_template), MessagesPlaceholder('chat_history'), ('human', '{input}')]
-        )
-
-        question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
-        rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
-        msg = rag_chain.invoke({'input': input_string, 'chat_history': chat_history})
-        answers[llm_name] = msg['answer']
+    # Parallel processing
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_to_llm = {
+            executor.submit(
+                process_llm,
+                llm,
+                input_string,
+                message_history,
+                vector_store,
+                contextualize_q_system_prompt,
+                health_ai_template,
+            ): llm
+            for llm in llm_list
+        }
+        for future in concurrent.futures.as_completed(future_to_llm):
+            llm_name, answer = future.result()
+            answers[llm_name] = answer
 
     return answers
 
 
 load_dotenv()
-test_question = 'What should I eat if I have diabetes?'
+test_question = 'Give me some good recipies?'
 test_history = [
     {'user': 'I like salad.'},
     {'gpt-4': 'Salad healthy.', 'gemini': 'Burger better, more protein.', 'claude': 'Go running.'},
