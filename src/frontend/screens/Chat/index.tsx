@@ -87,13 +87,16 @@ export function Chat() {
       if (!queryText) return;
       if (activeChatId === 'new') {
         const chatId = await createNewChat(text);
-        const data = await fetchResponse(queryText);
+        const { data } = await getResponse({
+          query: queryText,
+          llms: chat?.model || ['gpt-4']
+        });
         await updateChat(chatId, { conversation: arrayUnion({ type: 'AI', message: data }) });
       } else {
         await updateChat(activeChatId, {
           conversation: arrayUnion({ type: 'USER', message: queryText })
         });
-        const data = await fetchResponse(queryText);
+        const { data } = await getResponse({ query: queryText, llms: chat?.model || [] });
         await updateChat(activeChatId, { conversation: arrayUnion({ type: 'AI', message: data }) });
       }
     } catch (error) {
