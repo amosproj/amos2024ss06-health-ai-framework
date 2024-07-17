@@ -4,3 +4,10 @@ langchain-community
 langchain-openai
 langchain-astradb
 lark
+langchain_core
+langchain_google_genai
+langchain_anthropic
+google-auth
+google-auth-oauthlib
+google-api-python-client
+python-dotenv

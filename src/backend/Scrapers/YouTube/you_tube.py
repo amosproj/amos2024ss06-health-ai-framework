@@ -1,5 +1,6 @@
 import html
 import json
+import logging
 import os
 import re
 from typing import List
@@ -14,9 +15,6 @@ from src.backend.Scrapers.BaseScraper.base_scraper import BaseScraper
 from src.backend.Scrapers.YouTube import INDEX_FILE_PATH, RAW_DIR_PATH
 from src.backend.Types.you_tube import TypeYouTubeScrappingData
 from src.backend.Utils.splitter import get_text_chunks
-import logging
-
-
 
 
 class YouTubeScraper(BaseScraper):
@@ -100,7 +98,7 @@ class YouTubeScraper(BaseScraper):
             scrap_data['ref'] = f'https://www.youtube.com/watch?v={scrap_data["videoId"]}'
             return scrap_data
         except Exception as e:
-            #print(f'Error: {e} No caption found for videoId: {self.element_id}')
+            # print(f'Error: {e} No caption found for videoId: {self.element_id}')
             error_msg = f'Error: {e} No caption found for videoId: {self.element_id}'
             write_to_log(self.element_id, self.__class__.__name__, error_msg)
             return {}

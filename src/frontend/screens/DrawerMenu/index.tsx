@@ -47,7 +47,7 @@ export function DrawerMenu() {
   const { setActiveChatId } = useActiveChatId();
   const createNewChat = () => {
     setActiveChatId('default');
-    navigate('Main', { screen: Screens.Chat, params: { chatId: 'default' } }); // only used to close drawer
+    navigate('Main', { screen: Screens.Chat, params: { chatId: null } }); // only used to close drawer
   };
 
   const handleLogout = async () => {

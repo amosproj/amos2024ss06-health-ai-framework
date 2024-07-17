@@ -18,11 +18,11 @@ import { Style } from './style';
  */
 
 export const DropdownMenu = () => {
+  const { params } = useRoute<RouteProp<MainDrawerParams>>();
   const [isVisible, setIsVisible] = useState(false);
-  const { activeChatId, setActiveChatId } = useActiveChatId();
-  const { activeLLMs, toggleLLM } = useLLMs(activeChatId || 'default');
+  const { activeLLMs, toggleLLM } = useLLMs(params?.chatId || 'new');
 
-  const { chat, status, error } = useGetChat(activeChatId);
+  const { chat, status } = useGetChat(params?.chatId || 'new');
 
   const activeLLMsCount = Object.values(activeLLMs).filter((llm) => llm.active).length;
   const activeLLMsNames = Object.values(activeLLMs)
