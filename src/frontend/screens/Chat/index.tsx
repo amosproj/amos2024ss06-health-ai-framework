@@ -51,6 +51,33 @@ export function Chat() {
     setActiveChatId(params?.chatId || 'new');
   }, [params?.chatId]);
 
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  async function fetchResponse(query: string): Promise<any> {
+    const url = 'https://us-central1-amos-agent-framework.cloudfunctions.net/get_response_url_2';
+    const data = {
+      query: query,
+      llms: chat?.model || ['gpt-4'],
+      history: JSON.parse(JSON.stringify(chat?.conversation || []))
+    };
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  }
+
   // ------------- Send Message -------------
   const sendMessage = async () => {
     const queryText = text.trim();
@@ -60,17 +87,13 @@ export function Chat() {
       if (!queryText) return;
       if (activeChatId === 'new') {
         const chatId = await createNewChat(text);
-        const { data } = await getResponse({ query: queryText, llms: ['gpt-4'], history: [] });
+        const data = await fetchResponse(queryText);
         await updateChat(chatId, { conversation: arrayUnion({ type: 'AI', message: data }) });
       } else {
         await updateChat(activeChatId, {
           conversation: arrayUnion({ type: 'USER', message: queryText })
         });
-        const { data } = await getResponse({
-          query: queryText,
-          llms: chat?.model || ['gpt-4'],
-          history: chat?.conversation || []
-        });
+        const data = await fetchResponse(queryText);
         await updateChat(activeChatId, { conversation: arrayUnion({ type: 'AI', message: data }) });
       }
     } catch (error) {
